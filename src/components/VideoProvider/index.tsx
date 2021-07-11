@@ -29,6 +29,9 @@ export interface IVideoContext {
   isAcquiringLocalTracks: boolean;
   removeLocalVideoTrack: () => void;
   isSharingScreen: boolean;
+  // isUsingRNNoise: boolean;
+  // enableRNNoise: () => void;
+  // disableRNNoise: () => void;
   toggleScreenShare: () => void;
   getAudioAndVideoTracks: () => Promise<void>;
 }
@@ -93,7 +96,7 @@ export function VideoProvider({ options, children, onError = () => {} }: VideoPr
       }}
     >
       <SelectedParticipantProvider room={room}>{children}</SelectedParticipantProvider>
-      {/* 
+      {/*
         The AttachVisibilityHandler component is using the useLocalVideoToggle hook
         which must be used within the VideoContext Provider.
       */}

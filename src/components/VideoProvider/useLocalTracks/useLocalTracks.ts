@@ -1,7 +1,74 @@
 import { DEFAULT_VIDEO_CONSTRAINTS, SELECTED_AUDIO_INPUT_KEY, SELECTED_VIDEO_INPUT_KEY } from '../../../constants';
 import { getDeviceInfo, isPermissionDenied } from '../../../utils';
 import { useCallback, useState } from 'react';
-import Video, { LocalVideoTrack, LocalAudioTrack, CreateLocalTrackOptions } from 'twilio-video';
+import { RNNoiseNode } from '../../../rnnoise/rnnoisenode';
+import Video, {
+  LocalVideoTrack,
+  LocalAudioTrack,
+  CreateLocalTrackOptions,
+  CreateLocalTracksOptions,
+  LocalTrack,
+} from 'twilio-video';
+
+const useRNNNoise = window.location.search.includes('rnnoise');
+// const AudioContext = window.AudioContext /* || window.webkitAudioContext */;
+async function removeNoiseFromTrack(track: MediaStreamTrack, audio_context?: AudioContext) {
+  audio_context = audio_context || new AudioContext({ sampleRate: 48000 });
+  await RNNoiseNode.register(audio_context);
+  const stream = new MediaStream([track]);
+
+  const sourceNode = audio_context.createMediaStreamSource(stream);
+  const rnnoiseNode = new RNNoiseNode(audio_context);
+  const destinationNode = audio_context.createMediaStreamDestination();
+
+  sourceNode.connect(rnnoiseNode);
+  rnnoiseNode.connect(destinationNode);
+
+  const outputStream = destinationNode.stream;
+  return {
+    audio_context,
+    track: outputStream.getTracks()[0],
+    rnnoise: rnnoiseNode,
+  };
+}
+
+async function removeNoiseFromLocalAudioTrack(localAudioTrack: LocalAudioTrack) {
+  if (useRNNNoise) {
+    console.warn('!*** Using rnnoise *** !');
+    const { track } = await removeNoiseFromTrack(localAudioTrack.mediaStreamTrack);
+    return new LocalAudioTrack(track);
+  } else {
+    console.warn('!*** Not using rnnoise *** !');
+    return localAudioTrack;
+  }
+}
+
+function updateAudioOptions(options: CreateLocalTrackOptions) {
+  options.channelCount = { ideal: 1 };
+  options.noiseSuppression = { ideal: false };
+  options.echoCancellation = { ideal: true };
+  options.autoGainControl = { ideal: false };
+  options.sampleRate = { ideal: 48000 };
+}
+
+async function video_createLocalTracks(options: CreateLocalTracksOptions): Promise<LocalTrack[]> {
+  if (options.audio) {
+    options.audio = typeof options.audio === 'object' ? options.audio : {};
+    updateAudioOptions(options.audio);
+  }
+
+  const localTracks = await Video.createLocalTracks(options);
+  const localTracks2 = localTracks.map(async track =>
+    track.kind === 'audio' ? await removeNoiseFromLocalAudioTrack(track) : track
+  );
+  return Promise.all(localTracks2);
+}
+
+async function video_createLocalAudioTrack(options: CreateLocalTrackOptions) {
+  updateAudioOptions(options);
+  const localAudioTrack = await Video.createLocalAudioTrack(options);
+  return removeNoiseFromLocalAudioTrack(localAudioTrack);
+}
 
 export default function useLocalTracks() {
   const [audioTrack, setAudioTrack] = useState<LocalAudioTrack>();
@@ -11,14 +78,17 @@ export default function useLocalTracks() {
   const getLocalAudioTrack = useCallback((deviceId?: string) => {
     const options: CreateLocalTrackOptions = {};
 
+    options.channelCount = { ideal: 1 };
+    options.noiseSuppression = { ideal: false };
+    options.echoCancellation = { ideal: true };
+    options.autoGainControl = { ideal: false };
+    options.sampleRate = { ideal: 48000 };
+
     if (deviceId) {
       options.deviceId = { exact: deviceId };
     }
 
-    return Video.createLocalAudioTrack(options).then(newTrack => {
-      setAudioTrack(newTrack);
-      return newTrack;
-    });
+    return video_createLocalAudioTrack(options);
   }, []);
 
   const getLocalVideoTrack = useCallback(async () => {
@@ -93,7 +163,7 @@ export default function useLocalTracks() {
         (hasSelectedAudioDevice ? { deviceId: { exact: selectedAudioDeviceId! } } : hasAudioInputDevices),
     };
 
-    return Video.createLocalTracks(localTrackConstraints)
+    return video_createLocalTracks(localTrackConstraints)
       .then(tracks => {
         const newVideoTrack = tracks.find(track => track.kind === 'video') as LocalVideoTrack;
         const newAudioTrack = tracks.find(track => track.kind === 'audio') as LocalAudioTrack;
