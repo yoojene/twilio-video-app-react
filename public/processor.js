@@ -1,6 +1,6 @@
-;
 let rnnoiseExports = null;
 let heapFloat32;
+let processCount = 0;
 console.log('Processor loaded 2');
 class RNNNoiseProcessor extends AudioWorkletProcessor {
     constructor(options) {
@@ -42,6 +42,10 @@ class RNNNoiseProcessor extends AudioWorkletProcessor {
         else {
             // rnnoise is turned off.
             outputs[0][0].set(inputs[0][0]);
+        }
+        processCount++;
+        if (processCount % 111 === 0) {
+            console.log(`${processCount}: RNNoise ${this.state ? 'enabled' : 'disabled'}`);
         }
         return true;
     }

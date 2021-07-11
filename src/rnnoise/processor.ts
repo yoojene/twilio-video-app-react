@@ -15,6 +15,7 @@ interface RNNoiseExport {
 
 let rnnoiseExports: RNNoiseExport | null = null;
 let heapFloat32: Float32Array;
+let processCount = 0;
 
 console.log('Processor loaded 2');
 // eslint-disable-next-line @typescript-eslint/no-redeclare
@@ -72,6 +73,11 @@ class RNNNoiseProcessor extends AudioWorkletProcessor {
       // rnnoise is turned off.
       outputs[0][0].set(inputs[0][0]);
     }
+    processCount++;
+    if (processCount % 111 === 0) {
+      console.log(`${processCount}: RNNoise ${this.state ? 'enabled' : 'disabled'}`);
+    }
+
     return true;
   }
 }

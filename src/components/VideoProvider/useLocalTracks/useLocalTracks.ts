@@ -83,10 +83,11 @@ export default function useLocalTracks() {
   const [videoTrack, setVideoTrack] = useState<LocalVideoTrack>();
   const [rnNoiseNode, setRNNoiseNode] = useState<RNNoiseNode | null>(null);
   const [isAcquiringLocalTracks, setIsAcquiringLocalTracks] = useState(false);
-  const [isUsingRNNoise, setIsUsingRNNoise] = useState(false);
+  const [isUsingRNNoise, setIsUsingRNNoise] = useState(useRNNNoise);
 
   const enableRNNoise = useCallback(() => {
     if (rnNoiseNode) {
+      console.log('enabling rnnoise');
       rnNoiseNode.update(true);
       setIsUsingRNNoise(rnNoiseNode.getIsActive());
     } else {
@@ -96,6 +97,7 @@ export default function useLocalTracks() {
 
   const disableRNNoise = useCallback(() => {
     if (rnNoiseNode) {
+      console.log('disabling rnnoise');
       rnNoiseNode.update(false);
       setIsUsingRNNoise(rnNoiseNode.getIsActive());
     }
