@@ -1,5 +1,3 @@
-let heapFloat32: Float32Array;
-let requestNumber = 0;
 interface AudioWorkletProcessor {
   readonly port: MessagePort;
   process(inputs: Float32Array[][], outputs: Float32Array[][], parameters: Map<string, Float32Array>): boolean;
@@ -7,15 +5,19 @@ interface AudioWorkletProcessor {
 
 type RNNoiseState = number;
 
-let instance: {
+interface RNNoiseExport {
   newState: () => RNNoiseState;
   getInput: (state: RNNoiseState) => any;
   getVadProb: (state: RNNoiseState) => number;
   deleteState: (state: RNNoiseState) => void;
   pipe: (state: RNNoiseState, length: number) => number;
-};
+}
 
-console.log('Processor loaded');
+let rnnoiseExports: RNNoiseExport | null = null;
+let heapFloat32: Float32Array;
+
+console.log('Processor loaded 2');
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 declare var AudioWorkletProcessor: {
   prototype: AudioWorkletProcessor;
   new (options?: AudioWorkletNodeOptions): AudioWorkletProcessor;
@@ -33,34 +35,36 @@ class RNNNoiseProcessor extends AudioWorkletProcessor {
       outputChannelCount: [1],
     });
 
-    if (!instance) {
+    if (!rnnoiseExports) {
       // @ts-ignore
-      instance = new WebAssembly.Instance(options.processorOptions.module).exports;
+      rnnoiseExports = new WebAssembly.Instance(options.processorOptions.module).exports;
       // @ts-ignore
-      heapFloat32 = new Float32Array(instance.memory.buffer);
+      heapFloat32 = new Float32Array(rnnoiseExports.memory.buffer);
     }
     console.log('processor creating state');
-    this.state = instance.newState();
+    this.state = rnnoiseExports.newState();
     this.port.onmessage = ({ data: keepalive }) => {
+      let vadProb = 0;
       if (keepalive) {
         if (this.state === null) {
           console.log('processor creating state again');
-          this.state = instance.newState();
+          this.state = rnnoiseExports.newState();
         }
-        this.port.postMessage({ vadProb: instance.getVadProb(this.state) });
+        vadProb = rnnoiseExports.getVadProb(this.state);
       } else if (this.state) {
         console.log('processor deleting state');
-        instance.deleteState(this.state);
+        rnnoiseExports.deleteState(this.state);
         this.state = null;
       }
+      this.port.postMessage({ vadProb, isActive: this.state !== null });
     };
   }
 
   process(inputs: Float32Array[][], outputs: Float32Array[][], parameters: Map<string, Float32Array>): boolean {
     if (this.state) {
-      heapFloat32.set(inputs[0][0], instance.getInput(this.state) / 4);
+      heapFloat32.set(inputs[0][0], rnnoiseExports.getInput(this.state) / 4);
       const o = outputs[0][0];
-      const ptr4 = instance.pipe(this.state, o.length) / 4;
+      const ptr4 = rnnoiseExports.pipe(this.state, o.length) / 4;
       if (ptr4) {
         o.set(heapFloat32.subarray(ptr4, ptr4 + o.length));
       }

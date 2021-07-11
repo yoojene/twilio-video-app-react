@@ -75,6 +75,7 @@
     "build": "node ./scripts/build.js",
     "test": "cross-env TZ=utc jest",
     "eject": "react-scripts eject",
+    "build:processor": "tsc -p tsconfig.rnnoise.json",
     "lint": "eslint src server",
     "server": "ts-node -T -P server/tsconfig.json server/index.ts",
     "typescript:server": "tsc --noEmit -p server/",

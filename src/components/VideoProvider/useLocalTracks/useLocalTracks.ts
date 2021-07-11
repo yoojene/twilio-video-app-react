@@ -7,7 +7,6 @@ import Video, {
   LocalAudioTrack,
   CreateLocalTrackOptions,
   CreateLocalTracksOptions,
-  LocalTrack,
 } from 'twilio-video';
 
 const useRNNNoise = window.location.search.includes('rnnoise');
@@ -33,14 +32,19 @@ async function removeNoiseFromTrack(track: MediaStreamTrack, audio_context?: Aud
 }
 
 async function removeNoiseFromLocalAudioTrack(localAudioTrack: LocalAudioTrack) {
+  let rnnoiseNode: RNNoiseNode | null = null;
   if (useRNNNoise) {
     console.warn('!*** Using rnnoise *** !');
-    const { track } = await removeNoiseFromTrack(localAudioTrack.mediaStreamTrack);
-    return new LocalAudioTrack(track);
+    const { track, rnnoise } = await removeNoiseFromTrack(localAudioTrack.mediaStreamTrack);
+    localAudioTrack = new LocalAudioTrack(track);
+    rnnoiseNode = rnnoise;
   } else {
     console.warn('!*** Not using rnnoise *** !');
-    return localAudioTrack;
   }
+  return {
+    localAudioTrack,
+    rnnoiseNode,
+  };
 }
 
 function updateAudioOptions(options: CreateLocalTrackOptions) {
@@ -51,29 +55,52 @@ function updateAudioOptions(options: CreateLocalTrackOptions) {
   options.sampleRate = { ideal: 48000 };
 }
 
-async function video_createLocalTracks(options: CreateLocalTracksOptions): Promise<LocalTrack[]> {
+async function video_createLocalTracks(options: CreateLocalTracksOptions) {
+  let rnnoiseNode: RNNoiseNode | null = null;
   if (options.audio) {
     options.audio = typeof options.audio === 'object' ? options.audio : {};
     updateAudioOptions(options.audio);
   }
 
   const localTracks = await Video.createLocalTracks(options);
-  const localTracks2 = localTracks.map(async track =>
-    track.kind === 'audio' ? await removeNoiseFromLocalAudioTrack(track) : track
-  );
-  return Promise.all(localTracks2);
+  const localVideoTrack = localTracks.find(track => track.kind === 'video') as LocalVideoTrack;
+  let localAudioTrack = localTracks.find(track => track.kind === 'audio') as LocalAudioTrack;
+  if (localAudioTrack) {
+    ({ localAudioTrack, rnnoiseNode } = await removeNoiseFromLocalAudioTrack(localAudioTrack));
+  }
+  return { localVideoTrack, localAudioTrack, rnnoiseNode };
 }
 
 async function video_createLocalAudioTrack(options: CreateLocalTrackOptions) {
   updateAudioOptions(options);
   const localAudioTrack = await Video.createLocalAudioTrack(options);
-  return removeNoiseFromLocalAudioTrack(localAudioTrack);
+  const rnnNoiseTrack = await removeNoiseFromLocalAudioTrack(localAudioTrack);
+  return rnnNoiseTrack.localAudioTrack;
 }
 
 export default function useLocalTracks() {
   const [audioTrack, setAudioTrack] = useState<LocalAudioTrack>();
   const [videoTrack, setVideoTrack] = useState<LocalVideoTrack>();
+  const [rnNoiseNode, setRNNoiseNode] = useState<RNNoiseNode | null>(null);
   const [isAcquiringLocalTracks, setIsAcquiringLocalTracks] = useState(false);
+  const [isUsingRNNoise, setIsUsingRNNoise] = useState(false);
+
+  const enableRNNoise = useCallback(() => {
+    if (rnNoiseNode) {
+      rnNoiseNode.update(true);
+      setIsUsingRNNoise(rnNoiseNode.getIsActive());
+    } else {
+      setIsUsingRNNoise(false);
+    }
+  }, [rnNoiseNode]);
+
+  const disableRNNoise = useCallback(() => {
+    if (rnNoiseNode) {
+      rnNoiseNode.update(false);
+      setIsUsingRNNoise(rnNoiseNode.getIsActive());
+    }
+    setIsUsingRNNoise(false);
+  }, [rnNoiseNode]);
 
   const getLocalAudioTrack = useCallback((deviceId?: string) => {
     const options: CreateLocalTrackOptions = {};
@@ -164,9 +191,9 @@ export default function useLocalTracks() {
     };
 
     return video_createLocalTracks(localTrackConstraints)
-      .then(tracks => {
-        const newVideoTrack = tracks.find(track => track.kind === 'video') as LocalVideoTrack;
-        const newAudioTrack = tracks.find(track => track.kind === 'audio') as LocalAudioTrack;
+      .then(tracksAndRnnNoise => {
+        const newVideoTrack = tracksAndRnnNoise.localVideoTrack;
+        const newAudioTrack = tracksAndRnnNoise.localAudioTrack;
         if (newVideoTrack) {
           setVideoTrack(newVideoTrack);
           // Save the deviceId so it can be picked up by the VideoInputList component. This only matters
@@ -176,9 +203,12 @@ export default function useLocalTracks() {
             newVideoTrack.mediaStreamTrack.getSettings().deviceId ?? ''
           );
         }
+
         if (newAudioTrack) {
           setAudioTrack(newAudioTrack);
         }
+
+        setRNNoiseNode(tracksAndRnnNoise.rnnoiseNode);
 
         // These custom errors will be picked up by the MediaErrorSnackbar component.
         if (isCameraPermissionDenied && isMicrophonePermissionDenied) {
@@ -205,6 +235,9 @@ export default function useLocalTracks() {
 
   return {
     localTracks,
+    disableRNNoise,
+    enableRNNoise,
+    isUsingRNNoise,
     getLocalVideoTrack,
     getLocalAudioTrack,
     isAcquiringLocalTracks,

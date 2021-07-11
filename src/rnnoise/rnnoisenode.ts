@@ -9,6 +9,7 @@ export class RNNoiseNode extends AudioWorkletNode {
   static webModule: WebAssembly.Module | null = null;
   private _onUpdate?: () => void;
   private _vadProb: number = 0;
+  private _isActive: boolean = true;
   static async register(context: AudioContext) {
     RNNoiseNode.webModule = await fetchAndCompileWebAssemblyModule('/rnnoise-processor.wasm');
     await context.audioWorklet.addModule('/processor.js');
@@ -30,6 +31,7 @@ export class RNNoiseNode extends AudioWorkletNode {
     this.port.onmessage = ({ data }) => {
       if (data.vadProb) {
         this._vadProb = data.vadProb;
+        this._isActive = data.isActive;
         if (this._onUpdate) {
           this._onUpdate();
         }
@@ -43,6 +45,10 @@ export class RNNoiseNode extends AudioWorkletNode {
 
   getVadProb() {
     return this._vadProb;
+  }
+
+  getIsActive() {
+    return this._isActive;
   }
 
   update(keepalive: boolean) {

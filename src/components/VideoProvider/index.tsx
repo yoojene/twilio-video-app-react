@@ -29,9 +29,9 @@ export interface IVideoContext {
   isAcquiringLocalTracks: boolean;
   removeLocalVideoTrack: () => void;
   isSharingScreen: boolean;
-  // isUsingRNNoise: boolean;
-  // enableRNNoise: () => void;
-  // disableRNNoise: () => void;
+  isUsingRNNoise: boolean;
+  enableRNNoise: () => void;
+  disableRNNoise: () => void;
   toggleScreenShare: () => void;
   getAudioAndVideoTracks: () => Promise<void>;
 }
@@ -55,6 +55,9 @@ export function VideoProvider({ options, children, onError = () => {} }: VideoPr
 
   const {
     localTracks,
+    disableRNNoise,
+    enableRNNoise,
+    isUsingRNNoise,
     getLocalVideoTrack,
     getLocalAudioTrack,
     isAcquiringLocalTracks,
@@ -84,6 +87,9 @@ export function VideoProvider({ options, children, onError = () => {} }: VideoPr
         room,
         localTracks,
         isConnecting,
+        disableRNNoise,
+        enableRNNoise,
+        isUsingRNNoise,
         onError: onErrorCallback,
         getLocalVideoTrack,
         getLocalAudioTrack,
