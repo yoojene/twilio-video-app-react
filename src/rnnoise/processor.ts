@@ -42,8 +42,15 @@ class RNNNoiseProcessor extends AudioWorkletProcessor {
       // @ts-ignore
       heapFloat32 = new Float32Array(rnnoiseExports.memory.buffer);
     }
-    console.log('processor creating state');
-    this.state = rnnoiseExports.newState();
+
+    if (options.processorOptions.activeInitially) {
+      console.log('processor activeInitially');
+      this.state = rnnoiseExports.newState();
+    } else {
+      console.log('processor NOT activeInitially');
+      this.state = null;
+    }
+
     this.port.onmessage = ({ data: keepalive }) => {
       let vadProb = 0;
       if (keepalive) {

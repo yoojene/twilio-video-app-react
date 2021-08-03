@@ -1,0 +1,94 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Krisp Javascript SDK Example With MJS Module</title>
+</head>
+
+<body>
+    <h3>PLEASE TEST WITH HEADPHONES</h3>
+    <p>Click the start button below to begin the demonstration.</p>
+    <div>
+        <select id="algSelector">
+            <option>Select One..</option>
+            <option>VAD</option>
+            <option>NC</option>
+        </select>
+        <button id="startButton" class="button" disabled>Start</button>
+        <button id="toggleButton" class="button" disabled>Toggle</button>
+    </div>
+    <br />
+    <audio id="audio" autoplay="" controls=""></audio><br>
+    <br />
+    <p>Statuses</p>
+    <ul>
+        <li>Krisp Supported: <span id='supportStatus'>?</span></li>
+        <li>Krisp Initialized Status: <span id='initStatus'>?</span></li>
+        <li>Krisp NC/VAD Status: <span id='ncStatus'>?</span></li>
+    </ul>
+
+    <script type='module'>
+        import { Krisp } from './krispsdk.mjs';
+
+        const KrispModule = new Krisp({
+            workletScriptNC: "./wasm/debug/krisp-nc-processor.js",
+            workletScriptVAD: "./wasm/debug/krisp-vad-processor.js",
+            model8: "https://cdn.krisp.ai/scripts/ext/models/small_8k.thw",
+            model16: "https://cdn.krisp.ai/scripts/ext/models/small_16k.thw",
+            model_vad: "./VAD_weight.thw",
+        })
+        console.log('Makarand: KrispModule: ', KrispModule);
+
+        let toggleValue = false;
+        let isVAD = false;
+        const audioElement = document.getElementById("audio");
+        const supportStatus = document.getElementById("supportStatus");
+        const initStatus = document.getElementById("initStatus");
+        const ncStatus = document.getElementById("ncStatus");
+        const selectElement = document.getElementById("algSelector");
+        const startButtonElement = document.getElementById("startButton");
+        const toggleButtonElement = document.getElementById("toggleButton");
+
+        startButtonElement.addEventListener("click", function () {
+            selectElement.disabled = true;
+            supportStatus.innerText = KrispModule.isSupported ? '✓' : '✘';
+
+            navigator.mediaDevices.getUserMedia({audio: true}).then(stream => {
+                KrispModule.init(isVAD).then(() => {
+                    const cleanStream = KrispModule.getStream(stream);
+                    audioElement.srcObject = cleanStream;
+                    initStatus.innerText = '✓';
+                    ncStatus.innerText = '✘';
+                }).catch(err => {
+                    console.log(err);
+                    initStatus.innerText = '✘';
+                    ncStatus.innerText = '✘';
+                });
+            }).catch(console.log);
+        }, false);
+
+        toggleButtonElement.addEventListener("click", function () {
+            toggleValue = !toggleValue;
+            KrispModule.toggle(toggleValue)
+            ncStatus.innerText = toggleValue ? '✓' : '✘';
+        }, false);
+
+        selectElement.addEventListener('change', function(e) {
+            let val = e.target.value;
+            if (val === 'VAD') {
+                startButtonElement.disabled = false;
+                toggleButtonElement.disabled = false;
+                isVAD = true;
+            } else if (val === 'NC') {
+                startButtonElement.disabled = false;
+                toggleButtonElement.disabled = false;
+                isVAD = false;
+            } else {
+                console.log("Please select either NC or VAD.");
+                startButtonElement.disabled = true;
+                toggleButtonElement.disabled = true;
+            }
+        }, false);
+
+    </script>
+</body>
+</html>

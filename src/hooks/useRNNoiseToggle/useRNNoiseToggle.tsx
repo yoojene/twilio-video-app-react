@@ -2,11 +2,11 @@ import { useCallback } from 'react';
 import useVideoContext from '../useVideoContext/useVideoContext';
 
 export default function useRNNoiseToggle() {
-  const { isUsingRNNoise, enableRNNoise, disableRNNoise } = useVideoContext();
+  const { isUsingANC, enableANC, disableANC } = useVideoContext();
 
   const toggleRNNoise = useCallback(() => {
-    isUsingRNNoise ? disableRNNoise() : enableRNNoise();
-  }, [isUsingRNNoise, disableRNNoise, enableRNNoise]);
+    isUsingANC ? disableANC() : enableANC();
+  }, [isUsingANC, disableANC, enableANC]);
 
-  return [isUsingRNNoise, toggleRNNoise] as const;
+  return [isUsingANC, toggleRNNoise] as const;
 }

@@ -7,6 +7,8 @@ import useRNNoiseToggle from '../../../hooks/useRNNoiseToggle/useRNNoiseToggle';
 
 export default function ToggleRNNoiseButton(props: { disabled?: boolean; className?: string }) {
   const [isRNNoiseEnabled, toggleRNNoise] = useRNNoiseToggle();
+
+  // todo: move this to state.
   const hasRNNNoise = window.location.search.includes('rnnoise');
 
   return (
