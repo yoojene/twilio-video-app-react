@@ -5,8 +5,9 @@
     "module": "es6",
     "target": "es6",
     "moduleResolution": "node",
+    "skipLibCheck": true
   },
   "include": [
-    "src/rnnoise/processor.ts"
+    "src/anc/rnnoise/processor.ts"
   ]
 }

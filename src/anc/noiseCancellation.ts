@@ -1,4 +1,5 @@
-import { RNNoiseNode } from '../rnnoise/rnnoisenode';
+import { RNNoiseNode } from './rnnoise/rnnoisenode';
+import { Krisp, makeKrisp } from './krisp/krispsdk';
 
 export interface NoiseCancellation {
   isActive: () => boolean; // is noise cancellation currently active?
@@ -13,10 +14,14 @@ export interface NoiseCancellationWithTrack {
 }
 
 const useRNNNoise = window.location.search.includes('rnnoise');
+const useKrisp = window.location.search.includes('krisp');
 export async function removeNoiseFromMSTrack(msTrack: MediaStreamTrack): Promise<NoiseCancellationWithTrack> {
   if (useRNNNoise) {
     console.warn('!*** Using rnnoise *** !');
     const noiseCancellationAndTrack = await rnnNoise_removeNoiseFromTrack(msTrack);
+    return noiseCancellationAndTrack;
+  } else if (useKrisp) {
+    const noiseCancellationAndTrack = await krisp_removeNoiseFromTrack(msTrack);
     return noiseCancellationAndTrack;
   } else {
     console.warn('!*** Not using rnnoise *** !');
@@ -26,12 +31,33 @@ export async function removeNoiseFromMSTrack(msTrack: MediaStreamTrack): Promise
     };
   }
 }
+async function krisp_removeNoiseFromTrack(track: MediaStreamTrack): Promise<NoiseCancellationWithTrack> {
+  const KrispModule = makeKrisp({
+    workletScriptNC: '/krisp/wasm/debug/krisp-nc-processor.js',
+    workletScriptVAD: '/krisp/wasm/debug/krisp-vad-processor.js',
+    model8: 'https://cdn.krisp.ai/scripts/ext/models/small_8k.thw',
+    model16: 'https://cdn.krisp.ai/scripts/ext/models/small_16k.thw',
+    model_vad: '/krisp/VAD_weight.thw',
+  });
 
-async function rnnNoise_removeNoiseFromTrack(
-  track: MediaStreamTrack,
-  audio_context?: AudioContext
-): Promise<NoiseCancellationWithTrack> {
-  audio_context = audio_context || new AudioContext({ sampleRate: 48000 });
+  await KrispModule.init(false);
+
+  const stream = new MediaStream([track]);
+  const cleanStream = KrispModule.getStream(stream);
+
+  return {
+    noiseCancellation: {
+      isActive: () => KrispModule.isEnabled(),
+      turnOn: () => KrispModule.toggle(true),
+      turnOff: () => KrispModule.toggle(false),
+      kind: () => 'krisp',
+    },
+    track: cleanStream.getTracks()[0],
+  };
+}
+
+async function rnnNoise_removeNoiseFromTrack(track: MediaStreamTrack): Promise<NoiseCancellationWithTrack> {
+  const audio_context = new AudioContext({ sampleRate: 48000 });
   await RNNoiseNode.register(audio_context);
   const stream = new MediaStream([track]);
 

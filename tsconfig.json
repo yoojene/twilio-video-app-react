@@ -27,6 +27,6 @@
     "src"
   ],
   "exclude": [
-    "src/rnnoise/processor.ts"
+    "src/anc/rnnoise/processor.ts"
   ]
 }

@@ -10,7 +10,6 @@ import Video, {
 } from 'twilio-video';
 
 async function removeNoiseFromLocalAudioTrack(localAudioTrack: LocalAudioTrack) {
-  console.warn('!*** Using rnnoise *** !');
   const { track, noiseCancellation } = await removeNoiseFromMSTrack(localAudioTrack.mediaStreamTrack);
   localAudioTrack = new LocalAudioTrack(track);
   return {
@@ -56,6 +55,7 @@ export default function useLocalTracks() {
   const [noiseCancellation, setNoiseCancellation] = useState<NoiseCancellation | null>(null);
   const [isAcquiringLocalTracks, setIsAcquiringLocalTracks] = useState(false);
   const [isUsingANC, setIsUsingNoiseCancellation] = useState(false);
+  const [noiseCancellationKind, setNoiseCancellationKind] = useState<string>('none');
 
   const enableANC = useCallback(() => {
     if (noiseCancellation) {
@@ -183,6 +183,9 @@ export default function useLocalTracks() {
         }
 
         setNoiseCancellation(tracksAndRnnNoise.noiseCancellation);
+        setNoiseCancellationKind(
+          tracksAndRnnNoise.noiseCancellation ? tracksAndRnnNoise.noiseCancellation.kind() : 'none'
+        );
 
         // These custom errors will be picked up by the MediaErrorSnackbar component.
         if (isCameraPermissionDenied && isMicrophonePermissionDenied) {
@@ -212,6 +215,7 @@ export default function useLocalTracks() {
     disableANC,
     enableANC,
     isUsingANC,
+    noiseCancellationKind,
     getLocalVideoTrack,
     getLocalAudioTrack,
     isAcquiringLocalTracks,
