@@ -1,5 +1,5 @@
 import { RNNoiseNode } from './rnnoise/rnnoisenode';
-import { Krisp, makeKrisp } from './krisp/krispsdk';
+import { makeKrisp } from './krisp/krispsdk';
 
 export interface NoiseCancellation {
   isActive: () => boolean; // is noise cancellation currently active?
@@ -13,14 +13,17 @@ export interface NoiseCancellationWithTrack {
   noiseCancellation: NoiseCancellation | null;
 }
 
-const useRNNNoise = window.location.search.includes('rnnoise');
-const useKrisp = window.location.search.includes('krisp');
+const urlParams = new URLSearchParams(window.location.search);
+const ancOption = urlParams.get('anc') || 'krisp';
+let anc = ancOption.toLowerCase();
+
 export async function removeNoiseFromMSTrack(msTrack: MediaStreamTrack): Promise<NoiseCancellationWithTrack> {
-  if (useRNNNoise) {
+  if (anc === 'rnnoise') {
     console.warn('!*** Using rnnoise *** !');
     const noiseCancellationAndTrack = await rnnNoise_removeNoiseFromTrack(msTrack);
     return noiseCancellationAndTrack;
-  } else if (useKrisp) {
+  } else if (anc === 'krisp') {
+    console.warn('!*** Using krisp *** !');
     const noiseCancellationAndTrack = await krisp_removeNoiseFromTrack(msTrack);
     return noiseCancellationAndTrack;
   } else {
