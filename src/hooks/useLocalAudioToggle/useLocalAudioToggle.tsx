@@ -4,15 +4,21 @@ import useIsTrackEnabled from '../useIsTrackEnabled/useIsTrackEnabled';
 import useVideoContext from '../useVideoContext/useVideoContext';
 
 export default function useLocalAudioToggle() {
-  const { localTracks } = useVideoContext();
+  const { localTracks, disableANC, enableANC } = useVideoContext();
   const audioTrack = localTracks.find(track => track.kind === 'audio') as LocalAudioTrack;
   const isEnabled = useIsTrackEnabled(audioTrack);
 
   const toggleAudioEnabled = useCallback(() => {
     if (audioTrack) {
-      audioTrack.isEnabled ? audioTrack.disable() : audioTrack.enable();
+      if (audioTrack.isEnabled) {
+        audioTrack.disable();
+        disableANC();
+      } else {
+        audioTrack.enable();
+        enableANC();
+      }
     }
-  }, [audioTrack]);
+  }, [audioTrack, disableANC, enableANC]);
 
   return [isEnabled, toggleAudioEnabled] as const;
 }
