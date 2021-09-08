@@ -9,9 +9,15 @@ import Video, {
   CreateLocalTracksOptions,
 } from 'twilio-video';
 
+const noiseCancellation_activeInitially = false;
 async function removeNoiseFromLocalAudioTrack(localAudioTrack: LocalAudioTrack) {
   const { track, noiseCancellation } = await removeNoiseFromMSTrack(localAudioTrack.mediaStreamTrack);
   localAudioTrack = new LocalAudioTrack(track);
+
+  if (noiseCancellation) {
+    noiseCancellation_activeInitially ? noiseCancellation.turnOn() : noiseCancellation.turnOff();
+  }
+
   return {
     localAudioTrack,
     noiseCancellation,
@@ -54,7 +60,7 @@ export default function useLocalTracks() {
   const [videoTrack, setVideoTrack] = useState<LocalVideoTrack>();
   const [noiseCancellation, setNoiseCancellation] = useState<NoiseCancellation | null>(null);
   const [isAcquiringLocalTracks, setIsAcquiringLocalTracks] = useState(false);
-  const [isUsingANC, setIsUsingNoiseCancellation] = useState(false);
+  const [isUsingANC, setIsUsingNoiseCancellation] = useState(noiseCancellation_activeInitially);
   const [noiseCancellationKind, setNoiseCancellationKind] = useState<string>('none');
 
   const enableANC = useCallback(() => {

@@ -34,7 +34,7 @@ export async function removeNoiseFromMSTrack(msTrack: MediaStreamTrack): Promise
     };
   }
 }
-async function krisp_removeNoiseFromTrack(track: MediaStreamTrack): Promise<NoiseCancellationWithTrack> {
+export async function krisp_removeNoiseFromTrack(track: MediaStreamTrack): Promise<NoiseCancellationWithTrack> {
   const KrispModule = makeKrisp({
     workletScriptNC: '/krisp/wasm/debug/krisp-nc-processor.js',
     workletScriptVAD: '/krisp/wasm/debug/krisp-vad-processor.js',
@@ -59,7 +59,7 @@ async function krisp_removeNoiseFromTrack(track: MediaStreamTrack): Promise<Nois
   };
 }
 
-async function rnnNoise_removeNoiseFromTrack(track: MediaStreamTrack): Promise<NoiseCancellationWithTrack> {
+export async function rnnNoise_removeNoiseFromTrack(track: MediaStreamTrack): Promise<NoiseCancellationWithTrack> {
   const audio_context = new AudioContext({ sampleRate: 48000 });
   await RNNoiseNode.register(audio_context);
   const stream = new MediaStream([track]);
