@@ -36,7 +36,6 @@
             model16: "https://cdn.krisp.ai/scripts/ext/models/small_16k.thw",
             model_vad: "./VAD_weight.thw",
         })
-        console.log('Makarand: KrispModule: ', KrispModule);
 
         let toggleValue = false;
         let isVAD = false;
@@ -49,7 +48,7 @@
         const toggleButtonElement = document.getElementById("toggleButton");
 
         startButtonElement.addEventListener("click", function () {
-            selectElement.disabled = true;
+            selectElement.disabled = true; 
             supportStatus.innerText = KrispModule.isSupported ? '✓' : '✘';
 
             navigator.mediaDevices.getUserMedia({audio: true}).then(stream => {
@@ -71,7 +70,7 @@
             KrispModule.toggle(toggleValue)
             ncStatus.innerText = toggleValue ? '✓' : '✘';
         }, false);
-
+        
         selectElement.addEventListener('change', function(e) {
             let val = e.target.value;
             if (val === 'VAD') {
@@ -88,7 +87,7 @@
                 toggleButtonElement.disabled = true;
             }
         }, false);
-
+        
     </script>
 </body>
 </html>

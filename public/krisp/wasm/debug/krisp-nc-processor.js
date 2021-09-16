@@ -44,7 +44,6 @@ class WASMWorkletProcessor extends AudioWorkletProcessor {
    */
   constructor() {
     super();
-    console.log("makarand: Module:", Module);
 
     // Allocate the buffer for the heap access. Start with stereo, but it can
     // be expanded up to 32 channels.
@@ -60,17 +59,37 @@ class WASMWorkletProcessor extends AudioWorkletProcessor {
       2,
       MAX_CHANNEL_COUNT,
     );
-
+    
     this._kernel = new Module.KRISP_NC();
 
     this.port.onmessage = ({ data }) => {
       if (data.type === 'init') {
         this.initModel(data.data, sampleRate);
       }
+      if (data.type === 'init-vad') {
+        this.initModelVAD(data.data, sampleRate);
+      }
       if (data.type === 'change') {
         this.changeModel(data.data, sampleRate);
       }
+      if (data.type === 'change-vad') {
+        this.changeModelVAD(data.data, sampleRate);
+      }
     };
+  }
+  
+  initModelVAD(data, rate) {
+    console.log("initModelVAD");
+    const weights = new Uint8Array(data);
+    const weightsPtr = Module._malloc(weights.byteLength);
+
+    const weightsArray = Module.HEAPU8.subarray(weightsPtr, weightsPtr + weights.byteLength);
+    weightsArray.set(weights);
+
+    this._kernel.init_weights_vad(weightsPtr, weights.byteLength);
+    this._kernel.open_session_vad(rate);
+
+    this._modelInitVAD = true;
   }
 
   initModel(data, rate) {
@@ -90,6 +109,12 @@ class WASMWorkletProcessor extends AudioWorkletProcessor {
     this._modelInit = false;
     this._kernel.close_session();
     this.initModel(data, rate);
+  }
+  
+  changeModelVAD(data, rate) {
+    this._modelInitVAD = false;
+    this._kernel.close_session_vad();
+    this.initModelVAD(data, rate);
   }
 
   processDisabled(inputs, outputs) {

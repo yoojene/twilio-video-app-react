@@ -72,7 +72,9 @@ export function Krisp({ workletScriptNC, workletScriptVAD, model8, model16, mode
     console.log('krispsdk.mjs ---- init ------');
     if (!isSupported) return errorLog('no_support');
     if (ready) return errorLog('already_ready');
-    audioCtx = new AudioContext();
+
+    //audioCtx = new AudioContext();
+    audioCtx = new AudioContext({ sampleRate: 32000 });
     let workletNodeName = 'krisp-nc-processor';
     let workletScript = workletScriptNC;
     if (isVad) {

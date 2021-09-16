@@ -63,8 +63,14 @@ class WASMWorkletProcessor extends AudioWorkletProcessor {
     this._kernel = new Module.KRISP_VAD();
 
     this.port.onmessage = ({ data }) => {
+      if (data.type === 'init') {
+        this.initModel(data.data, sampleRate);
+      }
       if (data.type === 'init-vad') {
         this.initModelVAD(data.data, sampleRate);
+      }
+      if (data.type === 'change') {
+        this.changeModel(data.data, sampleRate);
       }
       if (data.type === 'change-vad') {
         this.changeModelVAD(data.data, sampleRate);
@@ -86,6 +92,25 @@ class WASMWorkletProcessor extends AudioWorkletProcessor {
     this._modelInitVAD = true;
   }
 
+  initModel(data, rate) {
+    const weights = new Uint8Array(data);
+    const weightsPtr = Module._malloc(weights.byteLength);
+
+    const weightsArray = Module.HEAPU8.subarray(weightsPtr, weightsPtr + weights.byteLength);
+    weightsArray.set(weights);
+
+    this._kernel.init_weights(weightsPtr, weights.byteLength);
+    this._kernel.open_session(rate);
+
+    this._modelInit = true;
+  }
+
+  changeModel(data, rate) {
+    this._modelInit = false;
+    this._kernel.close_session();
+    this.initModel(data, rate);
+  }
+  
   changeModelVAD(data, rate) {
     this._modelInitVAD = false;
     this._kernel.close_session_vad();
