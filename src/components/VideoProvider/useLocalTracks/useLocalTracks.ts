@@ -85,11 +85,12 @@ export default function useLocalTracks() {
   const getLocalAudioTrack = useCallback((deviceId?: string) => {
     const options: CreateLocalTrackOptions = {};
 
-    options.channelCount = { ideal: 1 };
-    options.noiseSuppression = { ideal: false };
-    options.echoCancellation = { ideal: true };
-    options.autoGainControl = { ideal: false };
-    options.sampleRate = { ideal: 48000 };
+    // options preferred by krisp
+    // options.channelCount = { ideal: 1 };
+    // options.noiseSuppression = { ideal: false };
+    // options.echoCancellation = { ideal: true };
+    // options.autoGainControl = { ideal: false };
+    // options.sampleRate = { ideal: 48000 };
 
     if (deviceId) {
       options.deviceId = { exact: deviceId };
