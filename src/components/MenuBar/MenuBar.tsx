@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 
 import Button from '@material-ui/core/Button';
@@ -12,6 +12,9 @@ import ToggleAudioButton from '../Buttons/ToggleAudioButton/ToggleAudioButton';
 import ToggleChatButton from '../Buttons/ToggleChatButton/ToggleChatButton';
 import ToggleVideoButton from '../Buttons/ToggleVideoButton/ToggleVideoButton';
 import ToggleScreenShareButton from '../Buttons/ToogleScreenShareButton/ToggleScreenShareButton';
+import CaptureImageButton from '../Buttons/CaptureImageButton/CaptureImageButton';
+import CaptureImageDialog from '../CaptureImageDialog/CaptureImageDialog';
+import useCaptureImageContext from '../../hooks/useCaptureImageContext/useCaptureImageContext';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -68,6 +71,7 @@ export default function MenuBar() {
   const roomState = useRoomState();
   const isReconnecting = roomState === 'reconnecting';
   const { room } = useVideoContext();
+  const { isCaptureImageDialogOpen, setIsCaptureImageDialogOpen } = useCaptureImageContext();
 
   return (
     <>
@@ -88,6 +92,7 @@ export default function MenuBar() {
             <Grid container justifyContent="center">
               <ToggleAudioButton disabled={isReconnecting} />
               <ToggleVideoButton disabled={isReconnecting} />
+              <CaptureImageButton disabled={isReconnecting} />
               {!isSharingScreen && !isMobile && <ToggleScreenShareButton disabled={isReconnecting} />}
               {process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && <ToggleChatButton />}
               <Hidden smDown>
@@ -104,6 +109,12 @@ export default function MenuBar() {
           </Hidden>
         </Grid>
       </footer>
+      <CaptureImageDialog
+        open={isCaptureImageDialogOpen}
+        onClose={() => {
+          setIsCaptureImageDialogOpen(!isCaptureImageDialogOpen);
+        }}
+      />
     </>
   );
 }

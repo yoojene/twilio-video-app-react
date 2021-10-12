@@ -16,6 +16,7 @@ import { ChatProvider } from './components/ChatProvider';
 import { VideoProvider } from './components/VideoProvider';
 import useConnectionOptions from './utils/useConnectionOptions/useConnectionOptions';
 import UnsupportedBrowserWarning from './components/UnsupportedBrowserWarning/UnsupportedBrowserWarning';
+import { CaptureImageProvider } from './components/CaptureImageProvider';
 
 const VideoApp = () => {
   const { error, setError } = useAppState();
@@ -24,8 +25,11 @@ const VideoApp = () => {
   return (
     <VideoProvider options={connectionOptions} onError={setError}>
       <ErrorDialog dismissError={() => setError(null)} error={error} />
+
       <ChatProvider>
-        <App />
+        <CaptureImageProvider>
+          <App />
+        </CaptureImageProvider>
       </ChatProvider>
     </VideoProvider>
   );
