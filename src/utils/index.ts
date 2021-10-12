@@ -1,5 +1,5 @@
-import isPlainObject from 'is-plain-object';
-
+// import isPlainObject from 'is-plain-object';
+import _ from 'lodash';
 export const isMobile = (() => {
   if (typeof navigator === 'undefined' || typeof navigator.userAgent !== 'string') {
     return false;
@@ -9,7 +9,7 @@ export const isMobile = (() => {
 
 // Recursively removes any object keys with a value of undefined
 export function removeUndefineds<T>(obj: T): T {
-  if (!isPlainObject(obj)) return obj;
+  if (!_.isPlainObject(obj)) return obj;
 
   const target: { [name: string]: any } = {};
 
