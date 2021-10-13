@@ -12,11 +12,12 @@ const Video = styled('video')({
 
 interface VideoTrackProps {
   track: IVideoTrack;
+  id?: string;
   isLocal?: boolean;
   priority?: Track.Priority | null;
 }
 
-export default function VideoTrack({ track, isLocal, priority }: VideoTrackProps) {
+export default function VideoTrack({ track, id, isLocal, priority }: VideoTrackProps) {
   const ref = useRef<HTMLVideoElement>(null!);
   const mediaStreamTrack = useMediaStreamTrack(track);
   const dimensions = useVideoTrackDimensions(track);
@@ -49,6 +50,7 @@ export default function VideoTrack({ track, isLocal, priority }: VideoTrackProps
     transform: isLocal && isFrontFacing ? 'rotateY(180deg)' : '',
     objectFit: isPortrait || track.name.includes('screen') ? ('contain' as const) : ('cover' as const),
   };
+  if (!id) id = 'video';
 
-  return <Video ref={ref} style={style} />;
+  return <Video id={id} ref={ref} style={style} />;
 }
