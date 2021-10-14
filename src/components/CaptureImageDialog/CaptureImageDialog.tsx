@@ -39,30 +39,19 @@ const useStyles = makeStyles((theme: Theme) => ({
 export default function CaptureImageDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
   const classes = useStyles();
   const { localTracks } = useVideoContext();
-  const { getVideoElementFromDialog } = useCaptureImageContext();
+  const { getVideoElementFromDialog, setVideoOnCanvas } = useCaptureImageContext();
 
   const localVideoTrack = localTracks.find(track => track.kind === 'video') as LocalVideoTrack | undefined;
 
   const captureImage = () => {
     const video = getVideoElementFromDialog();
     if (video) {
-      // console.log(video)
-      // let vid = video as HTMLMediaElement;
-      // console.log(vid.srcObject)
-      const canvas = document.getElementById('canvas') as HTMLCanvasElement;
-      // canvas.style = 'display:none'
-
-      if (canvas) {
-        const ctx = canvas.getContext('2d');
-        canvas.width = 320;
-        canvas.height = 600;
-        ctx?.drawImage(video as CanvasImageSource, 0, 0, canvas.width, canvas.height);
-
-        // const data = canvas.toDataURL('image/png');
-        // const photo = document.getElementById('photo');
-        // photo?.setAttribute('src', data);
-      }
+      setVideoOnCanvas(video);
     }
+  };
+
+  const saveImage = () => {
+    console.log('saving image');
   };
 
   return (
@@ -81,6 +70,9 @@ export default function CaptureImageDialog({ open, onClose }: { open: boolean; o
       </div> */}
       <Divider />
       <DialogActions>
+        <Button color="primary" variant="contained" className={classes.button} onClick={saveImage}>
+          Save
+        </Button>
         <Button color="primary" variant="contained" className={classes.button} onClick={captureImage}>
           Capture
         </Button>
