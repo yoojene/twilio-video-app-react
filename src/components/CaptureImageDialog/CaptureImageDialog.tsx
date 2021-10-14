@@ -1,5 +1,5 @@
 import React from 'react';
-import { Divider, Dialog, DialogActions, Button, Theme, DialogTitle, makeStyles, Typography } from '@material-ui/core';
+import { Divider, Dialog, DialogActions, Button, Theme, DialogTitle, makeStyles } from '@material-ui/core';
 import VideoTrack from '../VideoTrack/VideoTrack';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import { LocalVideoTrack } from 'twilio-video';
@@ -55,7 +55,7 @@ export default function CaptureImageDialog({ open, onClose }: { open: boolean; o
       if (canvas) {
         const ctx = canvas.getContext('2d');
         canvas.width = 320;
-        canvas.height = 200;
+        canvas.height = 600;
         ctx?.drawImage(video as CanvasImageSource, 0, 0, canvas.width, canvas.height);
 
         // const data = canvas.toDataURL('image/png');
@@ -69,16 +69,12 @@ export default function CaptureImageDialog({ open, onClose }: { open: boolean; o
     <Dialog open={open} onClose={onClose} classes={{ paper: classes.paper }}>
       <DialogTitle>Capture Image</DialogTitle>
       <Divider />
-      {/* <DialogContent className={classes.headline}>** Captured image placeholder **</DialogContent> */}
       {localVideoTrack && (
         <div>
           <VideoTrack id={'capture-video'} isLocal track={localVideoTrack} />
         </div>
       )}
       <Divider />
-      {/* <Typography variant="h6">
-         Captured Image
-      </Typography> */}
       <canvas id="canvas"></canvas>
       {/* <div>
         <img id="photo" alt="The screen capture will appear in this box."/> 
