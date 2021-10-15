@@ -26,8 +26,8 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
 
     if (canvas) {
       const ctx = canvas.getContext('2d');
-      canvas.width = 320;
-      canvas.height = 600;
+      canvas.width = 640;
+      canvas.height = 1200;
       ctx?.drawImage(video as CanvasImageSource, 0, 0, canvas.width, canvas.height);
       return canvas;
     }

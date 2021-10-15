@@ -1,15 +1,5 @@
 import React from 'react';
-import {
-  Divider,
-  Dialog,
-  DialogActions,
-  Button,
-  Theme,
-  DialogTitle,
-  makeStyles,
-  useMediaQuery,
-  useTheme,
-} from '@material-ui/core';
+import { Divider, Dialog, DialogActions, Button, Theme, DialogTitle, makeStyles } from '@material-ui/core';
 import VideoTrack from '../VideoTrack/VideoTrack';
 import { Participant, RemoteVideoTrack } from 'twilio-video';
 import useCaptureImageContext from '../../hooks/useCaptureImageContext/useCaptureImageContext';
@@ -53,6 +43,10 @@ const useStyles = makeStyles((theme: Theme) => ({
       maxHeight: '600px',
     },
   },
+  canvasPreview: {
+    width: '320px',
+    height: '600px',
+  },
 }));
 
 interface CaptureImageDialogProps {
@@ -63,8 +57,6 @@ interface CaptureImageDialogProps {
 
 export default function CaptureImageDialog({ open, onClose, participant }: CaptureImageDialogProps) {
   const classes = useStyles();
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.up('lg'));
   const { getVideoElementFromDialog, setVideoOnCanvas, saveImageAndOpen } = useCaptureImageContext();
   // const { localTracks } = useVideoContext();
   // const videoTrack = localTracks.find(track => track.kind === 'video') as LocalVideoTrack | undefined;
@@ -86,7 +78,7 @@ export default function CaptureImageDialog({ open, onClose, participant }: Captu
   };
 
   return (
-    <Dialog fullScreen={fullScreen} open={open} onClose={onClose} classes={{ paper: classes.paper }}>
+    <Dialog open={open} onClose={onClose} classes={{ paper: classes.paper }}>
       <DialogTitle>Capture Image</DialogTitle>
       <Divider />
       {videoTrack && (
@@ -95,7 +87,7 @@ export default function CaptureImageDialog({ open, onClose, participant }: Captu
         </div>
       )}
       <Divider />
-      <canvas id="canvas"></canvas>
+      <canvas id="canvas" className={classes.canvasPreview}></canvas>
       {/* <div>
         <img id="photo" alt="The screen capture will appear in this box."/> 
       </div> */}
