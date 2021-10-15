@@ -11,8 +11,7 @@ import {
   useTheme,
 } from '@material-ui/core';
 import VideoTrack from '../VideoTrack/VideoTrack';
-import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
-import { LocalVideoTrack, Participant, RemoteVideoTrack } from 'twilio-video';
+import { Participant, RemoteVideoTrack } from 'twilio-video';
 import useCaptureImageContext from '../../hooks/useCaptureImageContext/useCaptureImageContext';
 import useTrack from '../../hooks/useTrack/useTrack';
 import usePublications from '../../hooks/usePublications/usePublications';
