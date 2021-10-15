@@ -2,8 +2,10 @@ import React from 'react';
 import { Divider, Dialog, DialogActions, Button, Theme, DialogTitle, makeStyles } from '@material-ui/core';
 import VideoTrack from '../VideoTrack/VideoTrack';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
-import { LocalVideoTrack } from 'twilio-video';
+import { LocalVideoTrack, Participant, RemoteVideoTrack } from 'twilio-video';
 import useCaptureImageContext from '../../hooks/useCaptureImageContext/useCaptureImageContext';
+import useTrack from '../../hooks/useTrack/useTrack';
+import usePublications from '../../hooks/usePublications/usePublications';
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
@@ -36,12 +38,21 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export default function CaptureImageDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const classes = useStyles();
-  const { localTracks } = useVideoContext();
-  const { getVideoElementFromDialog, setVideoOnCanvas } = useCaptureImageContext();
+interface CaptureImageDialogProps {
+  open: boolean;
+  onClose: () => void;
+  participant: Participant;
+}
 
-  const localVideoTrack = localTracks.find(track => track.kind === 'video') as LocalVideoTrack | undefined;
+export default function CaptureImageDialog({ open, onClose, participant }: CaptureImageDialogProps) {
+  const classes = useStyles();
+  const { getVideoElementFromDialog, setVideoOnCanvas } = useCaptureImageContext();
+  // const { localTracks } = useVideoContext();
+  // const videoTrack = localTracks.find(track => track.kind === 'video') as LocalVideoTrack | undefined;
+  // console.log(participant)
+  const publications = usePublications(participant);
+  const videoPublication = publications.find(p => !p.trackName.includes('screen') && p.kind === 'video');
+  const videoTrack = useTrack(videoPublication) as RemoteVideoTrack;
 
   const captureImage = () => {
     const video = getVideoElementFromDialog();
@@ -58,9 +69,9 @@ export default function CaptureImageDialog({ open, onClose }: { open: boolean; o
     <Dialog open={open} onClose={onClose} classes={{ paper: classes.paper }}>
       <DialogTitle>Capture Image</DialogTitle>
       <Divider />
-      {localVideoTrack && (
+      {videoTrack && (
         <div>
-          <VideoTrack id={'capture-video'} isLocal track={localVideoTrack} />
+          <VideoTrack id={'capture-video'} track={videoTrack} />
         </div>
       )}
       <Divider />

@@ -15,6 +15,7 @@ import ToggleScreenShareButton from '../Buttons/ToogleScreenShareButton/ToggleSc
 import CaptureImageButton from '../Buttons/CaptureImageButton/CaptureImageButton';
 import CaptureImageDialog from '../CaptureImageDialog/CaptureImageDialog';
 import useCaptureImageContext from '../../hooks/useCaptureImageContext/useCaptureImageContext';
+import useParticipants from '../../hooks/useParticipants/useParticipants';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -67,9 +68,12 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function MenuBar() {
   const classes = useStyles();
+  const participants = useParticipants();
+  console.log(participants);
   const { isSharingScreen, toggleScreenShare } = useVideoContext();
   const roomState = useRoomState();
   const isReconnecting = roomState === 'reconnecting';
+  const noParticipants = participants.length === 0;
   const { room } = useVideoContext();
   const { isCaptureImageDialogOpen, setIsCaptureImageDialogOpen } = useCaptureImageContext();
 
@@ -92,7 +96,7 @@ export default function MenuBar() {
             <Grid container justifyContent="center">
               <ToggleAudioButton disabled={isReconnecting} />
               <ToggleVideoButton disabled={isReconnecting} />
-              <CaptureImageButton disabled={isReconnecting} />
+              {!noParticipants && <CaptureImageButton disabled={isReconnecting} />}
               {!isSharingScreen && !isMobile && <ToggleScreenShareButton disabled={isReconnecting} />}
               {process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && <ToggleChatButton />}
               <Hidden smDown>
@@ -109,12 +113,15 @@ export default function MenuBar() {
           </Hidden>
         </Grid>
       </footer>
-      <CaptureImageDialog
-        open={isCaptureImageDialogOpen}
-        onClose={() => {
-          setIsCaptureImageDialogOpen(!isCaptureImageDialogOpen);
-        }}
-      />
+      {!noParticipants && (
+        <CaptureImageDialog
+          participant={participants[0]}
+          open={isCaptureImageDialogOpen}
+          onClose={() => {
+            setIsCaptureImageDialogOpen(!isCaptureImageDialogOpen);
+          }}
+        />
+      )}
     </>
   );
 }
