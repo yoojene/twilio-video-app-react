@@ -1,5 +1,15 @@
 import React from 'react';
-import { Divider, Dialog, DialogActions, Button, Theme, DialogTitle, makeStyles } from '@material-ui/core';
+import {
+  Divider,
+  Dialog,
+  DialogActions,
+  Button,
+  Theme,
+  DialogTitle,
+  makeStyles,
+  useMediaQuery,
+  useTheme,
+} from '@material-ui/core';
 import VideoTrack from '../VideoTrack/VideoTrack';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import { LocalVideoTrack, Participant, RemoteVideoTrack } from 'twilio-video';
@@ -36,6 +46,14 @@ const useStyles = makeStyles((theme: Theme) => ({
       margin: '1em 0 2em 0',
     },
   },
+  preview: {
+    width: '320px',
+    maxHeight: '600px',
+    margin: '0.5em auto',
+    '& video': {
+      maxHeight: '600px',
+    },
+  },
 }));
 
 interface CaptureImageDialogProps {
@@ -46,7 +64,9 @@ interface CaptureImageDialogProps {
 
 export default function CaptureImageDialog({ open, onClose, participant }: CaptureImageDialogProps) {
   const classes = useStyles();
-  const { getVideoElementFromDialog, setVideoOnCanvas } = useCaptureImageContext();
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.up('lg'));
+  const { getVideoElementFromDialog, setVideoOnCanvas, saveImageAndOpen } = useCaptureImageContext();
   // const { localTracks } = useVideoContext();
   // const videoTrack = localTracks.find(track => track.kind === 'video') as LocalVideoTrack | undefined;
   // console.log(participant)
@@ -63,14 +83,15 @@ export default function CaptureImageDialog({ open, onClose, participant }: Captu
 
   const saveImage = () => {
     console.log('saving image');
+    saveImageAndOpen();
   };
 
   return (
-    <Dialog open={open} onClose={onClose} classes={{ paper: classes.paper }}>
+    <Dialog fullScreen={fullScreen} open={open} onClose={onClose} classes={{ paper: classes.paper }}>
       <DialogTitle>Capture Image</DialogTitle>
       <Divider />
       {videoTrack && (
-        <div>
+        <div className={classes.preview}>
           <VideoTrack id={'capture-video'} track={videoTrack} />
         </div>
       )}
