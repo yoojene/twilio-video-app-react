@@ -45,13 +45,14 @@ ReactDOM.render(
             <PrivateRoute exact path="/">
               <VideoApp />
             </PrivateRoute>
-            {/* <PrivateRoute path="/room/:URLRoomName">
+
+            <PrivateRoute path="/room/:URLRoomName/name/:URLUserName">
+              <VideoApp />
+            </PrivateRoute>
+            <PrivateRoute path="/room/:URLRoomName">
               <VideoApp />
             </PrivateRoute>
             <PrivateRoute path="/name/:URLUserName">
-              <VideoApp />
-            </PrivateRoute> */}
-            <PrivateRoute path="/room/:URLRoomName/name/:URLUserName">
               <VideoApp />
             </PrivateRoute>
             <Route path="/login">
