@@ -15,7 +15,7 @@ export enum Steps {
 export default function PreJoinScreens() {
   const { user } = useAppState();
   const { getAudioAndVideoTracks } = useVideoContext();
-  const { URLRoomName } = useParams();
+  const { URLRoomName, URLUserName } = useParams();
   const [step, setStep] = useState(Steps.roomNameStep);
 
   const [name, setName] = useState<string>(user?.displayName || '');
@@ -31,6 +31,12 @@ export default function PreJoinScreens() {
       }
     }
   }, [user, URLRoomName]);
+
+  useEffect(() => {
+    if (URLUserName) {
+      setName(URLUserName);
+    }
+  }, [URLUserName]);
 
   useEffect(() => {
     if (step === Steps.deviceSelectionStep && !mediaError) {
