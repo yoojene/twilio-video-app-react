@@ -6,6 +6,7 @@ type CaptureImageContextType = {
   getVideoElementFromDialog: () => HTMLElement | null;
   setVideoOnCanvas: (video: HTMLElement) => HTMLCanvasElement | undefined;
   saveImageAndOpen: () => void;
+  setPhoto: (canvas: HTMLCanvasElement) => HTMLElement | null;
 };
 
 export const CaptureImageContext = createContext<CaptureImageContextType>(null!);
@@ -33,6 +34,14 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     }
   }, []);
 
+  const setPhoto = useCallback(canvas => {
+    const photo = document.getElementById('photo');
+    const data = canvas.toDataURL('image/png');
+    photo!.setAttribute('src', data);
+
+    return photo;
+  }, []);
+
   const saveImageAndOpen = useCallback(() => {
     // const image = canvas.toDataURL('image/png');
     const downloadLink = document.createElement('a');
@@ -53,6 +62,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         getVideoElementFromDialog,
         setVideoOnCanvas,
         saveImageAndOpen,
+        setPhoto,
       }}
     >
       {children}
