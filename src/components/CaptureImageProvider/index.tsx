@@ -4,6 +4,8 @@ type CaptureImageContextType = {
   isCaptureImageDialogOpen: boolean;
   setIsCaptureImageDialogOpen: (isCaptureImageDialogOpen: boolean) => void;
   getVideoElementFromDialog: () => HTMLElement | null;
+  isCaptureImageOpen: boolean;
+  setIsCaptureImageOpen: (isCaptureImageOpen: boolean) => void;
   setVideoOnCanvas: (video: HTMLElement) => HTMLCanvasElement | undefined;
   saveImageAndOpen: () => void;
   setPhoto: (canvas: HTMLCanvasElement) => HTMLElement | null;
@@ -13,6 +15,7 @@ export const CaptureImageContext = createContext<CaptureImageContextType>(null!)
 
 export const CaptureImageProvider: React.FC = ({ children }) => {
   const [isCaptureImageDialogOpen, setIsCaptureImageDialogOpen] = useState(false);
+  const [isCaptureImageOpen, setIsCaptureImageOpen] = useState(false);
 
   const getVideoElementFromDialog = useCallback(() => {
     const video = document.getElementById('capture-video');
@@ -43,15 +46,10 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   }, []);
 
   const saveImageAndOpen = useCallback(() => {
-    // const image = canvas.toDataURL('image/png');
     const downloadLink = document.createElement('a');
     downloadLink.setAttribute('download', 'UserImage.png');
-    const canvas = document.getElementById('canvas') as HTMLCanvasElement;
-    canvas.toBlob((blob: Blob | null) => {
-      const url = URL.createObjectURL(blob);
-      downloadLink.setAttribute('href', url);
-      downloadLink.click();
-    });
+    downloadLink.href = document.getElementById('photo')!.getAttribute('src')!;
+    downloadLink.click();
   }, []);
 
   return (
@@ -59,6 +57,8 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
       value={{
         isCaptureImageDialogOpen,
         setIsCaptureImageDialogOpen,
+        isCaptureImageOpen,
+        setIsCaptureImageOpen,
         getVideoElementFromDialog,
         setVideoOnCanvas,
         saveImageAndOpen,
