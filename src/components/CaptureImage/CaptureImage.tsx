@@ -62,13 +62,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-interface CaptureImageProps {
-  open?: boolean;
-  // onClose: () => void;
-  // participant: Participant;
-}
-
-export default function CaptureImage({ open }: CaptureImageProps) {
+export default function CaptureImage() {
   const imgRef = React.createRef<HTMLImageElement>();
 
   const classes = useStyles();
@@ -93,26 +87,22 @@ export default function CaptureImage({ open }: CaptureImageProps) {
       const canvas = setVideoOnCanvas(video);
       if (canvas) {
         setPhoto(canvas);
-        // showMarkerArea();
       }
     }
   };
 
   const saveImage = () => {
-    console.log('saving image');
-
     saveImageAndOpen();
   };
 
   const annotateImage = () => {
     showMarkerArea();
   };
-  const performOCR = () => {
-    // Get element.geBtoundingClientRect from image with marker
 
+  const performOCR = () => {
+    // Get element.getBoundingClientRect from image with marker
     const boundingBox = document.getElementsByTagName('rect')[0]; // appears to show two rects for rectangle marker
     const domRect = boundingBox.getBoundingClientRect();
-
     console.log(domRect);
 
     // Connect and sent to Reckonition API
@@ -123,6 +113,7 @@ export default function CaptureImage({ open }: CaptureImageProps) {
       // create a marker.js MarkerArea
       const markerArea = new markerjs2.MarkerArea(imgRef.current);
 
+      // TODO change this to just FrameMarker for OCR "mode"
       markerArea.availableMarkerTypes = [...markerArea.BASIC_MARKER_TYPES];
 
       // attach an event handler to assign annotated image back to our image element
