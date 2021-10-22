@@ -100,26 +100,30 @@ export default function CaptureImage({ open }: CaptureImageProps) {
 
   const saveImage = () => {
     console.log('saving image');
+
     saveImageAndOpen();
   };
 
   const annotateImage = () => {
-    showMarkerArea('Annotate');
+    showMarkerArea();
   };
   const performOCR = () => {
-    showMarkerArea('OCR');
+    // Get element.geBtoundingClientRect from image with marker
+
+    const boundingBox = document.getElementsByTagName('rect')[0]; // appears to show two rects for rectangle marker
+    const domRect = boundingBox.getBoundingClientRect();
+
+    console.log(domRect);
+
+    // Connect and sent to Reckonition API
   };
 
-  const showMarkerArea = (mode: 'OCR' | 'Annotate') => {
+  const showMarkerArea = () => {
     if (imgRef.current !== null) {
       // create a marker.js MarkerArea
       const markerArea = new markerjs2.MarkerArea(imgRef.current);
 
-      if (mode === 'Annotate') {
-        markerArea.availableMarkerTypes = [...markerArea.BASIC_MARKER_TYPES];
-      } else {
-        markerArea.availableMarkerTypes = [markerjs2.FrameMarker];
-      }
+      markerArea.availableMarkerTypes = [...markerArea.BASIC_MARKER_TYPES];
 
       // attach an event handler to assign annotated image back to our image element
       markerArea.addRenderEventListener(dataUrl => {
