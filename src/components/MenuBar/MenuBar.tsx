@@ -13,8 +13,6 @@ import ToggleChatButton from '../Buttons/ToggleChatButton/ToggleChatButton';
 import ToggleVideoButton from '../Buttons/ToggleVideoButton/ToggleVideoButton';
 import ToggleScreenShareButton from '../Buttons/ToogleScreenShareButton/ToggleScreenShareButton';
 import CaptureImageButton from '../Buttons/CaptureImageButton/CaptureImageButton';
-import CaptureImageDialog from '../CaptureImageDialog/CaptureImageDialog';
-import useCaptureImageContext from '../../hooks/useCaptureImageContext/useCaptureImageContext';
 import useParticipants from '../../hooks/useParticipants/useParticipants';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -69,13 +67,14 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function MenuBar() {
   const classes = useStyles();
   const participants = useParticipants();
-  console.log(participants);
   const { isSharingScreen, toggleScreenShare } = useVideoContext();
   const roomState = useRoomState();
   const isReconnecting = roomState === 'reconnecting';
   const noParticipants = participants.length === 0;
   const { room } = useVideoContext();
-  const { isCaptureImageDialogOpen, setIsCaptureImageDialogOpen } = useCaptureImageContext();
+
+  // Local testing
+  // switch noParticipants to !noParticipants when not testing on single feed
 
   return (
     <>
@@ -96,8 +95,7 @@ export default function MenuBar() {
             <Grid container justifyContent="center">
               <ToggleAudioButton disabled={isReconnecting} />
               <ToggleVideoButton disabled={isReconnecting} />
-              {/* {!noParticipants && <CaptureImageButton disabled={isReconnecting} />} */}
-              <CaptureImageButton disabled={isReconnecting} />
+              {noParticipants && <CaptureImageButton disabled={isReconnecting} />}
               {!isSharingScreen && !isMobile && <ToggleScreenShareButton disabled={isReconnecting} />}
               {process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && <ToggleChatButton />}
               <Hidden smDown>
@@ -114,22 +112,6 @@ export default function MenuBar() {
           </Hidden>
         </Grid>
       </footer>
-      {!noParticipants && (
-        <CaptureImageDialog
-          participant={participants[0]}
-          open={isCaptureImageDialogOpen}
-          onClose={() => {
-            setIsCaptureImageDialogOpen(!isCaptureImageDialogOpen);
-          }}
-        />
-      )}
-      <CaptureImageDialog
-        participant={participants[0]}
-        open={isCaptureImageDialogOpen}
-        onClose={() => {
-          setIsCaptureImageDialogOpen(!isCaptureImageDialogOpen);
-        }}
-      />
     </>
   );
 }
