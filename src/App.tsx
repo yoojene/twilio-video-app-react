@@ -10,6 +10,8 @@ import Room from './components/Room/Room';
 
 import useHeight from './hooks/useHeight/useHeight';
 import useRoomState from './hooks/useRoomState/useRoomState';
+import useCaptureImageContext from './hooks/useCaptureImageContext/useCaptureImageContext';
+import CaptureImage from './components/CaptureImage/CaptureImage';
 
 const Container = styled('div')({
   display: 'grid',
@@ -27,6 +29,7 @@ const Main = styled('main')(({ theme }: { theme: Theme }) => ({
 
 export default function App() {
   const roomState = useRoomState();
+  const { isCaptureImageOpen } = useCaptureImageContext();
 
   // Here we would like the height of the main container to be the height of the viewport.
   // On some mobile browsers, 'height: 100vh' sets the height equal to that of the screen,
@@ -44,7 +47,13 @@ export default function App() {
           <ReconnectingNotification />
           <RecordingNotifications />
           <MobileTopMenuBar />
-          <Room />
+          {!isCaptureImageOpen ? (
+            <>
+              <Room />{' '}
+            </>
+          ) : (
+            <CaptureImage />
+          )}
           <MenuBar />
         </Main>
       )}

@@ -7,17 +7,23 @@ import { ReactComponent as CameraIcon } from '../../../icons/camera-outline.svg'
 
 export default function CaptureImageButton(props: { disabled?: boolean; className?: string }) {
   const { hasVideoInputDevices } = useDevices();
-  const { isCaptureImageDialogOpen, setIsCaptureImageDialogOpen } = useCaptureImageContext();
+  const {
+    isCaptureImageDialogOpen,
+    setIsCaptureImageDialogOpen,
+    isCaptureImageOpen,
+    setIsCaptureImageOpen,
+  } = useCaptureImageContext();
 
-  const openCaptureImageDialog = () => {
+  const openCaptureImage = () => {
     console.log('capture image clicked!!!');
-    setIsCaptureImageDialogOpen(!isCaptureImageDialogOpen);
+    // setIsCaptureImageDialogOpen(!isCaptureImageDialogOpen);
+    setIsCaptureImageOpen(!isCaptureImageOpen);
   };
 
   return (
     <Button
       className={props.className}
-      onClick={openCaptureImageDialog}
+      onClick={openCaptureImage}
       disabled={!hasVideoInputDevices || props.disabled}
       startIcon={<CameraIcon />}
     >
