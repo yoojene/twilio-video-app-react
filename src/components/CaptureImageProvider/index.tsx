@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useState } from 'react';
+import { Storage } from 'aws-amplify';
 
 type CaptureImageContextType = {
   isCaptureImageDialogOpen: boolean;
@@ -45,12 +46,38 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     return photo;
   }, []);
 
-  const saveImageAndOpen = useCallback(() => {
-    const downloadLink = document.createElement('a');
-    downloadLink.setAttribute('download', 'UserImage.png');
-    downloadLink.href = document.getElementById('photo')!.getAttribute('src')!;
-    downloadLink.click();
+  const saveImageAndOpen = useCallback(async () => {
+    const photoFileName = `UserImage_${Date.now()}.png`;
+    console.log(photoFileName);
+
+    const photoURI = document.getElementById('photo')!.getAttribute('src')!;
+
+    const file = dataURIToBlob(photoURI);
+
+    console.log(file);
+
+    const result = await Storage.put(photoFileName, file);
+    console.log(result);
+
+    // const downloadLink = document.createElement('a');
+    // downloadLink.setAttribute('download', photo);
+    // downloadLink.href = document.getElementById('photo')!.getAttribute('src')!;
+    // console.log(downloadLink.href)
+    // console.log(document.getElementById('photo'))
+    // downloadLink.click();
   }, []);
+
+  const dataURIToBlob = (dataURI: string) => {
+    var arr = dataURI.split(','),
+      mime = arr[0]!.match(/:(.*?);/)![1],
+      bstr = atob(arr[1]),
+      n = bstr.length,
+      u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new Blob([u8arr], { type: mime });
+  };
 
   return (
     <CaptureImageContext.Provider
