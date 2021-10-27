@@ -22,6 +22,8 @@
     "@types/react-dom": "^16.9.5",
     "@types/react-router-dom": "^5.1.3",
     "@visx/react-spring": "2.1.2",
+    "aws-amplify": "4.3.3",
+    "aws-sdk": "2.1013.0",
     "concurrently": "^6.0.0",
     "copyfiles": "2.4.1",
     "cross-env": "^7.0.2",

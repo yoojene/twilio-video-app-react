@@ -13,6 +13,10 @@ import useRoomState from './hooks/useRoomState/useRoomState';
 import useCaptureImageContext from './hooks/useCaptureImageContext/useCaptureImageContext';
 import CaptureImage from './components/CaptureImage/CaptureImage';
 
+import Amplify from 'aws-amplify';
+import awsconfig from './aws-exports';
+Amplify.configure(awsconfig);
+
 const Container = styled('div')({
   display: 'grid',
   gridTemplateRows: '1fr auto',
