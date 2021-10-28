@@ -8,6 +8,7 @@ import imagePlaceholder from '../../images/import_placeholder-90.png';
 import * as markerjs2 from 'markerjs2';
 import useCaptureImageContext from '../../hooks/useCaptureImageContext/useCaptureImageContext';
 import { Button, DialogActions, DialogTitle } from '@material-ui/core';
+import AWS from 'aws-sdk';
 import useTrack from '../../hooks/useTrack/useTrack';
 import usePublications from '../../hooks/usePublications/usePublications';
 import useParticipants from '../../hooks/useParticipants/useParticipants';
@@ -106,6 +107,19 @@ export default function CaptureImage() {
     console.log(domRect);
 
     // Connect and sent to Reckonition API
+
+    const config = new AWS.Config({
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    });
+
+    AWS.config.update({ region: 'region' });
+
+    const client = new AWS.Rekognition();
+
+    console.log(client);
+
+    client.detectText();
   };
 
   const showMarkerArea = () => {
