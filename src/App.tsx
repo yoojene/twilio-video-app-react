@@ -14,8 +14,11 @@ import useCaptureImageContext from './hooks/useCaptureImageContext/useCaptureIma
 import CaptureImage from './components/CaptureImage/CaptureImage';
 
 import Amplify from 'aws-amplify';
+import { AmazonAIPredictionsProvider } from '@aws-amplify/predictions';
+
 import awsconfig from './aws-exports';
 Amplify.configure(awsconfig);
+Amplify.addPluggable(new AmazonAIPredictionsProvider());
 
 const Container = styled('div')({
   display: 'grid',

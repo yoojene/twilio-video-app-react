@@ -8,7 +8,7 @@ type CaptureImageContextType = {
   isCaptureImageOpen: boolean;
   setIsCaptureImageOpen: (isCaptureImageOpen: boolean) => void;
   setVideoOnCanvas: (video: HTMLElement) => HTMLCanvasElement | undefined;
-  saveImageAndOpen: () => void;
+  saveImageToStorage: () => void;
   setPhoto: (canvas: HTMLCanvasElement) => HTMLElement | null;
 };
 
@@ -46,7 +46,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     return photo;
   }, []);
 
-  const saveImageAndOpen = useCallback(async () => {
+  const saveImageToStorage = useCallback(async () => {
     const photoFileName = `UserImage_${Date.now()}.png`;
     console.log(photoFileName);
 
@@ -88,7 +88,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         setIsCaptureImageOpen,
         getVideoElementFromDialog,
         setVideoOnCanvas,
-        saveImageAndOpen,
+        saveImageToStorage,
         setPhoto,
       }}
     >

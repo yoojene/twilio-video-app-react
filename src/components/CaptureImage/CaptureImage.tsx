@@ -8,7 +8,8 @@ import imagePlaceholder from '../../images/import_placeholder-90.png';
 import * as markerjs2 from 'markerjs2';
 import useCaptureImageContext from '../../hooks/useCaptureImageContext/useCaptureImageContext';
 import { Button, DialogActions, DialogTitle } from '@material-ui/core';
-import AWS from 'aws-sdk';
+import Predictions from '@aws-amplify/predictions';
+
 import useTrack from '../../hooks/useTrack/useTrack';
 import usePublications from '../../hooks/usePublications/usePublications';
 import useParticipants from '../../hooks/useParticipants/useParticipants';
@@ -25,6 +26,7 @@ const useStyles = makeStyles(() => ({
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover',
     background: 'white',
+    overflowY: 'scroll',
   },
   preview: {
     width: '320px',
@@ -67,7 +69,7 @@ export default function CaptureImage() {
   const imgRef = React.createRef<HTMLImageElement>();
 
   const classes = useStyles();
-  const { getVideoElementFromDialog, setVideoOnCanvas, saveImageAndOpen, setPhoto } = useCaptureImageContext();
+  const { getVideoElementFromDialog, setVideoOnCanvas, saveImageToStorage, setPhoto } = useCaptureImageContext();
 
   // Local track for testing - uncomment for browser testing
 
@@ -93,7 +95,7 @@ export default function CaptureImage() {
   };
 
   const saveImage = () => {
-    saveImageAndOpen();
+    saveImageToStorage();
   };
 
   const annotateImage = () => {
@@ -108,18 +110,55 @@ export default function CaptureImage() {
 
     // Connect and sent to Reckonition API
 
-    const config = new AWS.Config({
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    });
+    // Predictions.identify({
 
-    AWS.config.update({ region: 'region' });
+    // })
 
-    const client = new AWS.Rekognition();
+    // Predictions.identify({
+    // text: {
+    //     source: {
+    //         file
+    //     },
+    //     format: "PLAIN",
+    // }
+    //   })
+    //   .then(response => {
+    //       const {
+    //           text: {
+    //               fullText, // String
+    //               lines, // Array of String ordered from top to bottom
+    //               linesDetailed: [
+    //                   {
+    //                       /* array of
+    //                       text, // String
+    //                       boundingBox: {
+    //                           width, // ratio of overall image width
+    //                           height, // ratio of overall image height
+    //                           left, // left coordinate as a ratio of overall image width
+    //                           top // top coordinate as a ratio of overall image height
+    //                       },
+    //                       polygon // Array of { x, y } coordinates as a ratio of overall image width and height
+    //                       */
+    //                   }
+    //               ],
+    //               words // Array of objects that contains { text, boundingBox, polygon}
+    //           }
+    //       } = response
+    //   })
+    //   .catch(err => console.log({ err }));
 
-    console.log(client);
+    // const config = new AWS.Config({
+    //   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    //   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    // });
 
-    client.detectText();
+    // AWS.config.update({ region: 'region' });
+
+    // const client = new AWS.Rekognition();
+
+    // console.log(client);
+
+    // client.detectText();
   };
 
   const showMarkerArea = () => {
