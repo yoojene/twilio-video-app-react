@@ -1,5 +1,5 @@
-import React, { createContext, useCallback, useState } from 'react';
-import { Storage } from 'aws-amplify';
+import React, { createContext, useCallback, useEffect, useState } from 'react';
+import { Predictions, Storage } from 'aws-amplify';
 
 type CaptureImageContextType = {
   isCaptureImageDialogOpen: boolean;
@@ -47,17 +47,45 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   }, []);
 
   const saveImageToStorage = useCallback(async () => {
+    // Temporarily also pass to Rekognition here for text searching
     const photoFileName = `UserImage_${Date.now()}.png`;
-    console.log(photoFileName);
+    const textFileName = `UserImage_${Date.now()}.txt`;
 
     const photoURI = document.getElementById('photo')!.getAttribute('src')!;
 
-    const file = dataURIToBlob(photoURI);
+    const file = dataURIToBlob(photoURI) as File;
 
     console.log(file);
 
-    const result = await Storage.put(photoFileName, file);
-    console.log(result);
+    // Pass file to Predictions API
+    Predictions.identify({
+      text: {
+        source: {
+          file,
+        },
+        format: 'PLAIN',
+      },
+    })
+      .then(async response => {
+        console.log({ response });
+
+        // Create text file of Predictions response
+        const text = createTextFile(JSON.stringify(response.text));
+
+        // Save image and text file on S3
+        const photoRes = await Storage.put(photoFileName, file);
+        console.log(photoRes);
+
+        const textRes = await Storage.put(textFileName, text);
+        console.log(textRes);
+      })
+      .catch(error => console.error(error));
+
+    // return result
+
+    // Download image from S3 to check
+    // const downloadResult = await Storage.get(result.key, { download: true });
+    // console.log(downloadResult);
 
     // const downloadLink = document.createElement('a');
     // downloadLink.setAttribute('download', photo);
@@ -77,6 +105,10 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
       u8arr[n] = bstr.charCodeAt(n);
     }
     return new Blob([u8arr], { type: mime });
+  };
+
+  const createTextFile = (text: string) => {
+    return new Blob([text], { type: 'text/plain' });
   };
 
   return (

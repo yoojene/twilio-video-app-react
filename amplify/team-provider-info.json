@@ -10,6 +10,11 @@
       "StackName": "amplify-twiliorva-dev-161029",
       "StackId": "arn:aws:cloudformation:eu-west-2:129103133221:stack/amplify-twiliorva-dev-161029/07454840-3738-11ec-8340-02458b76e486",
       "AmplifyAppId": "d177y0rw6y863b"
+    },
+    "categories": {
+      "auth": {
+        "twiliorva57db4ff9": {}
+      }
     }
   }
 }

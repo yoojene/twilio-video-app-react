@@ -8,11 +8,6 @@ import imagePlaceholder from '../../images/import_placeholder-90.png';
 import * as markerjs2 from 'markerjs2';
 import useCaptureImageContext from '../../hooks/useCaptureImageContext/useCaptureImageContext';
 import { Button, DialogActions, DialogTitle } from '@material-ui/core';
-import Predictions from '@aws-amplify/predictions';
-
-import useTrack from '../../hooks/useTrack/useTrack';
-import usePublications from '../../hooks/usePublications/usePublications';
-import useParticipants from '../../hooks/useParticipants/useParticipants';
 
 const useStyles = makeStyles(() => ({
   title: {
@@ -107,58 +102,6 @@ export default function CaptureImage() {
     const boundingBox = document.getElementsByTagName('rect')[0]; // appears to show two rects for rectangle marker
     const domRect = boundingBox.getBoundingClientRect();
     console.log(domRect);
-
-    // Connect and sent to Reckonition API
-
-    // Predictions.identify({
-
-    // })
-
-    // Predictions.identify({
-    // text: {
-    //     source: {
-    //         file
-    //     },
-    //     format: "PLAIN",
-    // }
-    //   })
-    //   .then(response => {
-    //       const {
-    //           text: {
-    //               fullText, // String
-    //               lines, // Array of String ordered from top to bottom
-    //               linesDetailed: [
-    //                   {
-    //                       /* array of
-    //                       text, // String
-    //                       boundingBox: {
-    //                           width, // ratio of overall image width
-    //                           height, // ratio of overall image height
-    //                           left, // left coordinate as a ratio of overall image width
-    //                           top // top coordinate as a ratio of overall image height
-    //                       },
-    //                       polygon // Array of { x, y } coordinates as a ratio of overall image width and height
-    //                       */
-    //                   }
-    //               ],
-    //               words // Array of objects that contains { text, boundingBox, polygon}
-    //           }
-    //       } = response
-    //   })
-    //   .catch(err => console.log({ err }));
-
-    // const config = new AWS.Config({
-    //   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    //   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    // });
-
-    // AWS.config.update({ region: 'region' });
-
-    // const client = new AWS.Rekognition();
-
-    // console.log(client);
-
-    // client.detectText();
   };
 
   const showMarkerArea = () => {
