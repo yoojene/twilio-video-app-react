@@ -37,7 +37,7 @@
     "linkify-it": "^3.0.2",
     "lint-staged": "^9.5.0",
     "lodash.throttle": "^4.1.1",
-    "markerjs2": "2.15.0",
+    "markerjs2": "2.16.0",
     "nanoid": "^3.1.12",
     "prettier": "^1.19.1",
     "react": "^16.12.0",
