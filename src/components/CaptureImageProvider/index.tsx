@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useEffect, useState } from 'react';
 import { Predictions, Storage } from 'aws-amplify';
+import * as markerjs2 from 'markerjs2';
 
 type CaptureImageContextType = {
   isCaptureImageDialogOpen: boolean;
@@ -10,6 +11,9 @@ type CaptureImageContextType = {
   setVideoOnCanvas: (video: HTMLElement) => HTMLCanvasElement | undefined;
   saveImageToStorage: () => void;
   setPhoto: (canvas: HTMLCanvasElement) => HTMLElement | null;
+  createMarkerArea: (imageRef: React.RefObject<HTMLImageElement>) => markerjs2.MarkerArea;
+  isMarkupPanelOpen: boolean;
+  setMarkupPanelOpen: (isMarkupPanelOpen: boolean) => void;
 };
 
 export const CaptureImageContext = createContext<CaptureImageContextType>(null!);
@@ -17,6 +21,7 @@ export const CaptureImageContext = createContext<CaptureImageContextType>(null!)
 export const CaptureImageProvider: React.FC = ({ children }) => {
   const [isCaptureImageDialogOpen, setIsCaptureImageDialogOpen] = useState(false);
   const [isCaptureImageOpen, setIsCaptureImageOpen] = useState(false);
+  const [isMarkupPanelOpen, setMarkupPanelOpen] = useState(false);
 
   const getVideoElementFromDialog = useCallback(() => {
     const video = document.getElementById('capture-video');
@@ -111,6 +116,31 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     return new Blob([text], { type: 'text/plain' });
   };
 
+  const createMarkerArea = (imageRef: React.RefObject<HTMLImageElement>) => {
+    // create a marker.js MarkerArea
+    const markerArea = new markerjs2.MarkerArea(imageRef.current!);
+
+    // TODO change this to just FrameMarker for OCR "mode"
+    markerArea.availableMarkerTypes = [...markerArea.BASIC_MARKER_TYPES];
+
+    // attach an event handler to assign annotated image back to our image element
+    markerArea.addEventListener('render', event => {
+      if (imageRef.current) {
+        imageRef.current.src = event.dataUrl;
+      }
+    });
+
+    markerArea.addEventListener('close', () => {
+      setMarkupPanelOpen(false);
+    });
+
+    markerArea.addEventListener('show', () => {
+      setMarkupPanelOpen(true);
+    });
+
+    return markerArea;
+  };
+
   return (
     <CaptureImageContext.Provider
       value={{
@@ -122,6 +152,9 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         setVideoOnCanvas,
         saveImageToStorage,
         setPhoto,
+        createMarkerArea,
+        isMarkupPanelOpen,
+        setMarkupPanelOpen,
       }}
     >
       {children}

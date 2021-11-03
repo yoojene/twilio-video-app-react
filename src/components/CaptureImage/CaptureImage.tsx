@@ -64,7 +64,14 @@ export default function CaptureImage() {
   const imgRef = React.createRef<HTMLImageElement>();
 
   const classes = useStyles();
-  const { getVideoElementFromDialog, setVideoOnCanvas, saveImageToStorage, setPhoto } = useCaptureImageContext();
+  const {
+    getVideoElementFromDialog,
+    setVideoOnCanvas,
+    saveImageToStorage,
+    setPhoto,
+    createMarkerArea,
+    isMarkupPanelOpen,
+  } = useCaptureImageContext();
 
   // Local track for testing - uncomment for browser testing
 
@@ -94,7 +101,15 @@ export default function CaptureImage() {
   };
 
   const annotateImage = () => {
-    showMarkerArea();
+    const markerArea = createMarkerArea(imgRef);
+    console.log(markerArea);
+    console.log(isMarkupPanelOpen);
+
+    if (!isMarkupPanelOpen) {
+      markerArea.show();
+    } else {
+      markerArea.close();
+    }
   };
 
   const performOCR = () => {
@@ -104,24 +119,27 @@ export default function CaptureImage() {
     console.log(domRect);
   };
 
-  const showMarkerArea = () => {
-    if (imgRef.current !== null) {
-      // create a marker.js MarkerArea
-      const markerArea = new markerjs2.MarkerArea(imgRef.current);
+  // const handleMarkerArea = () => {
 
-      // TODO change this to just FrameMarker for OCR "mode"
-      markerArea.availableMarkerTypes = [...markerArea.BASIC_MARKER_TYPES];
+  //   if (imgRef.current !== null) {
 
-      // attach an event handler to assign annotated image back to our image element
-      markerArea.addRenderEventListener(dataUrl => {
-        if (imgRef.current) {
-          imgRef.current.src = dataUrl;
-        }
-      });
-      // launch marker.js
-      markerArea.show();
-    }
-  };
+  //     // create a marker.js MarkerArea
+  //     const markerArea = new markerjs2.MarkerArea(imgRef.current);
+
+  //     // TODO change this to just FrameMarker for OCR "mode"
+  //     markerArea.availableMarkerTypes = [...markerArea.BASIC_MARKER_TYPES];
+
+  //     // attach an event handler to assign annotated image back to our image element
+  //     markerArea.addRenderEventListener(dataUrl => {
+  //       if (imgRef.current) {
+  //         imgRef.current.src = dataUrl;
+  //       }
+  //     });
+  //     // launch marker.js
+  //     markerArea.show();
+  //     // markerArea.close()
+  //   }
+  // };
 
   return (
     <div className={classes.container}>
@@ -145,7 +163,13 @@ export default function CaptureImage() {
         <Button color="primary" variant="contained" className={classes.button} onClick={captureImage}>
           Capture
         </Button>
-        <Button color="primary" variant="contained" className={classes.button} onClick={annotateImage}>
+        <Button
+          color="primary"
+          variant="contained"
+          className={classes.button}
+          onClick={annotateImage}
+          disabled={isMarkupPanelOpen}
+        >
           Annotate
         </Button>
         <Button color="primary" variant="contained" className={classes.button} onClick={performOCR}>
