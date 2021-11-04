@@ -65,7 +65,12 @@ export default function CaptureImageDialog({ open, onClose, participant }: Captu
   const imgRef = React.createRef<HTMLImageElement>();
 
   const classes = useStyles();
-  const { getVideoElementFromDialog, setVideoOnCanvas, saveImageToStorage, setPhoto } = useCaptureImageContext();
+  const {
+    getVideoElementFromDialog,
+    setVideoOnCanvas,
+    saveImageToStorage,
+    setPhotoFromCanvas,
+  } = useCaptureImageContext();
   // Local track for testing
   const { localTracks } = useVideoContext();
   const videoTrack = localTracks.find(track => track.kind === 'video') as LocalVideoTrack | undefined;
@@ -81,7 +86,7 @@ export default function CaptureImageDialog({ open, onClose, participant }: Captu
     if (video) {
       const canvas = setVideoOnCanvas(video);
       if (canvas) {
-        setPhoto(canvas);
+        setPhotoFromCanvas(canvas);
         showMarkerArea();
       }
     }

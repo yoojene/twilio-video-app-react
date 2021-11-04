@@ -1,5 +1,5 @@
 import { makeStyles } from '@material-ui/styles';
-import React from 'react';
+import React, { useRef } from 'react';
 import VideoTrack from '../VideoTrack/VideoTrack';
 
 import { LocalVideoTrack, Participant, RemoteVideoTrack } from 'twilio-video';
@@ -8,6 +8,9 @@ import imagePlaceholder from '../../images/import_placeholder-90.png';
 import * as markerjs2 from 'markerjs2';
 import useCaptureImageContext from '../../hooks/useCaptureImageContext/useCaptureImageContext';
 import { Button, DialogActions, DialogTitle } from '@material-ui/core';
+import useParticipants from '../../hooks/useParticipants/useParticipants';
+import usePublications from '../../hooks/usePublications/usePublications';
+import useTrack from '../../hooks/useTrack/useTrack';
 
 const useStyles = makeStyles(() => ({
   title: {
@@ -61,37 +64,37 @@ const useStyles = makeStyles(() => ({
 }));
 
 export default function CaptureImage() {
-  const imgRef = React.createRef<HTMLImageElement>();
+  const imgRef = useRef() as React.MutableRefObject<HTMLImageElement>;
 
   const classes = useStyles();
   const {
     getVideoElementFromDialog,
     setVideoOnCanvas,
     saveImageToStorage,
-    setPhoto,
+    setPhotoFromCanvas,
     createMarkerArea,
     isMarkupPanelOpen,
   } = useCaptureImageContext();
 
   // Local track for testing - uncomment for browser testing
 
-  const { localTracks } = useVideoContext();
-  const videoTrack = localTracks.find(track => track.kind === 'video') as LocalVideoTrack | undefined;
+  // const { localTracks } = useVideoContext();
+  // const videoTrack = localTracks.find(track => track.kind === 'video') as LocalVideoTrack | undefined;
 
   // Remote track
-  // const participants = useParticipants();
-  // const participant = participants[0];
-  // console.log(participant)
-  // const publications = usePublications(participant);
-  // const videoPublication = publications.find(p => !p.trackName.includes('screen') && p.kind === 'video');
-  // const videoTrack = useTrack(videoPublication) as RemoteVideoTrack;
+  const participants = useParticipants();
+  const participant = participants[0];
+  console.log(participant);
+  const publications = usePublications(participant);
+  const videoPublication = publications.find(p => !p.trackName.includes('screen') && p.kind === 'video');
+  const videoTrack = useTrack(videoPublication) as RemoteVideoTrack;
 
   const captureImage = () => {
     const video = getVideoElementFromDialog();
     if (video) {
       const canvas = setVideoOnCanvas(video);
       if (canvas) {
-        setPhoto(canvas);
+        setPhotoFromCanvas(canvas);
       }
     }
   };
@@ -101,6 +104,7 @@ export default function CaptureImage() {
   };
 
   const annotateImage = () => {
+    console.log(imgRef);
     const markerArea = createMarkerArea(imgRef);
     console.log(markerArea);
     console.log(isMarkupPanelOpen);

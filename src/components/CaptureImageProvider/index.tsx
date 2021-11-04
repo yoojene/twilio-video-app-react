@@ -10,10 +10,12 @@ type CaptureImageContextType = {
   setIsCaptureImageOpen: (isCaptureImageOpen: boolean) => void;
   setVideoOnCanvas: (video: HTMLElement) => HTMLCanvasElement | undefined;
   saveImageToStorage: () => void;
-  setPhoto: (canvas: HTMLCanvasElement) => HTMLElement | null;
-  createMarkerArea: (imageRef: React.RefObject<HTMLImageElement>) => markerjs2.MarkerArea;
+  setPhotoFromCanvas: (canvas: HTMLCanvasElement) => HTMLElement | null;
+  createMarkerArea: (imageRef: React.MutableRefObject<HTMLImageElement>) => markerjs2.MarkerArea;
   isMarkupPanelOpen: boolean;
   setMarkupPanelOpen: (isMarkupPanelOpen: boolean) => void;
+  annotatedPhoto: string;
+  setAnnotatedPhoto: (annotatedPhoto: string) => void;
 };
 
 export const CaptureImageContext = createContext<CaptureImageContextType>(null!);
@@ -22,6 +24,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   const [isCaptureImageDialogOpen, setIsCaptureImageDialogOpen] = useState(false);
   const [isCaptureImageOpen, setIsCaptureImageOpen] = useState(false);
   const [isMarkupPanelOpen, setMarkupPanelOpen] = useState(false);
+  const [annotatedPhoto, setAnnotatedPhoto] = useState('');
 
   const getVideoElementFromDialog = useCallback(() => {
     const video = document.getElementById('capture-video');
@@ -43,7 +46,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     }
   }, []);
 
-  const setPhoto = useCallback(canvas => {
+  const setPhotoFromCanvas = useCallback(canvas => {
     const photo = document.getElementById('photo');
     const data = canvas.toDataURL('image/png');
     photo!.setAttribute('src', data);
@@ -116,7 +119,8 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     return new Blob([text], { type: 'text/plain' });
   };
 
-  const createMarkerArea = (imageRef: React.RefObject<HTMLImageElement>) => {
+  const createMarkerArea = (imageRef: React.MutableRefObject<HTMLImageElement>) => {
+    console.log(imageRef);
     // create a marker.js MarkerArea
     const markerArea = new markerjs2.MarkerArea(imageRef.current!);
 
@@ -125,12 +129,16 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
 
     // attach an event handler to assign annotated image back to our image element
     markerArea.addEventListener('render', event => {
+      console.log(imageRef);
+      console.log(imageRef.current);
+      console.log(event);
       if (imageRef.current) {
         imageRef.current.src = event.dataUrl;
       }
     });
 
     markerArea.addEventListener('close', () => {
+      console.log('close');
       setMarkupPanelOpen(false);
     });
 
@@ -151,10 +159,12 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         getVideoElementFromDialog,
         setVideoOnCanvas,
         saveImageToStorage,
-        setPhoto,
+        setPhotoFromCanvas,
         createMarkerArea,
         isMarkupPanelOpen,
         setMarkupPanelOpen,
+        annotatedPhoto,
+        setAnnotatedPhoto,
       }}
     >
       {children}
