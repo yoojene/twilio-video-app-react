@@ -1,5 +1,5 @@
 import { makeStyles } from '@material-ui/styles';
-import React, { useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import VideoTrack from '../VideoTrack/VideoTrack';
 
 import { LocalVideoTrack, Participant, RemoteVideoTrack } from 'twilio-video';
@@ -27,7 +27,7 @@ const useStyles = makeStyles(() => ({
     overflowY: 'scroll',
   },
   preview: {
-    width: '320px',
+    width: '1000px',
     maxHeight: '600px',
     margin: '0.5em auto',
     '& video': {
@@ -42,7 +42,7 @@ const useStyles = makeStyles(() => ({
     display: 'none',
   },
   buttonContainer: {
-    marginTop: '3rem',
+    marginTop: '-5rem',
     padding: '16px',
     marginLeft: '8px',
     flex: '0 0 auto',
@@ -64,6 +64,8 @@ const useStyles = makeStyles(() => ({
 }));
 
 export default function CaptureImage() {
+  const [scale, setScale] = useState(1);
+
   const imgRef = useRef() as React.MutableRefObject<HTMLImageElement>;
 
   const classes = useStyles();
@@ -123,6 +125,16 @@ export default function CaptureImage() {
     console.log(domRect);
   };
 
+  const zoomOne = () => {
+    setScale(1);
+  };
+  const zoomTwo = () => {
+    setScale(2);
+  };
+  const zoomThree = () => {
+    setScale(3);
+  };
+
   // const handleMarkerArea = () => {
 
   //   if (imgRef.current !== null) {
@@ -146,22 +158,24 @@ export default function CaptureImage() {
   // };
 
   return (
-    <div className={classes.container}>
-      <DialogTitle>Capture Image</DialogTitle>
-      {videoTrack && (
-        <div className={classes.preview}>
-          <VideoTrack id={'capture-video'} track={videoTrack} />
+    <>
+      <div className={classes.container}>
+        <DialogTitle>Capture Image</DialogTitle>
+        {videoTrack && (
+          <div className={classes.preview}>
+            <VideoTrack id={'capture-video'} track={videoTrack} scale={scale} />
+          </div>
+        )}
+        <canvas id="canvas" className={classes.canvas}></canvas>
+        <div className={classes.imagePreview}>
+          <img
+            id="photo"
+            src={imagePlaceholder}
+            alt="The screen capture will appear in this box."
+            className={classes.photoPreview}
+            ref={imgRef}
+          />
         </div>
-      )}
-      <canvas id="canvas" className={classes.canvas}></canvas>
-      <div className={classes.imagePreview}>
-        <img
-          id="photo"
-          src={imagePlaceholder}
-          alt="The screen capture will appear in this box."
-          className={classes.photoPreview}
-          ref={imgRef}
-        />
       </div>
       <div className={classes.buttonContainer}>
         <Button color="primary" variant="contained" className={classes.button} onClick={captureImage}>
@@ -182,7 +196,16 @@ export default function CaptureImage() {
         <Button color="primary" variant="contained" className={classes.button} onClick={saveImage}>
           Save
         </Button>
+        <Button color="primary" variant="contained" className={classes.button} onClick={zoomOne}>
+          1X
+        </Button>
+        <Button color="primary" variant="contained" className={classes.button} onClick={zoomTwo}>
+          2X
+        </Button>
+        <Button color="primary" variant="contained" className={classes.button} onClick={zoomThree}>
+          3X
+        </Button>
       </div>
-    </div>
+    </>
   );
 }
