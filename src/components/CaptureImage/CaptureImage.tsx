@@ -38,6 +38,10 @@ const useStyles = makeStyles(() => ({
     width: '320px',
     backgroundSize: 'auto',
   },
+  canvasContainer: {
+    width: '100%',
+    textAlign: 'center',
+  },
   canvas: {
     display: 'none',
   },
@@ -94,7 +98,7 @@ export default function CaptureImage() {
   const captureImage = () => {
     const video = getVideoElementFromDialog();
     if (video) {
-      const canvas = setVideoOnCanvas(video);
+      const canvas = setVideoOnCanvas(video, scale);
       if (canvas) {
         setPhotoFromCanvas(canvas);
       }
@@ -166,7 +170,9 @@ export default function CaptureImage() {
             <VideoTrack id={'capture-video'} track={videoTrack} scale={scale} />
           </div>
         )}
-        <canvas id="canvas" className={classes.canvas}></canvas>
+        <div className={classes.canvasContainer}>
+          <canvas id="canvas" className={classes.canvas}></canvas>
+        </div>
         <div className={classes.imagePreview}>
           <img
             id="photo"

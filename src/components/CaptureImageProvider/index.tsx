@@ -8,7 +8,7 @@ type CaptureImageContextType = {
   getVideoElementFromDialog: () => HTMLElement | null;
   isCaptureImageOpen: boolean;
   setIsCaptureImageOpen: (isCaptureImageOpen: boolean) => void;
-  setVideoOnCanvas: (video: HTMLElement) => HTMLCanvasElement | undefined;
+  setVideoOnCanvas: (video: HTMLElement, scale?: number) => HTMLCanvasElement | undefined;
   saveImageToStorage: () => void;
   setPhotoFromCanvas: (canvas: HTMLCanvasElement) => HTMLElement | null;
   createMarkerArea: (imageRef: React.MutableRefObject<HTMLImageElement>) => markerjs2.MarkerArea;
@@ -28,20 +28,24 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
 
   const getVideoElementFromDialog = useCallback(() => {
     const video = document.getElementById('capture-video');
-    console.log(video);
-
     return video;
   }, []);
 
-  const setVideoOnCanvas = useCallback(video => {
+  const setVideoOnCanvas = useCallback((video, scale) => {
     const canvas = document.getElementById('canvas') as HTMLCanvasElement;
-    // canvas.style = 'display:none'
 
     if (canvas) {
       const ctx = canvas.getContext('2d');
-      canvas.width = 640;
+      canvas.width = 1000;
       canvas.height = 1200;
-      ctx?.drawImage(video as CanvasImageSource, 0, 0, canvas.width, canvas.height);
+      if (scale) {
+        ctx?.scale(scale, scale);
+      }
+      if (!scale) scale = 1;
+      const x = (canvas.width / scale - video.offsetWidth) / 2;
+      const y = (canvas.height / scale - video.offsetHeight) / 2;
+      ctx?.drawImage(video as CanvasImageSource, x, y);
+
       return canvas;
     }
   }, []);
