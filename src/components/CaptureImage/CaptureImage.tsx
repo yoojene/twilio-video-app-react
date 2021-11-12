@@ -35,8 +35,8 @@ const useStyles = makeStyles(() => ({
     },
   },
   photoPreview: {
-    width: '320px',
-    backgroundSize: 'auto',
+    // width: '320px',
+    // backgroundSize: 'auto',
   },
   canvasContainer: {
     width: '100%',
@@ -60,10 +60,9 @@ const useStyles = makeStyles(() => ({
     //    // marginLeft: '8px',
     // }
   },
-  imagePreview: {
-    marginTop: '3rem',
-    display: 'flex',
-    justifyContent: 'center',
+  photoContainer: {
+    width: '100%',
+    textAlign: 'center',
   },
 }));
 
@@ -87,13 +86,83 @@ export default function CaptureImage() {
   // const { localTracks } = useVideoContext();
   // const videoTrack = localTracks.find(track => track.kind === 'video') as LocalVideoTrack | undefined;
 
+  // const capabilities = videoTrack!.mediaStreamTrack.getCapabilities()
+  // console.log(capabilities)
+
+  // const settings = videoTrack!.mediaStreamTrack.getSettings();
+  // console.log(settings)
+
+  // videoTrack!.mediaStreamTrack.applyConstraints({ "advanced": [{ "zoom": 2.0 }]  as any})
+
+  // const media = navigator.mediaDevices.getUserMedia({video: true});
+
+  // media.then(mediaStream => {
+  //   console.log(mediaStream);
+
+  //   const track = mediaStream.getVideoTracks()[0];
+  //   const capabilities = track.getCapabilities();
+  //   const settings = track.getSettings();
+
+  //   console.log(track)
+  //   console.log(capabilities)
+  //   console.log(settings)
+
+  //   // get current zoom level
+  //   const currentZoomLevel = (settings as any).zoom;
+  //   console.log(currentZoomLevel)
+  //apply new zoom level of '2.0'
+  // track.applyConstraints({ advanced: [{ "zoom": 2.0 }] } as any);
+
+  // })
+
   // Remote track
   const participants = useParticipants();
   const participant = participants[0];
-  console.log(participant);
   const publications = usePublications(participant);
   const videoPublication = publications.find(p => !p.trackName.includes('screen') && p.kind === 'video');
   const videoTrack = useTrack(videoPublication) as RemoteVideoTrack;
+  // console.log(videoTrack);
+
+  // if (videoTrack) {
+  //   const capabilities = videoTrack.mediaStreamTrack.getCapabilities();
+  //   console.log('capabilities')
+  //   console.log(capabilities)
+  //   const settings = videoTrack.mediaStreamTrack.getSettings();
+
+  //   console.log('settings')
+  //   console.log(settings)
+
+  //   // console.log(capabilities.zoom)
+
+  //   // videoTrack.mediaStreamTrack.applyConstraints({ advanced: [{ zoom: 2.0 }] } as any)
+  //   // videoTrack.mediaStreamTrack.applyConstraints({ advanced: [{ torch: true }] } as any)
+  // }
+
+  // const media = navigator.mediaDevices.getUserMedia({video: true});
+
+  // media.then(mediaStream => {
+  //   console.log('in navigator get user media then');
+  //   console.log(mediaStream);
+
+  //   const tracks = mediaStream.getVideoTracks();
+
+  //   console.log(tracks)
+
+  //   const track = mediaStream.getVideoTracks()[0];
+  //   const capabilities = track.getCapabilities();
+  //   const settings = track.getSettings();
+
+  //   console.log(track)
+  //   console.log(capabilities)
+  //   console.log(settings)
+
+  // get current zoom level
+  // const currentZoomLevel = (settings as any).zoom;
+  // console.log(currentZoomLevel)
+  // apply new zoom level of '2.0'
+  // track.applyConstraints({ advanced: [{ "zoom": 2.0 }] } as any);
+
+  // })
 
   const captureImage = () => {
     const video = getVideoElementFromDialog();
@@ -173,7 +242,7 @@ export default function CaptureImage() {
         <div className={classes.canvasContainer}>
           <canvas id="canvas" className={classes.canvas}></canvas>
         </div>
-        <div className={classes.imagePreview}>
+        <div className={classes.photoContainer}>
           <img
             id="photo"
             src={imagePlaceholder}

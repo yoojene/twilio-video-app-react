@@ -36,8 +36,10 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
 
     if (canvas) {
       const ctx = canvas.getContext('2d');
+      // Canvas setup for device in landscape mode
+      // TODO change this based on phone orientation
       canvas.width = 1000;
-      canvas.height = 1200;
+      canvas.height = 600;
       if (scale) {
         ctx?.scale(scale, scale);
       }
