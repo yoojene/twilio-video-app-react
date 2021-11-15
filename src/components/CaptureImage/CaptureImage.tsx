@@ -7,10 +7,11 @@ import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import imagePlaceholder from '../../images/import_placeholder-90.png';
 import * as markerjs2 from 'markerjs2';
 import useCaptureImageContext from '../../hooks/useCaptureImageContext/useCaptureImageContext';
-import { Button, DialogActions, DialogTitle } from '@material-ui/core';
+import { Button, DialogActions, DialogTitle, Grid } from '@material-ui/core';
 import useParticipants from '../../hooks/useParticipants/useParticipants';
 import usePublications from '../../hooks/usePublications/usePublications';
 import useTrack from '../../hooks/useTrack/useTrack';
+import SavedImageGallery from '../SavedImageGallery/SavedImageGallery';
 
 const useStyles = makeStyles(() => ({
   title: {
@@ -79,12 +80,13 @@ export default function CaptureImage() {
     setPhotoFromCanvas,
     createMarkerArea,
     isMarkupPanelOpen,
+    getImagesFromStorage,
   } = useCaptureImageContext();
 
   // Local track for testing - uncomment for browser testing
 
-  // const { localTracks } = useVideoContext();
-  // const videoTrack = localTracks.find(track => track.kind === 'video') as LocalVideoTrack | undefined;
+  const { localTracks } = useVideoContext();
+  const videoTrack = localTracks.find(track => track.kind === 'video') as LocalVideoTrack | undefined;
 
   // const capabilities = videoTrack!.mediaStreamTrack.getCapabilities()
   // console.log(capabilities)
@@ -116,11 +118,11 @@ export default function CaptureImage() {
   // })
 
   // Remote track
-  const participants = useParticipants();
-  const participant = participants[0];
-  const publications = usePublications(participant);
-  const videoPublication = publications.find(p => !p.trackName.includes('screen') && p.kind === 'video');
-  const videoTrack = useTrack(videoPublication) as RemoteVideoTrack;
+  // const participants = useParticipants();
+  // const participant = participants[0];
+  // const publications = usePublications(participant);
+  // const videoPublication = publications.find(p => !p.trackName.includes('screen') && p.kind === 'video');
+  // const videoTrack = useTrack(videoPublication) as RemoteVideoTrack;
   // console.log(videoTrack);
 
   // if (videoTrack) {
@@ -172,9 +174,10 @@ export default function CaptureImage() {
         setPhotoFromCanvas(canvas);
       }
     }
+    // getImagesFromStorage();
   };
 
-  const saveImage = () => {
+  const saveImage = async () => {
     saveImageToStorage();
   };
 
@@ -208,49 +211,37 @@ export default function CaptureImage() {
     setScale(3);
   };
 
-  // const handleMarkerArea = () => {
-
-  //   if (imgRef.current !== null) {
-
-  //     // create a marker.js MarkerArea
-  //     const markerArea = new markerjs2.MarkerArea(imgRef.current);
-
-  //     // TODO change this to just FrameMarker for OCR "mode"
-  //     markerArea.availableMarkerTypes = [...markerArea.BASIC_MARKER_TYPES];
-
-  //     // attach an event handler to assign annotated image back to our image element
-  //     markerArea.addRenderEventListener(dataUrl => {
-  //       if (imgRef.current) {
-  //         imgRef.current.src = dataUrl;
-  //       }
-  //     });
-  //     // launch marker.js
-  //     markerArea.show();
-  //     // markerArea.close()
-  //   }
-  // };
-
   return (
     <>
       <div className={classes.container}>
         <DialogTitle>Capture Image</DialogTitle>
-        {videoTrack && (
-          <div className={classes.preview}>
-            <VideoTrack id={'capture-video'} track={videoTrack} scale={scale} />
-          </div>
-        )}
-        <div className={classes.canvasContainer}>
-          <canvas id="canvas" className={classes.canvas}></canvas>
-        </div>
-        <div className={classes.photoContainer}>
-          <img
-            id="photo"
-            src={imagePlaceholder}
-            alt="The screen capture will appear in this box."
-            className={classes.photoPreview}
-            ref={imgRef}
-          />
-        </div>
+
+        <Grid container spacing={2}>
+          <Grid item xs={8}>
+            {videoTrack && (
+              <div className={classes.preview}>
+                <VideoTrack id={'capture-video'} track={videoTrack} scale={scale} />
+              </div>
+            )}
+
+            <div className={classes.canvasContainer}>
+              <canvas id="canvas" className={classes.canvas}></canvas>
+            </div>
+            <div className={classes.photoContainer}>
+              <img
+                id="photo"
+                src={imagePlaceholder}
+                alt="The screen capture will appear in this box."
+                className={classes.photoPreview}
+                ref={imgRef}
+              />
+            </div>
+          </Grid>
+          <Grid item xs={4}>
+            Photo gallery here
+            <SavedImageGallery></SavedImageGallery>
+          </Grid>
+        </Grid>
       </div>
       <div className={classes.buttonContainer}>
         <Button color="primary" variant="contained" className={classes.button} onClick={captureImage}>
