@@ -2,7 +2,7 @@ import { makeStyles } from '@material-ui/styles';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import VideoTrack from '../VideoTrack/VideoTrack';
 
-import { LocalVideoTrack, Participant, RemoteVideoTrack } from 'twilio-video';
+import { LocalVideoTrack, Participant, RemoteVideoTrack, Room } from 'twilio-video';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import imagePlaceholder from '../../images/import_placeholder-90.png';
 import * as markerjs2 from 'markerjs2';
@@ -80,7 +80,6 @@ export default function CaptureImage() {
     setPhotoFromCanvas,
     createMarkerArea,
     isMarkupPanelOpen,
-    getImagesFromStorage,
   } = useCaptureImageContext();
 
   // Local track for testing - uncomment for browser testing
@@ -238,7 +237,7 @@ export default function CaptureImage() {
             </div>
           </Grid>
           <Grid item xs={4}>
-            Photo gallery here
+            <DialogTitle>Saved Images</DialogTitle>
             <SavedImageGallery></SavedImageGallery>
           </Grid>
         </Grid>
