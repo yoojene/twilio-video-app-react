@@ -2,6 +2,9 @@ import React, { createContext, useCallback, useEffect, useState } from 'react';
 import { Predictions, Storage } from 'aws-amplify';
 import * as markerjs2 from 'markerjs2';
 import { S3ProviderListOutputItem, S3ProviderListOutput } from '@aws-amplify/storage';
+import { Room } from 'twilio-video';
+import useRoomState from '../../hooks/useRoomState/useRoomState';
+import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 
 type CaptureImageContextType = {
   isCaptureImageDialogOpen: boolean;
@@ -27,6 +30,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   const [isCaptureImageOpen, setIsCaptureImageOpen] = useState(false);
   const [isMarkupPanelOpen, setMarkupPanelOpen] = useState(false);
   const [annotatedPhoto, setAnnotatedPhoto] = useState('');
+  const { room } = useVideoContext();
 
   const getVideoElementFromDialog = useCallback(() => {
     const video = document.getElementById('capture-video');
@@ -62,11 +66,13 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     return photo;
   }, []);
 
-  const saveImageToStorage = useCallback(async () => {
+  const saveImageToStorage = async () => {
     // Temporarily also pass to Rekognition here for text searching
     const photoFileName = `UserImage_${Date.now()}.png`;
     const textFileName = `UserImage_${Date.now()}.txt`;
 
+    // Create path for files in S3
+    const path = `${room?.name}/${room?.sid}`;
     const photoURI = document.getElementById('photo')!.getAttribute('src')!;
 
     const file = dataURIToBlob(photoURI) as File;
@@ -89,10 +95,10 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         const text = createTextFile(JSON.stringify(response.text));
 
         // Save image and text file on S3
-        const photoRes = await Storage.put(photoFileName, file);
+        const photoRes = await Storage.put(`${path}/${photoFileName}`, file, {});
         console.log(photoRes);
 
-        const textRes = await Storage.put(textFileName, text);
+        const textRes = await Storage.put(`${path}/${textFileName}`, text);
         console.log(textRes);
       })
       .catch(error => console.error(error));
@@ -109,7 +115,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     // console.log(downloadLink.href)
     // console.log(document.getElementById('photo'))
     // downloadLink.click();
-  }, []);
+  };
 
   const dataURIToBlob = (dataURI: string) => {
     var arr = dataURI.split(','),
