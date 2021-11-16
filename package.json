@@ -5,6 +5,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@aws-amplify/predictions": "4.0.21",
+    "@aws-amplify/ui-react": "1.2.24",
     "@material-ui/core": "^4.12.3",
     "@material-ui/icons": "^4.11.2",
     "@twilio-labs/plugin-rtc": "^0.8.2",
@@ -47,6 +48,7 @@
     "react-spring": "9.3.0",
     "rimraf": "3.0.2",
     "strip-color": "^0.1.0",
+    "styled-components": "5.3.3",
     "ts-node": "^9.1.1",
     "twilio": "^3.63.1",
     "twilio-video": "^2.17.1",
@@ -58,6 +60,7 @@
     "@testing-library/react-hooks": "^3.2.1",
     "@types/enzyme": "^3.10.4",
     "@types/enzyme-adapter-react-16": "^1.0.5",
+    "@types/styled-components": "5.1.15",
     "cypress": "^6.8.0",
     "cypress-multi-reporters": "^1.4.0",
     "enzyme": "^3.11.0",
