@@ -84,8 +84,8 @@ export default function CaptureImage() {
 
   // Local track for testing - uncomment for browser testing
 
-  const { localTracks } = useVideoContext();
-  const videoTrack = localTracks.find(track => track.kind === 'video') as LocalVideoTrack | undefined;
+  // const { localTracks } = useVideoContext();
+  // const videoTrack = localTracks.find(track => track.kind === 'video') as LocalVideoTrack | undefined;
 
   // const capabilities = videoTrack!.mediaStreamTrack.getCapabilities()
   // console.log(capabilities)
@@ -117,12 +117,11 @@ export default function CaptureImage() {
   // })
 
   // Remote track
-  // const participants = useParticipants();
-  // const participant = participants[0];
-  // const publications = usePublications(participant);
-  // const videoPublication = publications.find(p => !p.trackName.includes('screen') && p.kind === 'video');
-  // const videoTrack = useTrack(videoPublication) as RemoteVideoTrack;
-  // console.log(videoTrack);
+  const participants = useParticipants();
+  const participant = participants[0];
+  const publications = usePublications(participant);
+  const videoPublication = publications.find(p => !p.trackName.includes('screen') && p.kind === 'video');
+  const videoTrack = useTrack(videoPublication) as RemoteVideoTrack;
 
   // if (videoTrack) {
   //   const capabilities = videoTrack.mediaStreamTrack.getCapabilities();
