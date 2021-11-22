@@ -153,12 +153,14 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     // TODO change this to just FrameMarker for OCR "mode"
     markerArea.availableMarkerTypes = [...markerArea.BASIC_MARKER_TYPES];
 
+    markerArea.settings.displayMode = 'popup';
+
     // attach an event handler to assign annotated image back to our image element
     markerArea.addEventListener('render', event => {
       console.log(imageRef);
       console.log(imageRef.current);
       console.log(event);
-      (document.getElementsByClassName('__markerjs2_')[0] as HTMLElement).style.top = '296px';
+      // (document.getElementsByClassName('__markerjs2_')[0] as HTMLElement).style.top = '296px';
       if (imageRef.current) {
         imageRef.current.src = event.dataUrl;
       }
