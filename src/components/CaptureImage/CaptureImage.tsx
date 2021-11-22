@@ -42,7 +42,7 @@ const useStyles = makeStyles(() => ({
   },
   photoPreview: {
     '@media (max-width: 1600px)': {
-      width: '500px',
+      width: '787px',
     },
   },
   canvasContainer: {
