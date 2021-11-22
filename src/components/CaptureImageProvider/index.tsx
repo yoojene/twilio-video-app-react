@@ -20,6 +20,8 @@ type CaptureImageContextType = {
   setAnnotatedPhoto: (annotatedPhoto: string) => void;
   imgRef: React.MutableRefObject<HTMLImageElement> | null;
   setImageRef: (imgRef: any) => void;
+  scale: number;
+  setScale: (scale: number) => void;
   // getImagesFromStorage: () => Promise<S3ProviderListOutput>
 };
 
@@ -30,6 +32,8 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   const [isMarkupPanelOpen, setMarkupPanelOpen] = useState(false);
   const [annotatedPhoto, setAnnotatedPhoto] = useState('');
   const [imgRef, setImageRef] = useState(null);
+
+  const [scale, setScale] = useState(1);
   const { room } = useVideoContext();
 
   const getVideoElementFromDialog = useCallback(() => {
@@ -197,6 +201,8 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         setAnnotatedPhoto,
         imgRef,
         setImageRef,
+        scale,
+        setScale,
         // getImagesFromStorage
       }}
     >

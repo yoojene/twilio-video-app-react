@@ -18,6 +18,7 @@ import ToggleCaptureImageButton from '../Buttons/ToggleCaptureImageButton/Toggle
 import SaveCaptureImageButton from '../Buttons/SaveCaptureImageButton/SaveCaptureImageButton';
 import CaptureImageButton from '../Buttons/CaptureImageButton/CaptureImageButton';
 import AnnotateButton from '../Buttons/AnnotateButton/AnnotateButton';
+import ZoomButton from '../Buttons/ZoomButton/ZoomButton';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -133,49 +134,9 @@ export default function MenuBar() {
               <Grid container>
                 <div className={classes.buttonContainer}>
                   <CaptureImageButton />
-                  <Button
-                    color="primary"
-                    variant="contained"
-                    className={classes.button}
-                    // onClick={annotateImage}
-                    // disabled={isMarkupPanelOpen}
-                  >
-                    Annotate
-                  </Button>
                   <AnnotateButton />
-                  {/* <Button 
-                  color="primary" 
-                  variant="contained" 
-                  className={classes.button} 
-                  // onClick={performOCR}
-                  >
-                  OCR
-                </Button> */}
                   <SaveCaptureImageButton />
-                  <Button
-                    color="primary"
-                    variant="contained"
-                    className={classes.button}
-                    // onClick={zoomOne}
-                  >
-                    1X
-                  </Button>
-                  <Button
-                    color="primary"
-                    variant="contained"
-                    className={classes.button}
-                    // onClick={zoomTwo}
-                  >
-                    2X
-                  </Button>
-                  <Button
-                    color="primary"
-                    variant="contained"
-                    className={classes.button}
-                    // onClick={zoomThree}
-                  >
-                    3X
-                  </Button>
+                  <ZoomButton />
                 </div>
               </Grid>
             ) : (

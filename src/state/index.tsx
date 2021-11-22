@@ -69,6 +69,9 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
       getToken: async (user_identity, room_name) => {
         const endpoint = process.env.REACT_APP_TOKEN_ENDPOINT || '/token';
 
+        console.log(process.env.REACT_APP_TOKEN_ENDPOINT);
+        console.log(endpoint);
+
         return fetch(endpoint, {
           method: 'POST',
           headers: {

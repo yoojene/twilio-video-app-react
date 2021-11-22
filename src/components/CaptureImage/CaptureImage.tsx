@@ -81,12 +81,10 @@ const useStyles = makeStyles(() => ({
 }));
 
 export default function CaptureImage() {
-  const [scale, setScale] = useState(1);
-
   const imgRef = useRef() as React.MutableRefObject<HTMLImageElement>;
 
   const classes = useStyles();
-  const { createMarkerArea, isMarkupPanelOpen, setImageRef } = useCaptureImageContext();
+  const { createMarkerArea, isMarkupPanelOpen, setImageRef, scale } = useCaptureImageContext();
 
   setImageRef(imgRef);
 
@@ -173,18 +171,6 @@ export default function CaptureImage() {
   // track.applyConstraints({ advanced: [{ "zoom": 2.0 }] } as any);
 
   // })
-  const annotateImage = () => {
-    console.log(imgRef);
-    const markerArea = createMarkerArea(imgRef);
-    console.log(markerArea);
-    console.log(isMarkupPanelOpen);
-
-    if (!isMarkupPanelOpen) {
-      markerArea.show();
-    } else {
-      markerArea.close();
-    }
-  };
 
   // const performOCR = () => {
   //   // Get element.getBoundingClientRect from image with marker
@@ -192,16 +178,6 @@ export default function CaptureImage() {
   //   const domRect = boundingBox.getBoundingClientRect();
   //   console.log(domRect);
   // };
-
-  const zoomOne = () => {
-    setScale(1);
-  };
-  const zoomTwo = () => {
-    setScale(2);
-  };
-  const zoomThree = () => {
-    setScale(3);
-  };
 
   return (
     <>
@@ -254,27 +230,9 @@ export default function CaptureImage() {
         </Grid>
       </div>
       <div className={classes.buttonContainer}>
-        <Button
-          color="primary"
-          variant="contained"
-          className={classes.button}
-          onClick={annotateImage}
-          disabled={isMarkupPanelOpen}
-        >
-          Annotate
-        </Button>
         {/* <Button color="primary" variant="contained" className={classes.button} onClick={performOCR}>
           OCR
         </Button> */}
-        <Button color="primary" variant="contained" className={classes.button} onClick={zoomOne}>
-          1X
-        </Button>
-        <Button color="primary" variant="contained" className={classes.button} onClick={zoomTwo}>
-          2X
-        </Button>
-        <Button color="primary" variant="contained" className={classes.button} onClick={zoomThree}>
-          3X
-        </Button>
       </div>
     </>
   );
