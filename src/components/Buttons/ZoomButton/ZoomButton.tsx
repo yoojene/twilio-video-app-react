@@ -1,5 +1,5 @@
 import { Button, createStyles, makeStyles, Theme } from '@material-ui/core';
-import React, { useState } from 'react';
+import React from 'react';
 import useCaptureImageContext from '../../../hooks/useCaptureImageContext/useCaptureImageContext';
 
 const useStyles = makeStyles((theme: Theme) =>

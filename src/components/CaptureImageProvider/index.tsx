@@ -158,6 +158,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
       console.log(imageRef);
       console.log(imageRef.current);
       console.log(event);
+      (document.getElementsByClassName('__markerjs2_')[0] as HTMLElement).style.top = '296px';
       if (imageRef.current) {
         imageRef.current.src = event.dataUrl;
       }

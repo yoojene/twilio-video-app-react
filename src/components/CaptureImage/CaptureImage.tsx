@@ -84,7 +84,7 @@ export default function CaptureImage() {
   const imgRef = useRef() as React.MutableRefObject<HTMLImageElement>;
 
   const classes = useStyles();
-  const { createMarkerArea, isMarkupPanelOpen, setImageRef, scale } = useCaptureImageContext();
+  const { setImageRef, scale } = useCaptureImageContext();
 
   setImageRef(imgRef);
 
