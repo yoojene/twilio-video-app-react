@@ -7,29 +7,29 @@ import useRoomState from '../../hooks/useRoomState/useRoomState';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 
 type CaptureImageContextType = {
-  isCaptureImageDialogOpen: boolean;
-  setIsCaptureImageDialogOpen: (isCaptureImageDialogOpen: boolean) => void;
   getVideoElementFromDialog: () => HTMLElement | null;
   isCaptureImageOpen: boolean;
   setIsCaptureImageOpen: (isCaptureImageOpen: boolean) => void;
   setVideoOnCanvas: (video: HTMLElement, scale?: number) => HTMLCanvasElement | undefined;
   saveImageToStorage: () => void;
   setPhotoFromCanvas: (canvas: HTMLCanvasElement) => HTMLElement | null;
-  createMarkerArea: (imageRef: React.MutableRefObject<HTMLImageElement>) => markerjs2.MarkerArea;
+  createMarkerArea: (imageRef: any) => markerjs2.MarkerArea;
   isMarkupPanelOpen: boolean;
   setMarkupPanelOpen: (isMarkupPanelOpen: boolean) => void;
   annotatedPhoto: string;
   setAnnotatedPhoto: (annotatedPhoto: string) => void;
+  imgRef: React.MutableRefObject<HTMLImageElement> | null;
+  setImageRef: (imgRef: any) => void;
   // getImagesFromStorage: () => Promise<S3ProviderListOutput>
 };
 
 export const CaptureImageContext = createContext<CaptureImageContextType>(null!);
 
 export const CaptureImageProvider: React.FC = ({ children }) => {
-  const [isCaptureImageDialogOpen, setIsCaptureImageDialogOpen] = useState(false);
   const [isCaptureImageOpen, setIsCaptureImageOpen] = useState(false);
   const [isMarkupPanelOpen, setMarkupPanelOpen] = useState(false);
   const [annotatedPhoto, setAnnotatedPhoto] = useState('');
+  const [imgRef, setImageRef] = useState(null);
   const { room } = useVideoContext();
 
   const getVideoElementFromDialog = useCallback(() => {
@@ -50,9 +50,13 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         ctx?.scale(scale, scale);
       }
       if (!scale) scale = 1;
+
       const x = (canvas.width / scale - video.offsetWidth) / 2;
       const y = (canvas.height / scale - video.offsetHeight) / 2;
-      ctx?.drawImage(video as CanvasImageSource, x, y);
+
+      console.log(x);
+      console.log(y);
+      ctx?.drawImage(video as CanvasImageSource, 0, 0);
 
       return canvas;
     }
@@ -180,8 +184,6 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   return (
     <CaptureImageContext.Provider
       value={{
-        isCaptureImageDialogOpen,
-        setIsCaptureImageDialogOpen,
         isCaptureImageOpen,
         setIsCaptureImageOpen,
         getVideoElementFromDialog,
@@ -193,6 +195,8 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         setMarkupPanelOpen,
         annotatedPhoto,
         setAnnotatedPhoto,
+        imgRef,
+        setImageRef,
         // getImagesFromStorage
       }}
     >

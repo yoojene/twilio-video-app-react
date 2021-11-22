@@ -12,8 +12,12 @@ import ToggleAudioButton from '../Buttons/ToggleAudioButton/ToggleAudioButton';
 import ToggleChatButton from '../Buttons/ToggleChatButton/ToggleChatButton';
 import ToggleVideoButton from '../Buttons/ToggleVideoButton/ToggleVideoButton';
 import ToggleScreenShareButton from '../Buttons/ToogleScreenShareButton/ToggleScreenShareButton';
-import CaptureImageButton from '../Buttons/CaptureImageButton/CaptureImageButton';
 import useParticipants from '../../hooks/useParticipants/useParticipants';
+import useCaptureImageContext from '../../hooks/useCaptureImageContext/useCaptureImageContext';
+import ToggleCaptureImageButton from '../Buttons/ToggleCaptureImageButton/ToggleCaptureImageButton';
+import SaveCaptureImageButton from '../Buttons/SaveCaptureImageButton/SaveCaptureImageButton';
+import CaptureImageButton from '../Buttons/CaptureImageButton/CaptureImageButton';
+import AnnotateButton from '../Buttons/AnnotateButton/AnnotateButton';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -61,6 +65,28 @@ const useStyles = makeStyles((theme: Theme) =>
         display: 'none',
       },
     },
+    buttonGridContainer: {
+      // "&*::after": {
+      // height: '22px',
+      // },
+      // "&*::before": {
+      // height: '22px',
+      // }
+    },
+    buttonContainer: {
+      // marginTop: '-5rem',
+      // paddingTop: '16px',
+      // paddingBottom: '16px',
+      // height: '40px',
+      // marginLeft: '8px',
+      // flex: '0 0 auto',
+      // display: 'flex',
+      // justifyContent: 'center',
+    },
+    button: {
+      textAlign: 'center',
+      marginLeft: '8px',
+    },
   })
 );
 
@@ -72,6 +98,7 @@ export default function MenuBar() {
   const isReconnecting = roomState === 'reconnecting';
   const noParticipants = participants.length === 0;
   const { room } = useVideoContext();
+  const { isCaptureImageOpen } = useCaptureImageContext();
 
   // Local testing
   // switch noParticipants to !noParticipants when not testing on single feed
@@ -91,17 +118,69 @@ export default function MenuBar() {
               <Typography variant="body1">{room!.name}</Typography>
             </Grid>
           </Hidden>
-          <Grid item>
+          <Grid item className={classes.buttonGridContainer}>
             <Grid container justifyContent="center">
               <ToggleAudioButton disabled={isReconnecting} />
               <ToggleVideoButton disabled={isReconnecting} />
-              {!noParticipants && <CaptureImageButton disabled={isReconnecting} />}
+              {noParticipants && <ToggleCaptureImageButton disabled={isReconnecting} />}
               {!isSharingScreen && !isMobile && <ToggleScreenShareButton disabled={isReconnecting} />}
               {process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && <ToggleChatButton />}
               <Hidden smDown>
                 <Menu />
               </Hidden>
             </Grid>
+            {isCaptureImageOpen ? (
+              <Grid container>
+                <div className={classes.buttonContainer}>
+                  <CaptureImageButton />
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    className={classes.button}
+                    // onClick={annotateImage}
+                    // disabled={isMarkupPanelOpen}
+                  >
+                    Annotate
+                  </Button>
+                  <AnnotateButton />
+                  {/* <Button 
+                  color="primary" 
+                  variant="contained" 
+                  className={classes.button} 
+                  // onClick={performOCR}
+                  >
+                  OCR
+                </Button> */}
+                  <SaveCaptureImageButton />
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    className={classes.button}
+                    // onClick={zoomOne}
+                  >
+                    1X
+                  </Button>
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    className={classes.button}
+                    // onClick={zoomTwo}
+                  >
+                    2X
+                  </Button>
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    className={classes.button}
+                    // onClick={zoomThree}
+                  >
+                    3X
+                  </Button>
+                </div>
+              </Grid>
+            ) : (
+              ''
+            )}
           </Grid>
           <Hidden smDown>
             <Grid style={{ flex: 1 }}>

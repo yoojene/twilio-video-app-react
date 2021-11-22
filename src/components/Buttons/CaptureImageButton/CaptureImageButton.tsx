@@ -1,33 +1,34 @@
-import Button from '@material-ui/core/Button';
+import { Button, createStyles, makeStyles, Theme } from '@material-ui/core';
 import React from 'react';
 import useCaptureImageContext from '../../../hooks/useCaptureImageContext/useCaptureImageContext';
-import useDevices from '../../../hooks/useDevices/useDevices';
-// import CameraIcon from '../../../icons/CameraIcon';
-import { ReactComponent as CameraIcon } from '../../../icons/camera-outline.svg';
 
-export default function CaptureImageButton(props: { disabled?: boolean; className?: string }) {
-  const { hasVideoInputDevices } = useDevices();
-  const {
-    isCaptureImageDialogOpen,
-    setIsCaptureImageDialogOpen,
-    isCaptureImageOpen,
-    setIsCaptureImageOpen,
-  } = useCaptureImageContext();
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    button: {
+      textAlign: 'center',
+      marginLeft: '8px',
+    },
+  })
+);
+export default function CaptureImageButton() {
+  const classes = useStyles();
 
-  const openCaptureImage = () => {
-    console.log('capture image clicked!!!');
-    // setIsCaptureImageDialogOpen(!isCaptureImageDialogOpen);
-    setIsCaptureImageOpen(!isCaptureImageOpen);
+  const { getVideoElementFromDialog, setVideoOnCanvas, setPhotoFromCanvas } = useCaptureImageContext();
+
+  const captureImage = () => {
+    console.log('capture image from captureImageButton');
+    const video = getVideoElementFromDialog();
+    if (video) {
+      const canvas = setVideoOnCanvas(video);
+      if (canvas) {
+        setPhotoFromCanvas(canvas);
+      }
+    }
   };
 
   return (
-    <Button
-      className={props.className}
-      onClick={openCaptureImage}
-      disabled={!hasVideoInputDevices || props.disabled}
-      startIcon={<CameraIcon />}
-    >
-      Capture Image
+    <Button color="primary" variant="contained" className={classes.button} onClick={captureImage}>
+      Capture
     </Button>
   );
 }

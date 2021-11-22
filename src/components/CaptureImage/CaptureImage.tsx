@@ -12,6 +12,8 @@ import useParticipants from '../../hooks/useParticipants/useParticipants';
 import usePublications from '../../hooks/usePublications/usePublications';
 import useTrack from '../../hooks/useTrack/useTrack';
 import SavedImageGallery from '../SavedImageGallery/SavedImageGallery';
+import ChatWindow from '../ChatWindow/ChatWindow';
+import useChatContext from '../../hooks/useChatContext/useChatContext';
 
 const useStyles = makeStyles(() => ({
   title: {
@@ -29,6 +31,9 @@ const useStyles = makeStyles(() => ({
   },
   preview: {
     width: '1000px',
+    '@media (max-width: 1600px)': {
+      width: '500px',
+    },
     maxHeight: '600px',
     margin: '0.5em auto',
     '& video': {
@@ -36,8 +41,9 @@ const useStyles = makeStyles(() => ({
     },
   },
   photoPreview: {
-    // width: '320px',
-    // backgroundSize: 'auto',
+    '@media (max-width: 1600px)': {
+      width: '500px',
+    },
   },
   canvasContainer: {
     width: '100%',
@@ -65,6 +71,13 @@ const useStyles = makeStyles(() => ({
     width: '100%',
     textAlign: 'center',
   },
+  galleryTitle: {
+    textAlign: 'center',
+  },
+  galleryContainer: {
+    // display: 'flex',
+    justifyContent: 'center',
+  },
 }));
 
 export default function CaptureImage() {
@@ -73,19 +86,16 @@ export default function CaptureImage() {
   const imgRef = useRef() as React.MutableRefObject<HTMLImageElement>;
 
   const classes = useStyles();
-  const {
-    getVideoElementFromDialog,
-    setVideoOnCanvas,
-    saveImageToStorage,
-    setPhotoFromCanvas,
-    createMarkerArea,
-    isMarkupPanelOpen,
-  } = useCaptureImageContext();
+  const { createMarkerArea, isMarkupPanelOpen, setImageRef } = useCaptureImageContext();
+
+  setImageRef(imgRef);
+
+  const { isChatWindowOpen } = useChatContext();
 
   // Local track for testing - uncomment for browser testing
 
-  // const { localTracks } = useVideoContext();
-  // const videoTrack = localTracks.find(track => track.kind === 'video') as LocalVideoTrack | undefined;
+  const { localTracks } = useVideoContext();
+  const videoTrack = localTracks.find(track => track.kind === 'video') as LocalVideoTrack | undefined;
 
   // const capabilities = videoTrack!.mediaStreamTrack.getCapabilities()
   // console.log(capabilities)
@@ -117,11 +127,11 @@ export default function CaptureImage() {
   // })
 
   // Remote track
-  const participants = useParticipants();
-  const participant = participants[0];
-  const publications = usePublications(participant);
-  const videoPublication = publications.find(p => !p.trackName.includes('screen') && p.kind === 'video');
-  const videoTrack = useTrack(videoPublication) as RemoteVideoTrack;
+  // const participants = useParticipants();
+  // const participant = participants[0];
+  // const publications = usePublications(participant);
+  // const videoPublication = publications.find(p => !p.trackName.includes('screen') && p.kind === 'video');
+  // const videoTrack = useTrack(videoPublication) as RemoteVideoTrack;
 
   // if (videoTrack) {
   //   const capabilities = videoTrack.mediaStreamTrack.getCapabilities();
@@ -163,22 +173,6 @@ export default function CaptureImage() {
   // track.applyConstraints({ advanced: [{ "zoom": 2.0 }] } as any);
 
   // })
-
-  const captureImage = () => {
-    const video = getVideoElementFromDialog();
-    if (video) {
-      const canvas = setVideoOnCanvas(video, scale);
-      if (canvas) {
-        setPhotoFromCanvas(canvas);
-      }
-    }
-    // getImagesFromStorage();
-  };
-
-  const saveImage = async () => {
-    saveImageToStorage();
-  };
-
   const annotateImage = () => {
     console.log(imgRef);
     const markerArea = createMarkerArea(imgRef);
@@ -192,12 +186,12 @@ export default function CaptureImage() {
     }
   };
 
-  const performOCR = () => {
-    // Get element.getBoundingClientRect from image with marker
-    const boundingBox = document.getElementsByTagName('rect')[0]; // appears to show two rects for rectangle marker
-    const domRect = boundingBox.getBoundingClientRect();
-    console.log(domRect);
-  };
+  // const performOCR = () => {
+  //   // Get element.getBoundingClientRect from image with marker
+  //   const boundingBox = document.getElementsByTagName('rect')[0]; // appears to show two rects for rectangle marker
+  //   const domRect = boundingBox.getBoundingClientRect();
+  //   console.log(domRect);
+  // };
 
   const zoomOne = () => {
     setScale(1);
@@ -214,8 +208,8 @@ export default function CaptureImage() {
       <div className={classes.container}>
         <DialogTitle>Capture Image</DialogTitle>
 
-        <Grid container spacing={2}>
-          <Grid item xs={8}>
+        <Grid container spacing={1}>
+          <Grid item xs={6}>
             {videoTrack && (
               <div className={classes.preview}>
                 <VideoTrack id={'capture-video'} track={videoTrack} scale={scale} />
@@ -235,16 +229,31 @@ export default function CaptureImage() {
               />
             </div>
           </Grid>
-          <Grid item xs={4}>
-            <DialogTitle>Saved Images</DialogTitle>
-            <SavedImageGallery></SavedImageGallery>
-          </Grid>
+          {isChatWindowOpen ? (
+            <Grid item xs={3}>
+              <div className={classes.galleryContainer}>
+                <DialogTitle>Saved Images</DialogTitle>
+                <SavedImageGallery></SavedImageGallery>
+              </div>
+            </Grid>
+          ) : (
+            <Grid item xs={6}>
+              <DialogTitle className={classes.galleryTitle}>Saved Images</DialogTitle>
+              <div className={classes.galleryContainer}>
+                <SavedImageGallery></SavedImageGallery>
+              </div>
+            </Grid>
+          )}
+          {isChatWindowOpen ? (
+            <Grid item xs={3}>
+              <ChatWindow />
+            </Grid>
+          ) : (
+            ''
+          )}
         </Grid>
       </div>
       <div className={classes.buttonContainer}>
-        <Button color="primary" variant="contained" className={classes.button} onClick={captureImage}>
-          Capture
-        </Button>
         <Button
           color="primary"
           variant="contained"
@@ -254,12 +263,9 @@ export default function CaptureImage() {
         >
           Annotate
         </Button>
-        <Button color="primary" variant="contained" className={classes.button} onClick={performOCR}>
+        {/* <Button color="primary" variant="contained" className={classes.button} onClick={performOCR}>
           OCR
-        </Button>
-        <Button color="primary" variant="contained" className={classes.button} onClick={saveImage}>
-          Save
-        </Button>
+        </Button> */}
         <Button color="primary" variant="contained" className={classes.button} onClick={zoomOne}>
           1X
         </Button>
