@@ -10,7 +10,7 @@ type CaptureImageContextType = {
   getVideoElementFromDialog: () => HTMLElement | null;
   isCaptureImageOpen: boolean;
   setIsCaptureImageOpen: (isCaptureImageOpen: boolean) => void;
-  setVideoOnCanvas: (video: HTMLElement, scale?: number) => HTMLCanvasElement | undefined;
+  setVideoOnCanvas: (video: HTMLElement) => HTMLCanvasElement | undefined;
   saveImageToStorage: () => void;
   setPhotoFromCanvas: (canvas: HTMLCanvasElement) => HTMLElement | null;
   createMarkerArea: (imageRef: any) => markerjs2.MarkerArea;
@@ -41,30 +41,34 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     return video;
   }, []);
 
-  const setVideoOnCanvas = useCallback((video, scale) => {
-    const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+  const setVideoOnCanvas = useCallback(
+    video => {
+      const canvas = document.getElementById('canvas') as HTMLCanvasElement;
 
-    if (canvas) {
-      const ctx = canvas.getContext('2d');
-      // Canvas setup for device in landscape mode
-      // TODO change this based on phone orientation
-      canvas.width = 1000;
-      canvas.height = 600;
-      if (scale) {
-        ctx?.scale(scale, scale);
+      if (canvas) {
+        const ctx = canvas.getContext('2d');
+        // Canvas setup for device in landscape mode
+        // TODO change this based on phone orientation
+        canvas.width = 1000;
+        canvas.height = 600;
+        if (scale) {
+          ctx?.scale(scale, scale);
+        }
+
+        const x = (canvas.width / scale - video.offsetWidth) / 2;
+        const y = (canvas.height / scale - video.offsetHeight) / 2;
+
+        if (scale === 1) {
+          ctx?.drawImage(video as CanvasImageSource, 0, 0);
+        } else {
+          ctx?.drawImage(video as CanvasImageSource, x, y);
+        }
+
+        return canvas;
       }
-      if (!scale) scale = 1;
-
-      const x = (canvas.width / scale - video.offsetWidth) / 2;
-      const y = (canvas.height / scale - video.offsetHeight) / 2;
-
-      console.log(x);
-      console.log(y);
-      ctx?.drawImage(video as CanvasImageSource, 0, 0);
-
-      return canvas;
-    }
-  }, []);
+    },
+    [scale]
+  );
 
   const setPhotoFromCanvas = useCallback(canvas => {
     const photo = document.getElementById('photo');
