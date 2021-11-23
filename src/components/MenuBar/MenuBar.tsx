@@ -19,6 +19,7 @@ import SaveCaptureImageButton from '../Buttons/SaveCaptureImageButton/SaveCaptur
 import CaptureImageButton from '../Buttons/CaptureImageButton/CaptureImageButton';
 import AnnotateButton from '../Buttons/AnnotateButton/AnnotateButton';
 import ZoomButton from '../Buttons/ZoomButton/ZoomButton';
+import ToggleGalleryButton from '../Buttons/ToggleGalleryButton/ToggleGalleryButton';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -137,6 +138,7 @@ export default function MenuBar() {
                   <AnnotateButton />
                   <SaveCaptureImageButton />
                   <ZoomButton />
+                  <ToggleGalleryButton />
                 </div>
               </Grid>
             ) : (

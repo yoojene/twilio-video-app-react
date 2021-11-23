@@ -75,7 +75,6 @@ const useStyles = makeStyles(() => ({
     textAlign: 'center',
   },
   galleryContainer: {
-    // display: 'flex',
     textAlign: 'center',
   },
 }));
@@ -84,7 +83,7 @@ export default function CaptureImage() {
   const imgRef = useRef() as React.MutableRefObject<HTMLImageElement>;
 
   const classes = useStyles();
-  const { setImageRef, scale } = useCaptureImageContext();
+  const { setImageRef, scale, photoBase64, isGalleryOpen, setIsGalleryOpen } = useCaptureImageContext();
 
   setImageRef(imgRef);
 
@@ -92,8 +91,8 @@ export default function CaptureImage() {
 
   // Local track for testing - uncomment for browser testing
 
-  // const { localTracks } = useVideoContext();
-  // const videoTrack = localTracks.find(track => track.kind === 'video') as LocalVideoTrack | undefined;
+  const { localTracks } = useVideoContext();
+  const localVideoTrack = localTracks.find(track => track.kind === 'video') as LocalVideoTrack | undefined;
 
   // const capabilities = videoTrack!.mediaStreamTrack.getCapabilities()
   // console.log(capabilities)
@@ -129,7 +128,7 @@ export default function CaptureImage() {
   const participant = participants[0];
   const publications = usePublications(participant);
   const videoPublication = publications.find(p => !p.trackName.includes('screen') && p.kind === 'video');
-  const videoTrack = useTrack(videoPublication) as RemoteVideoTrack;
+  const remoteVideoTrack = useTrack(videoPublication) as RemoteVideoTrack;
 
   // if (videoTrack) {
   //   const capabilities = videoTrack.mediaStreamTrack.getCapabilities();
@@ -179,6 +178,19 @@ export default function CaptureImage() {
   //   console.log(domRect);
   // };
 
+  let videoTrack;
+  if (window.navigator.appVersion.includes('Mobile')) {
+    console.log('mobile');
+    videoTrack = localVideoTrack;
+  } else {
+    console.log('desktop');
+    videoTrack = remoteVideoTrack;
+  }
+
+  useEffect(() => {
+    console.log(photoBase64);
+  }, [photoBase64]);
+
   return (
     <>
       <div className={classes.container}>
@@ -198,27 +210,33 @@ export default function CaptureImage() {
             <div className={classes.photoContainer}>
               <img
                 id="photo"
-                src={imagePlaceholder}
+                src={photoBase64 !== '' ? photoBase64 : imagePlaceholder}
                 alt="The screen capture will appear in this box."
                 className={classes.photoPreview}
                 ref={imgRef}
               />
             </div>
           </Grid>
-          {isChatWindowOpen ? (
-            <Grid item xs={3}>
-              <div className={classes.galleryContainer}>
-                <DialogTitle>Saved Images</DialogTitle>
-                <SavedImageGallery></SavedImageGallery>
-              </div>
-            </Grid>
+          {isGalleryOpen ? (
+            <>
+              {isChatWindowOpen ? (
+                <Grid item xs={3}>
+                  <div className={classes.galleryContainer}>
+                    <DialogTitle>Saved Images</DialogTitle>
+                    <SavedImageGallery></SavedImageGallery>
+                  </div>
+                </Grid>
+              ) : (
+                <Grid item xs={6}>
+                  <DialogTitle className={classes.galleryTitle}>Saved Images</DialogTitle>
+                  <div className={classes.galleryContainer}>
+                    <SavedImageGallery></SavedImageGallery>
+                  </div>
+                </Grid>
+              )}
+            </>
           ) : (
-            <Grid item xs={6}>
-              <DialogTitle className={classes.galleryTitle}>Saved Images</DialogTitle>
-              <div className={classes.galleryContainer}>
-                <SavedImageGallery></SavedImageGallery>
-              </div>
-            </Grid>
+            ''
           )}
           {isChatWindowOpen ? (
             <Grid item xs={3}>
@@ -228,11 +246,6 @@ export default function CaptureImage() {
             ''
           )}
         </Grid>
-      </div>
-      <div className={classes.buttonContainer}>
-        {/* <Button color="primary" variant="contained" className={classes.button} onClick={performOCR}>
-          OCR
-        </Button> */}
       </div>
     </>
   );

@@ -12,17 +12,20 @@ type CaptureImageContextType = {
   setIsCaptureImageOpen: (isCaptureImageOpen: boolean) => void;
   setVideoOnCanvas: (video: HTMLElement) => HTMLCanvasElement | undefined;
   saveImageToStorage: () => void;
-  setPhotoFromCanvas: (canvas: HTMLCanvasElement) => HTMLElement | null;
+  setPhotoFromCanvas: (canvas: HTMLCanvasElement) => void;
   createMarkerArea: (imageRef: any) => markerjs2.MarkerArea;
   isMarkupPanelOpen: boolean;
   setMarkupPanelOpen: (isMarkupPanelOpen: boolean) => void;
   annotatedPhoto: string;
   setAnnotatedPhoto: (annotatedPhoto: string) => void;
   imgRef: React.MutableRefObject<HTMLImageElement> | null;
-  setImageRef: (imgRef: any) => void;
+  setImageRef: (imgRef: React.MutableRefObject<HTMLImageElement> | null) => void;
   scale: number;
   setScale: (scale: number) => void;
-  // getImagesFromStorage: () => Promise<S3ProviderListOutput>
+  photoBase64: string;
+  setPhotoBase64: (photoBase64: string) => void;
+  isGalleryOpen: boolean;
+  setIsGalleryOpen: (isGalleryOpen: boolean) => void;
 };
 
 export const CaptureImageContext = createContext<CaptureImageContextType>(null!);
@@ -31,7 +34,9 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   const [isCaptureImageOpen, setIsCaptureImageOpen] = useState(false);
   const [isMarkupPanelOpen, setMarkupPanelOpen] = useState(false);
   const [annotatedPhoto, setAnnotatedPhoto] = useState('');
-  const [imgRef, setImageRef] = useState(null);
+  const [imgRef, setImageRef] = useState<React.MutableRefObject<HTMLImageElement> | null>(null);
+  const [photoBase64, setPhotoBase64] = useState<string>('');
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
 
   const [scale, setScale] = useState(1);
   const { room } = useVideoContext();
@@ -70,13 +75,14 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     [scale]
   );
 
-  const setPhotoFromCanvas = useCallback(canvas => {
+  const setPhotoFromCanvas = (canvas: HTMLCanvasElement) => {
     const photo = document.getElementById('photo');
     const data = canvas.toDataURL('image/png');
     photo!.setAttribute('src', data);
+    setPhotoBase64(data);
 
-    return photo;
-  }, []);
+    // return photo;
+  };
 
   const saveImageToStorage = async () => {
     // Temporarily also pass to Rekognition here for text searching
@@ -210,7 +216,10 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         setImageRef,
         scale,
         setScale,
-        // getImagesFromStorage
+        photoBase64,
+        setPhotoBase64,
+        isGalleryOpen,
+        setIsGalleryOpen,
       }}
     >
       {children}
