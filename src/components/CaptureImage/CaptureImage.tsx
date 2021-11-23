@@ -76,7 +76,7 @@ const useStyles = makeStyles(() => ({
   },
   galleryContainer: {
     // display: 'flex',
-    justifyContent: 'center',
+    textAlign: 'center',
   },
 }));
 
