@@ -22,7 +22,7 @@ export default function ToggleGalleryButton() {
   };
   return (
     <Button color="primary" variant="contained" className={classes.button} onClick={toggleGallery}>
-      Gallery
+      {isGalleryOpen ? 'Close' : 'Open'} Gallery
     </Button>
   );
 }
