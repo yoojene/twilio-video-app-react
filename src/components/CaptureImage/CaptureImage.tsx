@@ -165,11 +165,6 @@ export default function CaptureImage() {
     console.log('desktop');
     videoTrack = remoteVideoTrack;
   }
-
-  useEffect(() => {
-    console.log(photoBase64);
-  }, [photoBase64]);
-
   return (
     <>
       <div className={classes.container}>
