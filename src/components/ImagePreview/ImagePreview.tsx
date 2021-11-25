@@ -20,6 +20,7 @@ const useStyles = makeStyles(() => ({
   photoContainer: {
     width: '100%',
     textAlign: 'center',
+    marginLeft: '16px',
   },
 }));
 

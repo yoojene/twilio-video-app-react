@@ -30,6 +30,7 @@ const useStyles = makeStyles(() => ({
   },
   preview: {
     width: '1000px',
+    marginLeft: '16px',
     '@media (max-width: 1600px)': {
       width: '500px',
     },
