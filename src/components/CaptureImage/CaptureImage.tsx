@@ -4,8 +4,6 @@ import VideoTrack from '../VideoTrack/VideoTrack';
 
 import { LocalVideoTrack, Participant, RemoteVideoTrack, Room } from 'twilio-video';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
-import imagePlaceholder from '../../images/import_placeholder-90.png';
-import * as markerjs2 from 'markerjs2';
 import useCaptureImageContext from '../../hooks/useCaptureImageContext/useCaptureImageContext';
 import { Button, DialogActions, DialogTitle, Grid } from '@material-ui/core';
 import useParticipants from '../../hooks/useParticipants/useParticipants';
@@ -14,6 +12,7 @@ import useTrack from '../../hooks/useTrack/useTrack';
 import SavedImageGallery from '../SavedImageGallery/SavedImageGallery';
 import ChatWindow from '../ChatWindow/ChatWindow';
 import useChatContext from '../../hooks/useChatContext/useChatContext';
+import ImagePreview from '../ImagePreview/ImagePreview';
 
 const useStyles = makeStyles(() => ({
   title: {
@@ -40,18 +39,6 @@ const useStyles = makeStyles(() => ({
       maxHeight: '600px',
     },
   },
-  photoPreview: {
-    '@media (max-width: 1600px)': {
-      width: '787px',
-    },
-  },
-  canvasContainer: {
-    width: '100%',
-    textAlign: 'center',
-  },
-  canvas: {
-    display: 'none',
-  },
   buttonContainer: {
     marginTop: '-5rem',
     padding: '16px',
@@ -67,10 +54,6 @@ const useStyles = makeStyles(() => ({
     //    // marginLeft: '8px',
     // }
   },
-  photoContainer: {
-    width: '100%',
-    textAlign: 'center',
-  },
   galleryTitle: {
     textAlign: 'center',
   },
@@ -80,12 +63,8 @@ const useStyles = makeStyles(() => ({
 }));
 
 export default function CaptureImage() {
-  const imgRef = useRef() as React.MutableRefObject<HTMLImageElement>;
-
   const classes = useStyles();
-  const { setImageRef, scale, photoBase64, isGalleryOpen, setIsGalleryOpen } = useCaptureImageContext();
-
-  setImageRef(imgRef);
+  const { scale, isGalleryOpen } = useCaptureImageContext();
 
   const { isChatWindowOpen } = useChatContext();
 
@@ -203,19 +182,7 @@ export default function CaptureImage() {
                 <VideoTrack id={'capture-video'} track={videoTrack} scale={scale} />
               </div>
             )}
-
-            <div className={classes.canvasContainer}>
-              <canvas id="canvas" className={classes.canvas}></canvas>
-            </div>
-            <div className={classes.photoContainer}>
-              <img
-                id="photo"
-                src={photoBase64 !== '' ? photoBase64 : imagePlaceholder}
-                alt="The screen capture will appear in this box."
-                className={classes.photoPreview}
-                ref={imgRef}
-              />
-            </div>
+            <ImagePreview />
           </Grid>
           {isGalleryOpen ? (
             <>
