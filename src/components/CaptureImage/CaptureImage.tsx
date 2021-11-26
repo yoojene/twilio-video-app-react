@@ -13,6 +13,7 @@ import SavedImageGallery from '../SavedImageGallery/SavedImageGallery';
 import ChatWindow from '../ChatWindow/ChatWindow';
 import useChatContext from '../../hooks/useChatContext/useChatContext';
 import ImagePreview from '../ImagePreview/ImagePreview';
+import RemoteImagePreview from '../RemoteImagePreview/RemoteImagePreview';
 
 const useStyles = makeStyles(() => ({
   title: {
@@ -178,6 +179,7 @@ export default function CaptureImage() {
               </div>
             )}
             <ImagePreview />
+            {checkIsUser() ? <RemoteImagePreview /> : ''}
           </Grid>
           {isGalleryOpen ? (
             <>

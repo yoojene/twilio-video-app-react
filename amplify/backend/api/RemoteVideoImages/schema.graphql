@@ -1,0 +1,6 @@
+type Image @model {
+  id: ID!
+  name: String!
+  base64Data: String!
+  description: String
+}

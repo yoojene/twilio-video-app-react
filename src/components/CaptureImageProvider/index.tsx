@@ -5,7 +5,9 @@ import { S3ProviderListOutputItem, S3ProviderListOutput } from '@aws-amplify/sto
 import { Room } from 'twilio-video';
 import useRoomState from '../../hooks/useRoomState/useRoomState';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
-
+import { defaultBase64Image } from '../RemoteImagePreview/RemoteImagePreviewData';
+import { DataStore } from '@aws-amplify/datastore';
+import { Image } from '../../models';
 type CaptureImageContextType = {
   checkIsUser: () => boolean;
   captureImage: () => void;
@@ -38,7 +40,8 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   const [isMarkupPanelOpen, setMarkupPanelOpen] = useState(false);
   const [annotatedPhoto, setAnnotatedPhoto] = useState('');
   const [imgRef, setImageRef] = useState<React.MutableRefObject<HTMLImageElement> | null>(null);
-  const [photoBase64, setPhotoBase64] = useState<string>('');
+  const [photoBase64, setPhotoBase64] = useState<string>(defaultBase64Image);
+
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
 
   const [scale, setScale] = useState(1);
@@ -109,11 +112,12 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     [scale]
   );
 
-  const setPhotoFromCanvas = (canvas: HTMLCanvasElement) => {
+  const setPhotoFromCanvas = async (canvas: HTMLCanvasElement) => {
     const photo = document.getElementById('photo');
     const data = canvas.toDataURL('image/png');
     photo!.setAttribute('src', data);
-    setPhotoBase64(data);
+    console.log('saving image to DataStore');
+    await DataStore.save(new Image({ name: 'test', base64Data: data }));
 
     // return photo;
   };
