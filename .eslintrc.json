@@ -31,6 +31,8 @@
         ],
         "space-before-blocks": "error",
         "object-curly-spacing": "off",
-        "no-multiple-empty-lines": "error"
+        "no-multiple-empty-lines": "error",
+        "@typescript-eslint/explicit-module-boundary-types": "off",
+        "@typescript-eslint/no-non-null-assertion": "off"
     }
 }
