@@ -41,6 +41,7 @@ export default function SavedImageGallery() {
   return (
     <>
       {images?.map((img: any) => (
+        // eslint-disable-next-line react/jsx-key
         <StyledS3Image imgKey={img.key}></StyledS3Image>
       ))}
     </>

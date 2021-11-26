@@ -56,12 +56,12 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   if (process.env.REACT_APP_SET_AUTH === 'firebase') {
     contextValue = {
       ...contextValue,
-      ...useFirebaseAuth(), // eslint-disable-line react-hooks/rules-of-hooks
+      ...useFirebaseAuth(),
     };
   } else if (process.env.REACT_APP_SET_AUTH === 'passcode') {
     contextValue = {
       ...contextValue,
-      ...usePasscodeAuth(), // eslint-disable-line react-hooks/rules-of-hooks
+      ...usePasscodeAuth(),
     };
   } else {
     contextValue = {

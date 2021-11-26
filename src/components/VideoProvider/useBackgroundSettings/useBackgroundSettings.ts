@@ -103,7 +103,7 @@ const rawImagePaths = [
   SanFrancisco,
 ];
 
-let imageElements = new Map();
+const imageElements = new Map();
 
 const getImage = (index: number): Promise<HTMLImageElement> => {
   return new Promise((resolve, reject) => {
