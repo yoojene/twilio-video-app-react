@@ -14,7 +14,8 @@ type CaptureImageContextType = {
   setVideoOnCanvas: (video: HTMLElement) => HTMLCanvasElement | undefined;
   saveImageToStorage: () => void;
   setPhotoFromCanvas: (canvas: HTMLCanvasElement) => void;
-  createMarkerArea: (imageRef: any) => markerjs2.MarkerArea;
+  annotateImage: () => void;
+  createMarkerArea: (imageRef: React.MutableRefObject<HTMLImageElement> | null) => markerjs2.MarkerArea;
   isMarkupPanelOpen: boolean;
   setMarkupPanelOpen: (isMarkupPanelOpen: boolean) => void;
   annotatedPhoto: string;
@@ -49,6 +50,20 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
       if (canvas) {
         setPhotoFromCanvas(canvas);
       }
+    }
+  };
+
+  const annotateImage = () => {
+    console.log('annotate image');
+    console.log(imgRef);
+    const markerArea = createMarkerArea(imgRef);
+    console.log(markerArea);
+    console.log(isMarkupPanelOpen);
+
+    if (!isMarkupPanelOpen) {
+      markerArea.show();
+    } else {
+      markerArea.close();
     }
   };
 
@@ -163,10 +178,10 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     return new Blob([text], { type: 'text/plain' });
   };
 
-  const createMarkerArea = (imageRef: React.MutableRefObject<HTMLImageElement>) => {
+  const createMarkerArea = (imageRef: React.MutableRefObject<HTMLImageElement> | null) => {
     console.log(imageRef);
     // create a marker.js MarkerArea
-    const markerArea = new markerjs2.MarkerArea(imageRef.current!);
+    const markerArea = new markerjs2.MarkerArea(imageRef!.current!);
 
     // TODO change this to just FrameMarker for OCR "mode"
     markerArea.availableMarkerTypes = [...markerArea.BASIC_MARKER_TYPES];
@@ -176,11 +191,11 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     // attach an event handler to assign annotated image back to our image element
     markerArea.addEventListener('render', event => {
       console.log(imageRef);
-      console.log(imageRef.current);
+      console.log(imageRef!.current);
       console.log(event);
       // (document.getElementsByClassName('__markerjs2_')[0] as HTMLElement).style.top = '296px';
-      if (imageRef.current) {
-        imageRef.current.src = event.dataUrl;
+      if (imageRef!.current) {
+        imageRef!.current.src = event.dataUrl;
       }
     });
 
@@ -220,6 +235,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         setVideoOnCanvas,
         saveImageToStorage,
         setPhotoFromCanvas,
+        annotateImage,
         createMarkerArea,
         isMarkupPanelOpen,
         setMarkupPanelOpen,

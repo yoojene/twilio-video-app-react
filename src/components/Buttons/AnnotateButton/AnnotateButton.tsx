@@ -1,5 +1,5 @@
 import { makeStyles, Theme, createStyles, Button } from '@material-ui/core';
-import React, { useRef } from 'react';
+import React from 'react';
 import useCaptureImageContext from '../../../hooks/useCaptureImageContext/useCaptureImageContext';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -14,19 +14,12 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function AnnotateButton() {
   const classes = useStyles();
 
-  const { createMarkerArea, isMarkupPanelOpen, imgRef } = useCaptureImageContext();
+  const { isMarkupPanelOpen, captureImage, annotateImage } = useCaptureImageContext();
 
-  const annotateImage = () => {
-    console.log(imgRef);
-    const markerArea = createMarkerArea(imgRef);
-    console.log(markerArea);
-    console.log(isMarkupPanelOpen);
-
-    if (!isMarkupPanelOpen) {
-      markerArea.show();
-    } else {
-      markerArea.close();
-    }
+  const doAnnotateImage = () => {
+    captureImage();
+    console.log('then annotate');
+    annotateImage();
   };
 
   return (
@@ -34,7 +27,7 @@ export default function AnnotateButton() {
       color="primary"
       variant="contained"
       className={classes.button}
-      onClick={annotateImage}
+      onClick={doAnnotateImage}
       disabled={isMarkupPanelOpen}
     >
       Annotate

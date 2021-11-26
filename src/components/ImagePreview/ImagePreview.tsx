@@ -27,16 +27,12 @@ const useStyles = makeStyles(() => ({
 export default function ImagePreview() {
   const imgRef = useRef() as React.MutableRefObject<HTMLImageElement>;
 
-  const { photoBase64, setImageRef } = useCaptureImageContext();
+  const { setImageRef } = useCaptureImageContext();
   setImageRef(imgRef);
 
   const classes = useStyles();
 
   console.log(imgRef);
-
-  useEffect(() => {
-    console.log(photoBase64);
-  }, [photoBase64]);
 
   return (
     <>
@@ -46,7 +42,7 @@ export default function ImagePreview() {
       <div className={classes.photoContainer}>
         <img
           id="photo"
-          src={photoBase64 !== '' ? photoBase64 : imagePlaceholder}
+          src={imagePlaceholder}
           alt="The screen capture will appear in this box."
           className={classes.photoPreview}
           ref={imgRef}
