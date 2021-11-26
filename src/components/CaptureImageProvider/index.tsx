@@ -7,6 +7,7 @@ import useRoomState from '../../hooks/useRoomState/useRoomState';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 
 type CaptureImageContextType = {
+  captureImage: () => void;
   getVideoElementFromDialog: () => HTMLElement | null;
   isCaptureImageOpen: boolean;
   setIsCaptureImageOpen: (isCaptureImageOpen: boolean) => void;
@@ -40,6 +41,16 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
 
   const [scale, setScale] = useState(1);
   const { room } = useVideoContext();
+
+  const captureImage = () => {
+    const video = getVideoElementFromDialog();
+    if (video) {
+      const canvas = setVideoOnCanvas(video);
+      if (canvas) {
+        setPhotoFromCanvas(canvas);
+      }
+    }
+  };
 
   const getVideoElementFromDialog = useCallback(() => {
     const video = document.getElementById('capture-video');
@@ -136,11 +147,12 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   };
 
   const dataURIToBlob = (dataURI: string) => {
-    var arr = dataURI.split(','),
+    const arr = dataURI.split(','),
       mime = arr[0]!.match(/:(.*?);/)![1],
-      bstr = atob(arr[1]),
-      n = bstr.length,
-      u8arr = new Uint8Array(n);
+      bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+
     while (n--) {
       u8arr[n] = bstr.charCodeAt(n);
     }
@@ -201,6 +213,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   return (
     <CaptureImageContext.Provider
       value={{
+        captureImage,
         isCaptureImageOpen,
         setIsCaptureImageOpen,
         getVideoElementFromDialog,

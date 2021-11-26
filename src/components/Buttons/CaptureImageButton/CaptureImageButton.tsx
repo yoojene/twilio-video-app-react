@@ -13,21 +13,14 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function CaptureImageButton() {
   const classes = useStyles();
 
-  const { getVideoElementFromDialog, setVideoOnCanvas, setPhotoFromCanvas } = useCaptureImageContext();
+  const { captureImage } = useCaptureImageContext();
 
-  const captureImage = () => {
-    console.log('capture image from captureImageButton');
-    const video = getVideoElementFromDialog();
-    if (video) {
-      const canvas = setVideoOnCanvas(video);
-      if (canvas) {
-        setPhotoFromCanvas(canvas);
-      }
-    }
+  const doCaptureImage = () => {
+    captureImage();
   };
 
   return (
-    <Button color="primary" variant="contained" className={classes.button} onClick={captureImage}>
+    <Button color="primary" variant="contained" className={classes.button} onClick={doCaptureImage}>
       Capture
     </Button>
   );
