@@ -65,7 +65,7 @@ const useStyles = makeStyles(() => ({
 
 export default function CaptureImage() {
   const classes = useStyles();
-  const { scale, isGalleryOpen } = useCaptureImageContext();
+  const { checkIsUser, scale, isGalleryOpen } = useCaptureImageContext();
 
   const { isChatWindowOpen } = useChatContext();
 
@@ -73,6 +73,22 @@ export default function CaptureImage() {
 
   const { localTracks } = useVideoContext();
   const localVideoTrack = localTracks.find(track => track.kind === 'video') as LocalVideoTrack | undefined;
+
+  // Remote track
+  const participants = useParticipants();
+  const participant = participants[0];
+  const publications = usePublications(participant);
+  const videoPublication = publications.find(p => !p.trackName.includes('screen') && p.kind === 'video');
+  const remoteVideoTrack = useTrack(videoPublication) as RemoteVideoTrack;
+
+  let videoTrack;
+  if (checkIsUser()) {
+    console.log('mobile');
+    videoTrack = localVideoTrack;
+  } else {
+    console.log('desktop');
+    videoTrack = remoteVideoTrack;
+  }
 
   // const capabilities = videoTrack!.mediaStreamTrack.getCapabilities()
   // console.log(capabilities)
@@ -102,13 +118,6 @@ export default function CaptureImage() {
   // track.applyConstraints({ advanced: [{ "zoom": 2.0 }] } as any);
 
   // })
-
-  // Remote track
-  const participants = useParticipants();
-  const participant = participants[0];
-  const publications = usePublications(participant);
-  const videoPublication = publications.find(p => !p.trackName.includes('screen') && p.kind === 'video');
-  const remoteVideoTrack = useTrack(videoPublication) as RemoteVideoTrack;
 
   // if (videoTrack) {
   //   const capabilities = videoTrack.mediaStreamTrack.getCapabilities();
@@ -158,14 +167,6 @@ export default function CaptureImage() {
   //   console.log(domRect);
   // };
 
-  let videoTrack;
-  if (window.navigator.appVersion.includes('Mobile')) {
-    console.log('mobile');
-    videoTrack = localVideoTrack;
-  } else {
-    console.log('desktop');
-    videoTrack = remoteVideoTrack;
-  }
   return (
     <>
       <div className={classes.container}>

@@ -7,6 +7,7 @@ import useRoomState from '../../hooks/useRoomState/useRoomState';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 
 type CaptureImageContextType = {
+  checkIsUser: () => boolean;
   captureImage: () => void;
   getVideoElementFromDialog: () => HTMLElement | null;
   isCaptureImageOpen: boolean;
@@ -42,6 +43,13 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
 
   const [scale, setScale] = useState(1);
   const { room } = useVideoContext();
+
+  // For now, assumption is that Remote User will be on mobile device and Agent will be on
+  const checkIsUser = () => {
+    let isUser: boolean;
+    window.navigator.appVersion.includes('Mobile') ? (isUser = true) : (isUser = false);
+    return isUser;
+  };
 
   const captureImage = () => {
     const video = getVideoElementFromDialog();
@@ -228,6 +236,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   return (
     <CaptureImageContext.Provider
       value={{
+        checkIsUser,
         captureImage,
         isCaptureImageOpen,
         setIsCaptureImageOpen,
