@@ -22,17 +22,21 @@
     ],
     "rules": {
         "semi": [
-            "error",
+            "warn",
             "always"
         ],
         "indent": [
-            "error",
+            "warn",
             2
         ],
-        "space-before-blocks": "error",
+        "space-before-blocks": "warn",
         "object-curly-spacing": "off",
-        "no-multiple-empty-lines": "error",
+        "no-multiple-empty-lines": "warn",
         "@typescript-eslint/explicit-module-boundary-types": "off",
-        "@typescript-eslint/no-non-null-assertion": "off"
+        "@typescript-eslint/no-non-null-assertion": "off",
+        "@typescript-eslint/ban-ts-comment": "off",
+        "@typescript-eslint/no-empty-function" : "off",
+        "@typescript-eslint/ban-types": "off",
+        "react-hooks/rules-of-hooks": "off"
     }
 }
