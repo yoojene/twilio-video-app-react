@@ -169,8 +169,6 @@ export default function CaptureImage() {
   return (
     <>
       <div className={classes.container}>
-        <DialogTitle>Capture Image</DialogTitle>
-
         <Grid container spacing={1}>
           <Grid item xs={6}>
             {videoTrack && (
