@@ -201,13 +201,16 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     markerArea.settings.displayMode = 'popup';
 
     // attach an event handler to assign annotated image back to our image element
-    markerArea.addEventListener('render', event => {
+    markerArea.addEventListener('render', async event => {
       console.log(imageRef);
       console.log(imageRef!.current);
       console.log(event);
       // (document.getElementsByClassName('__markerjs2_')[0] as HTMLElement).style.top = '296px';
       if (imageRef!.current) {
         imageRef!.current.src = event.dataUrl;
+        console.log('saving annotated image to DataStore');
+        await DataStore.save(new Image({ name: 'test', base64Data: event.dataUrl }));
+        setPhotoBase64(event.dataUrl);
       }
     });
 

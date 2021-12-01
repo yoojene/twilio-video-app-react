@@ -1,8 +1,9 @@
 import { DataStore } from '@aws-amplify/datastore';
 import { makeStyles } from '@material-ui/styles';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import useCaptureImageContext from '../../hooks/useCaptureImageContext/useCaptureImageContext';
 import { Image } from '../../models';
+import { defaultBase64Image } from './RemoteImagePreviewData';
 
 const useStyles = makeStyles(() => ({
   photoPreview: {
@@ -27,6 +28,7 @@ export default function RemoteImagePreview() {
   const classes = useStyles();
 
   const { photoBase64, setPhotoBase64 } = useCaptureImageContext();
+  // const [photoBase64, setPhotoBase64] = useState<string>(defaultBase64Image);
 
   useEffect(() => {
     getImages();
@@ -39,10 +41,15 @@ export default function RemoteImagePreview() {
     const images = await DataStore.query(Image);
     console.log(images);
     if (images.length > 0) {
+      console.log('returning new image');
+      console.log(photoBase64);
+      console.log(images[images.length - 1].base64Data);
       setPhotoBase64(images[images.length - 1].base64Data);
-    } else {
-      setPhotoBase64(photoBase64);
+      // return images[images.length - 1].base64Data;
     }
+    // else {
+    //   return photoBase64;
+    // }
   };
 
   return (

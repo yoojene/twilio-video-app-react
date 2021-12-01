@@ -178,7 +178,7 @@ export default function CaptureImage() {
                 <VideoTrack id={'capture-video'} track={videoTrack} scale={scale} />
               </div>
             )}
-            <ImagePreview />
+            {!checkIsUser() ? <ImagePreview /> : ''}
             {checkIsUser() ? <RemoteImagePreview /> : ''}
           </Grid>
           {isGalleryOpen ? (
