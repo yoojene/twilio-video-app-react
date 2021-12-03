@@ -31,6 +31,7 @@ type CaptureImageContextType = {
   setPhotoBase64: (photoBase64: string) => void;
   isGalleryOpen: boolean;
   setIsGalleryOpen: (isGalleryOpen: boolean) => void;
+  getImagesFromDataStore: () => void;
 };
 
 export const CaptureImageContext = createContext<CaptureImageContextType>(null!);
@@ -226,19 +227,18 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     return markerArea;
   };
 
-  // const getImagesFromStorage = useCallback(async () => {
-
-  //   try {
-  //     const allFiles = await Storage.list('')
-  //     const photoFiles: S3ProviderListOutput = allFiles.filter(f => !f.key?.endsWith('txt') && (f.lastModified?.getDate() === new Date().getDate() && f.lastModified.getMonth() === new Date().getMonth() && f.lastModified.getFullYear() === new Date().getFullYear()))
-  //     console.log(photoFiles);
-  //     return photoFiles;
-
-  //   } catch (err) {
-  //     console.error(err)
-  //   }
-
-  // }, [])
+  const getImagesFromDataStore = async () => {
+    console.log('getting Images from datastore');
+    const images = await DataStore.query(Image);
+    console.log(images);
+    if (images.length > 0) {
+      console.log('returning new image');
+      console.log(photoBase64);
+      console.log(images[images.length - 1].base64Data);
+      setPhotoBase64(images[images.length - 1].base64Data);
+      // return images[images.length - 1].base64Data;
+    }
+  };
 
   return (
     <CaptureImageContext.Provider
@@ -265,6 +265,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         setPhotoBase64,
         isGalleryOpen,
         setIsGalleryOpen,
+        getImagesFromDataStore,
       }}
     >
       {children}

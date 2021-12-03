@@ -27,30 +27,13 @@ const useStyles = makeStyles(() => ({
 export default function RemoteImagePreview() {
   const classes = useStyles();
 
-  const { photoBase64, setPhotoBase64 } = useCaptureImageContext();
-  // const [photoBase64, setPhotoBase64] = useState<string>(defaultBase64Image);
+  const { photoBase64, getImagesFromDataStore } = useCaptureImageContext();
 
   useEffect(() => {
-    getImages();
-    const subscription = DataStore.observe(Image).subscribe(() => getImages());
+    getImagesFromDataStore();
+    const subscription = DataStore.observe(Image).subscribe(() => getImagesFromDataStore());
     return () => subscription.unsubscribe();
   });
-
-  const getImages = async () => {
-    console.log('getting Images from datastore');
-    const images = await DataStore.query(Image);
-    console.log(images);
-    if (images.length > 0) {
-      console.log('returning new image');
-      console.log(photoBase64);
-      console.log(images[images.length - 1].base64Data);
-      setPhotoBase64(images[images.length - 1].base64Data);
-      // return images[images.length - 1].base64Data;
-    }
-    // else {
-    //   return photoBase64;
-    // }
-  };
 
   return (
     <div className={classes.photoContainer}>

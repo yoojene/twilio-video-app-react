@@ -20,6 +20,7 @@ import CaptureImageButton from '../Buttons/CaptureImageButton/CaptureImageButton
 import AnnotateButton from '../Buttons/AnnotateButton/AnnotateButton';
 import ZoomButton from '../Buttons/ZoomButton/ZoomButton';
 import ToggleGalleryButton from '../Buttons/ToggleGalleryButton/ToggleGalleryButton';
+import RefreshImagePreviewButton from '../Buttons/RefreshImagePreviewButton/RefreshImagePreviewButton';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -100,7 +101,7 @@ export default function MenuBar() {
   const isReconnecting = roomState === 'reconnecting';
   const noParticipants = participants.length === 0;
   const { room } = useVideoContext();
-  const { isCaptureImageOpen } = useCaptureImageContext();
+  const { isCaptureImageOpen, checkIsUser } = useCaptureImageContext();
 
   // Local testing
   // switch noParticipants to !noParticipants when not testing on single feed
@@ -134,11 +135,12 @@ export default function MenuBar() {
             {isCaptureImageOpen ? (
               <Grid container>
                 <div className={classes.buttonContainer}>
-                  <CaptureImageButton />
-                  <AnnotateButton />
-                  <SaveCaptureImageButton />
-                  <ZoomButton />
-                  <ToggleGalleryButton />
+                  {!checkIsUser() ? <CaptureImageButton /> : ''}
+                  {!checkIsUser() ? <AnnotateButton /> : ''}
+                  {!checkIsUser() ? <ZoomButton /> : ''}
+                  {!checkIsUser() ? <SaveCaptureImageButton /> : ''}
+                  {!checkIsUser() ? <ToggleGalleryButton /> : ''}
+                  {checkIsUser() ? <RefreshImagePreviewButton /> : ''}
                 </div>
               </Grid>
             ) : (
