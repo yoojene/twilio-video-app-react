@@ -9,6 +9,9 @@ export const onCreateImage = /* GraphQL */ `
       name
       base64Data
       description
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -21,6 +24,9 @@ export const onUpdateImage = /* GraphQL */ `
       name
       base64Data
       description
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }
@@ -33,6 +39,9 @@ export const onDeleteImage = /* GraphQL */ `
       name
       base64Data
       description
+      _version
+      _deleted
+      _lastChangedAt
       createdAt
       updatedAt
     }

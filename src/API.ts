@@ -7,6 +7,7 @@ export type CreateImageInput = {
   name: string;
   base64Data: string;
   description?: string | null;
+  _version?: number | null;
 };
 
 export type ModelImageConditionInput = {
@@ -63,6 +64,9 @@ export type Image = {
   name: string;
   base64Data: string;
   description?: string | null;
+  _version: number;
+  _deleted?: boolean | null;
+  _lastChangedAt: number;
   createdAt: string;
   updatedAt: string;
 };
@@ -72,10 +76,12 @@ export type UpdateImageInput = {
   name?: string | null;
   base64Data?: string | null;
   description?: string | null;
+  _version?: number | null;
 };
 
 export type DeleteImageInput = {
   id: string;
+  _version?: number | null;
 };
 
 export type ModelImageFilterInput = {
@@ -108,6 +114,7 @@ export type ModelImageConnection = {
   __typename: 'ModelImageConnection';
   items?: Array<Image | null> | null;
   nextToken?: string | null;
+  startedAt?: number | null;
 };
 
 export type CreateImageMutationVariables = {
@@ -122,6 +129,9 @@ export type CreateImageMutation = {
     name: string;
     base64Data: string;
     description?: string | null;
+    _version: number;
+    _deleted?: boolean | null;
+    _lastChangedAt: number;
     createdAt: string;
     updatedAt: string;
   } | null;
@@ -139,6 +149,9 @@ export type UpdateImageMutation = {
     name: string;
     base64Data: string;
     description?: string | null;
+    _version: number;
+    _deleted?: boolean | null;
+    _lastChangedAt: number;
     createdAt: string;
     updatedAt: string;
   } | null;
@@ -156,8 +169,38 @@ export type DeleteImageMutation = {
     name: string;
     base64Data: string;
     description?: string | null;
+    _version: number;
+    _deleted?: boolean | null;
+    _lastChangedAt: number;
     createdAt: string;
     updatedAt: string;
+  } | null;
+};
+
+export type SyncImagesQueryVariables = {
+  filter?: ModelImageFilterInput | null;
+  limit?: number | null;
+  nextToken?: string | null;
+  lastSync?: number | null;
+};
+
+export type SyncImagesQuery = {
+  syncImages?: {
+    __typename: 'ModelImageConnection';
+    items?: Array<{
+      __typename: 'Image';
+      id: string;
+      name: string;
+      base64Data: string;
+      description?: string | null;
+      _version: number;
+      _deleted?: boolean | null;
+      _lastChangedAt: number;
+      createdAt: string;
+      updatedAt: string;
+    } | null> | null;
+    nextToken?: string | null;
+    startedAt?: number | null;
   } | null;
 };
 
@@ -172,6 +215,9 @@ export type GetImageQuery = {
     name: string;
     base64Data: string;
     description?: string | null;
+    _version: number;
+    _deleted?: boolean | null;
+    _lastChangedAt: number;
     createdAt: string;
     updatedAt: string;
   } | null;
@@ -192,10 +238,14 @@ export type ListImagesQuery = {
       name: string;
       base64Data: string;
       description?: string | null;
+      _version: number;
+      _deleted?: boolean | null;
+      _lastChangedAt: number;
       createdAt: string;
       updatedAt: string;
     } | null> | null;
     nextToken?: string | null;
+    startedAt?: number | null;
   } | null;
 };
 
@@ -206,6 +256,9 @@ export type OnCreateImageSubscription = {
     name: string;
     base64Data: string;
     description?: string | null;
+    _version: number;
+    _deleted?: boolean | null;
+    _lastChangedAt: number;
     createdAt: string;
     updatedAt: string;
   } | null;
@@ -218,6 +271,9 @@ export type OnUpdateImageSubscription = {
     name: string;
     base64Data: string;
     description?: string | null;
+    _version: number;
+    _deleted?: boolean | null;
+    _lastChangedAt: number;
     createdAt: string;
     updatedAt: string;
   } | null;
@@ -230,6 +286,9 @@ export type OnDeleteImageSubscription = {
     name: string;
     base64Data: string;
     description?: string | null;
+    _version: number;
+    _deleted?: boolean | null;
+    _lastChangedAt: number;
     createdAt: string;
     updatedAt: string;
   } | null;

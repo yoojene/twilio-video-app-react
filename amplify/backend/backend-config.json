@@ -57,7 +57,7 @@
             "authenticationType": "API_KEY",
             "apiKeyConfig": {
               "apiKeyExpirationDays": 365,
-              "description": "RemoteVideoImageKey"
+              "description": "RemoteVideoImagesKey"
             }
           },
           "additionalAuthenticationProviders": []
