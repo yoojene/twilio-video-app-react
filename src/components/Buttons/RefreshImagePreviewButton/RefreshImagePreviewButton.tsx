@@ -8,6 +8,7 @@ const useStyles = makeStyles((theme: Theme) =>
     button: {
       textAlign: 'center',
       marginLeft: '8px',
+      marginTop: '10px',
     },
   })
 );
@@ -21,7 +22,7 @@ export default function RefreshImagePreviewButton() {
     getImagesFromDataStore();
   };
   return (
-    <Button color="primary" variant="contained" className={classes.button} onClick={refreshPreview}>
+    <Button className={classes.button} onClick={refreshPreview}>
       Refresh Preview
     </Button>
   );

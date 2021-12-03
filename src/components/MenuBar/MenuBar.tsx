@@ -68,13 +68,18 @@ const useStyles = makeStyles((theme: Theme) =>
         display: 'none',
       },
     },
-    buttonGridContainer: {
+    buttonGridItem: {
       // "&*::after": {
       // height: '22px',
       // },
       // "&*::before": {
       // height: '22px',
       // }
+    },
+    buttonGridContainer: {
+      [theme.breakpoints.down('sm')]: {
+        marginTop: `-57px`,
+      },
     },
     buttonContainer: {
       // marginTop: '-5rem',
@@ -121,13 +126,14 @@ export default function MenuBar() {
               <Typography variant="body1">{room!.name}</Typography>
             </Grid>
           </Hidden>
-          <Grid item className={classes.buttonGridContainer}>
-            <Grid container justifyContent="center">
+          <Grid item className={classes.buttonGridItem}>
+            <Grid container justifyContent="center" className={classes.buttonGridContainer}>
               <ToggleAudioButton disabled={isReconnecting} />
               <ToggleVideoButton disabled={isReconnecting} />
               {!noParticipants && <ToggleCaptureImageButton disabled={isReconnecting} />}
               {!isSharingScreen && !isMobile && <ToggleScreenShareButton disabled={isReconnecting} />}
               {process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && <ToggleChatButton />}
+              {isCaptureImageOpen && checkIsUser() ? <RefreshImagePreviewButton /> : ''}
               <Hidden smDown>
                 <Menu />
               </Hidden>
@@ -140,7 +146,6 @@ export default function MenuBar() {
                   {!checkIsUser() ? <ZoomButton /> : ''}
                   {!checkIsUser() ? <SaveCaptureImageButton /> : ''}
                   {!checkIsUser() ? <ToggleGalleryButton /> : ''}
-                  {checkIsUser() ? <RefreshImagePreviewButton /> : ''}
                 </div>
               </Grid>
             ) : (
