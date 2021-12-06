@@ -26,6 +26,7 @@
     "@visx/react-spring": "2.1.2",
     "aws-amplify": "4.3.3",
     "aws-sdk": "2.1013.0",
+    "axios": "0.24.0",
     "concurrently": "^6.0.0",
     "copyfiles": "2.4.1",
     "cross-env": "^7.0.2",
@@ -51,6 +52,7 @@
     "styled-components": "5.3.3",
     "ts-node": "^9.1.1",
     "twilio": "^3.63.1",
+    "twilio-sync": "3.0.6",
     "twilio-video": "^2.17.1",
     "typescript": "^3.8.3"
   },

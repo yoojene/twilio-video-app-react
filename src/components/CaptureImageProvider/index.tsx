@@ -8,6 +8,8 @@ import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import { defaultBase64Image } from '../RemoteImagePreview/RemoteImagePreviewData';
 import { DataStore } from '@aws-amplify/datastore';
 import { Image } from '../../models';
+import axios from 'axios';
+import { SyncClient } from 'twilio-sync';
 type CaptureImageContextType = {
   checkIsUser: () => boolean;
   captureImage: () => void;
@@ -32,6 +34,8 @@ type CaptureImageContextType = {
   isGalleryOpen: boolean;
   setIsGalleryOpen: (isGalleryOpen: boolean) => void;
   getImagesFromDataStore: () => void;
+  retrieveSyncToken: () => Promise<string>;
+  createSyncClient: (token: string) => SyncClient | null;
 };
 
 export const CaptureImageContext = createContext<CaptureImageContextType>(null!);
@@ -42,6 +46,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   const [annotatedPhoto, setAnnotatedPhoto] = useState('');
   const [imgRef, setImageRef] = useState<React.MutableRefObject<HTMLImageElement> | null>(null);
   const [photoBase64, setPhotoBase64] = useState<string>(defaultBase64Image);
+  const [client, setSyncClient] = useState<SyncClient | null>(null);
 
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
 
@@ -55,7 +60,9 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     return isUser;
   };
 
-  const captureImage = () => {
+  const captureImage = async () => {
+    const accessToken = await retrieveSyncToken();
+    createSyncClient(accessToken);
     const video = getVideoElementFromDialog();
     if (video) {
       const canvas = setVideoOnCanvas(video);
@@ -118,7 +125,14 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     const data = canvas.toDataURL('image/png');
     photo!.setAttribute('src', data);
     console.log('saving image to DataStore');
-    await DataStore.save(new Image({ name: 'test', base64Data: data }));
+    if (!client) {
+      return;
+    }
+
+    client?.document('dude').then(doc => {
+      doc.set({ base64Data: data }); // too large!
+    });
+    // await DataStore.save(new Image({ name: 'test', base64Data: data }));
 
     // return photo;
   };
@@ -240,6 +254,20 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     }
   };
 
+  const retrieveSyncToken = async () => {
+    console.log('trying to get token from server');
+    const result = await axios.get('/synctoken/' + 'dude'); // TODO use a real identiy from participants.  Not sure if needed
+    const accessToken = result.data.token;
+    console.log(accessToken);
+    return accessToken;
+  };
+
+  const createSyncClient = (token: string) => {
+    setSyncClient(new SyncClient(token, { logLevel: 'info' }));
+    console.log(client);
+    return client;
+  };
+
   return (
     <CaptureImageContext.Provider
       value={{
@@ -266,6 +294,8 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         isGalleryOpen,
         setIsGalleryOpen,
         getImagesFromDataStore,
+        retrieveSyncToken,
+        createSyncClient,
       }}
     >
       {children}

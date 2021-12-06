@@ -66,7 +66,7 @@ const useStyles = makeStyles(() => ({
 
 export default function CaptureImage() {
   const classes = useStyles();
-  const { checkIsUser, scale, isGalleryOpen } = useCaptureImageContext();
+  const { checkIsUser, scale, isGalleryOpen, retrieveSyncToken, createSyncClient } = useCaptureImageContext();
 
   const { isChatWindowOpen } = useChatContext();
 
@@ -90,6 +90,12 @@ export default function CaptureImage() {
     console.log('desktop');
     videoTrack = remoteVideoTrack;
   }
+
+  useEffect(() => {
+    retrieveSyncToken().then(accessToken => {
+      createSyncClient(accessToken);
+    });
+  }, []);
 
   // const capabilities = videoTrack!.mediaStreamTrack.getCapabilities()
   // console.log(capabilities)
