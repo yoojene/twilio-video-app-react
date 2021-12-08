@@ -27,13 +27,23 @@ const useStyles = makeStyles(() => ({
 export default function RemoteImagePreview() {
   const classes = useStyles();
 
-  const { photoBase64, getImagesFromDataStore } = useCaptureImageContext();
+  const { photoBase64, getImagesFromDataStore, client } = useCaptureImageContext();
 
   useEffect(() => {
     getImagesFromDataStore();
     const subscription = DataStore.observe(Image).subscribe(() => getImagesFromDataStore());
     return () => subscription.unsubscribe();
-  });
+
+    if (client) {
+      client!.document('dude').then(doc => {
+        console.log(doc);
+        doc.on('updated', data => {
+          console.log('updated!');
+          console.log(data.data.Blob);
+        });
+      });
+    }
+  }, []);
 
   return (
     <div className={classes.photoContainer}>

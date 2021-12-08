@@ -36,6 +36,7 @@ type CaptureImageContextType = {
   getImagesFromDataStore: () => void;
   retrieveSyncToken: () => Promise<string>;
   createSyncClient: (token: string) => SyncClient | null;
+  client: SyncClient | null;
 };
 
 export const CaptureImageContext = createContext<CaptureImageContextType>(null!);
@@ -123,16 +124,21 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   const setPhotoFromCanvas = async (canvas: HTMLCanvasElement) => {
     const photo = document.getElementById('photo');
     const data = canvas.toDataURL('image/png');
+
     photo!.setAttribute('src', data);
     console.log('saving image to DataStore');
     if (!client) {
       return;
     }
 
+    const file = dataURIToBlob(data) as File;
+
+    console.log(file);
+
     client?.document('dude').then(doc => {
-      doc.set({ base64Data: data }); // too large!
+      doc.set({ Blob: file }); // too large!
     });
-    // await DataStore.save(new Image({ name: 'test', base64Data: data }));
+    // await DataStore.save(new Image({ name: 'test', base64Data: file }));
 
     // return photo;
   };
@@ -296,6 +302,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         getImagesFromDataStore,
         retrieveSyncToken,
         createSyncClient,
+        client,
       }}
     >
       {children}
