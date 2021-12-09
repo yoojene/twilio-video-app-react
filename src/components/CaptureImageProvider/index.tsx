@@ -2,7 +2,7 @@ import React, { createContext, useCallback, useEffect, useState } from 'react';
 import { Predictions, Storage } from 'aws-amplify';
 import * as markerjs2 from 'markerjs2';
 import { S3ProviderListOutputItem, S3ProviderListOutput } from '@aws-amplify/storage';
-import { Room } from 'twilio-video';
+import { Room, LocalDataTrack, LocalDataTrackPublication } from 'twilio-video';
 import useRoomState from '../../hooks/useRoomState/useRoomState';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import { defaultBase64Image } from '../RemoteImagePreview/RemoteImagePreviewData';
@@ -37,7 +37,14 @@ type CaptureImageContextType = {
   retrieveSyncToken: () => Promise<string>;
   createSyncClient: (token: string) => SyncClient | null;
   client: SyncClient | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  canvasWidthHeight: any;
+  setCanvasWidthHeight: (canvasWidthHeight: any) => void;
 };
+
+interface CanvasElement extends HTMLCanvasElement {
+  captureStream(frameRate?: number): MediaStream;
+}
 
 export const CaptureImageContext = createContext<CaptureImageContextType>(null!);
 
@@ -48,11 +55,19 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   const [imgRef, setImageRef] = useState<React.MutableRefObject<HTMLImageElement> | null>(null);
   const [photoBase64, setPhotoBase64] = useState<string>(defaultBase64Image);
   const [client, setSyncClient] = useState<SyncClient | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [canvasWidthHeight, setCanvasWidthHeight] = useState<any>([]);
 
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
 
   const [scale, setScale] = useState(1);
   const { room } = useVideoContext();
+
+  let localDataTrackPublication: LocalDataTrackPublication;
+
+  if (room) {
+    [localDataTrackPublication] = [...room!.localParticipant.dataTracks.values()];
+  }
 
   // For now, assumption is that Remote User will be on mobile device and Agent will be on
   const checkIsUser = () => {
@@ -100,8 +115,12 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         const ctx = canvas.getContext('2d');
         // Canvas setup for device in landscape mode
         // TODO change this based on phone orientation
-        canvas.width = 1000;
-        canvas.height = 600;
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        console.log(video.videoWidth);
+        console.log(video.videoHeight);
+        setCanvasWidthHeight([video.videoWidth, video.videoHeight]);
+        console.log(canvasWidthHeight);
         if (scale) {
           ctx?.scale(scale, scale);
         }
@@ -114,7 +133,6 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         } else {
           ctx?.drawImage(video as CanvasImageSource, x, y);
         }
-
         return canvas;
       }
     },
@@ -124,20 +142,58 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   const setPhotoFromCanvas = async (canvas: HTMLCanvasElement) => {
     const photo = document.getElementById('photo');
     const data = canvas.toDataURL('image/png');
+    const ctx = canvas.getContext('2d');
 
+    const CHUNK_LEN = 64000;
+    const img = ctx?.getImageData(0, 0, canvas.width, canvas.height);
+    console.log(img?.data);
+    console.log(img?.data.byteLength);
+    const len = img?.data.byteLength;
+    const n = (len! / CHUNK_LEN) | 0;
+
+    len?.toString();
+
+    console.log('Sending a total of ' + len + ' byte(s)');
+
+    localDataTrackPublication.track.send(len!.toString());
+    for (let i = 0; i < n; i++) {
+      const start = i * CHUNK_LEN,
+        end = (i + 1) * CHUNK_LEN;
+      console.log(start + ' - ' + (end - 1));
+
+      // img?.data.subarray(start, end);
+      // dataChannel.send(img.data.subarray(start, end));
+      localDataTrackPublication.track.send(img?.data.subarray(start, end) as ArrayBuffer);
+      console.log('i is - ' + i);
+    }
+
+    // send the reminder, if any
+
+    if (len! % CHUNK_LEN) {
+      console.log('last ' + (len! % CHUNK_LEN) + ' byte(s)');
+      localDataTrackPublication.track.send(img?.data.subarray(n * CHUNK_LEN) as ArrayBuffer);
+    }
+    // console.log(canvas);
+    // const stream = (document.getElementById('canvas') as CanvasElement).captureStream();
+    // console.log(stream);
+    // const tracks = stream.getVideoTracks();
+    // console.log(tracks);
     photo!.setAttribute('src', data);
     console.log('saving image to DataStore');
-    if (!client) {
-      return;
-    }
+
+    // const dataTrack = new LocalDataTrack();
+    // if (!client) {
+    //   return;
+    // }
 
     const file = dataURIToBlob(data) as File;
 
     console.log(file);
+    console.log(await file.arrayBuffer());
 
-    client?.document('dude').then(doc => {
-      doc.set({ Blob: file }); // too large!
-    });
+    // client?.document('dude').then(doc => {
+    //   doc.set({ Blob: file }); // too large!
+    // });
     // await DataStore.save(new Image({ name: 'test', base64Data: file }));
 
     // return photo;
@@ -220,6 +276,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     markerArea.availableMarkerTypes = [...markerArea.BASIC_MARKER_TYPES];
 
     markerArea.settings.displayMode = 'popup';
+    markerArea.renderTarget = document.getElementById('canvas') as HTMLCanvasElement;
 
     // attach an event handler to assign annotated image back to our image element
     markerArea.addEventListener('render', async event => {
@@ -303,6 +360,8 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         retrieveSyncToken,
         createSyncClient,
         client,
+        canvasWidthHeight,
+        setCanvasWidthHeight,
       }}
     >
       {children}

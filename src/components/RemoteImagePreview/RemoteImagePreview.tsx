@@ -1,8 +1,12 @@
 import { DataStore } from '@aws-amplify/datastore';
 import { makeStyles } from '@material-ui/styles';
 import React, { useEffect, useState } from 'react';
+import { RemoteDataTrack } from 'twilio-video';
 import useCaptureImageContext from '../../hooks/useCaptureImageContext/useCaptureImageContext';
 import { Image } from '../../models';
+import { DataTrack as IDataTrack } from 'twilio-video';
+
+import DataTrack from '../DataTrack/DataTrack';
 import { defaultBase64Image } from './RemoteImagePreviewData';
 
 const useStyles = makeStyles(() => ({
@@ -24,36 +28,29 @@ const useStyles = makeStyles(() => ({
     marginLeft: '16px',
   },
 }));
-export default function RemoteImagePreview() {
+export default function RemoteImagePreview(props: { track: IDataTrack }) {
   const classes = useStyles();
 
-  const { photoBase64, getImagesFromDataStore, client } = useCaptureImageContext();
+  const { photoBase64, getImagesFromDataStore } = useCaptureImageContext();
 
   useEffect(() => {
     getImagesFromDataStore();
     const subscription = DataStore.observe(Image).subscribe(() => getImagesFromDataStore());
     return () => subscription.unsubscribe();
-
-    if (client) {
-      client!.document('dude').then(doc => {
-        console.log(doc);
-        doc.on('updated', data => {
-          console.log('updated!');
-          console.log(data.data.Blob);
-        });
-      });
-    }
   }, []);
 
   return (
-    <div className={classes.photoContainer}>
-      <img
-        id="photo"
-        src={photoBase64}
-        alt="Users screen capture"
-        className={classes.photoPreview}
+    <>
+      <DataTrack track={props.track} />
+      {/* <div className={classes.photoContainer}>
+        <img
+          id="photo"
+          src={photoBase64}
+          alt="Users screen capture"
+          className={classes.photoPreview}
         // ref={imgRef}
-      />
-    </div>
+        />
+      </div> */}
+    </>
   );
 }

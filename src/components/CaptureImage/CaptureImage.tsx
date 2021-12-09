@@ -14,6 +14,7 @@ import ChatWindow from '../ChatWindow/ChatWindow';
 import useChatContext from '../../hooks/useChatContext/useChatContext';
 import ImagePreview from '../ImagePreview/ImagePreview';
 import RemoteImagePreview from '../RemoteImagePreview/RemoteImagePreview';
+import { DataTrack as IDataTrack } from 'twilio-video';
 
 const useStyles = makeStyles(() => ({
   title: {
@@ -81,6 +82,11 @@ export default function CaptureImage() {
   const publications = usePublications(participant);
   const videoPublication = publications.find(p => !p.trackName.includes('screen') && p.kind === 'video');
   const remoteVideoTrack = useTrack(videoPublication) as RemoteVideoTrack;
+
+  // Data track
+
+  const dataPublication = publications.find(p => p.kind === 'data');
+  const dataTrack = useTrack(dataPublication) as IDataTrack;
 
   let videoTrack;
   if (checkIsUser()) {
@@ -185,7 +191,7 @@ export default function CaptureImage() {
               </div>
             )}
             {!checkIsUser() ? <ImagePreview /> : ''}
-            {checkIsUser() ? <RemoteImagePreview /> : ''}
+            {checkIsUser() && dataTrack ? <RemoteImagePreview track={dataTrack} /> : ''}
           </Grid>
           {isGalleryOpen ? (
             <>
