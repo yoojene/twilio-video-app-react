@@ -3,7 +3,6 @@ import { createExpressHandler } from './createExpressHandler';
 import express, { RequestHandler } from 'express';
 import path from 'path';
 import { ServerlessFunction } from './types';
-import { tokenGenerator } from './token_generator';
 const PORT = process.env.PORT ?? 8081;
 
 const app = express();
@@ -36,6 +35,7 @@ app.use((req, res, next) => {
   next();
 });
 app.use(express.static(path.join(__dirname, '../build')));
+
 
 app.get('/ping', function (req, res) {
   return res.send('pong');
