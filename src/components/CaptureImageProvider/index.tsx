@@ -37,9 +37,6 @@ type CaptureImageContextType = {
   retrieveSyncToken: () => Promise<string>;
   createSyncClient: (token: string) => SyncClient | null;
   client: SyncClient | null;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  canvasWidthHeight: any;
-  setCanvasWidthHeight: (canvasWidthHeight: any) => void;
 };
 
 interface CanvasElement extends HTMLCanvasElement {
@@ -55,8 +52,6 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   const [imgRef, setImageRef] = useState<React.MutableRefObject<HTMLImageElement> | null>(null);
   const [photoBase64, setPhotoBase64] = useState<string>(defaultBase64Image);
   const [client, setSyncClient] = useState<SyncClient | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [canvasWidthHeight, setCanvasWidthHeight] = useState<any>([]);
 
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
 
@@ -117,8 +112,6 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         canvas.height = video.videoHeight;
         console.log(video.videoWidth);
         console.log(video.videoHeight);
-        setCanvasWidthHeight([video.videoWidth, video.videoHeight]);
-        console.log(canvasWidthHeight);
         if (scale) {
           ctx?.scale(scale, scale);
         }
@@ -360,8 +353,6 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         retrieveSyncToken,
         createSyncClient,
         client,
-        canvasWidthHeight,
-        setCanvasWidthHeight,
       }}
     >
       {children}

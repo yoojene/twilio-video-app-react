@@ -12,8 +12,6 @@ const useStyles = makeStyles(() => ({
 export default function DataTrack({ track }: { track: IDataTrack }) {
   const classes = useStyles();
 
-  const { canvasWidthHeight } = useCaptureImageContext();
-
   useEffect(() => {
     // eslint-disable-next-line no-var
     var count = 0;
@@ -40,7 +38,6 @@ export default function DataTrack({ track }: { track: IDataTrack }) {
       if (count === buf.byteLength) {
         console.log('Done can render photo now');
         console.log(buf);
-        // console.log(canvasWidthHeight); // 640 / 320 on mac
         const remotecanvas = document.getElementById('remotecanvas') as HTMLCanvasElement;
 
         const ctx = remotecanvas.getContext('2d');
@@ -60,7 +57,6 @@ export default function DataTrack({ track }: { track: IDataTrack }) {
 
   return (
     <>
-      The remote image canvas is here
       <div className={classes.canvasContainer}>
         <canvas id="remotecanvas"></canvas>
       </div>
