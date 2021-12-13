@@ -67,7 +67,7 @@ const useStyles = makeStyles(() => ({
 
 export default function CaptureImage() {
   const classes = useStyles();
-  const { checkIsUser, scale, isGalleryOpen, retrieveSyncToken, createSyncClient } = useCaptureImageContext();
+  const { checkIsUser, scale, isGalleryOpen } = useCaptureImageContext();
 
   const { isChatWindowOpen } = useChatContext();
 

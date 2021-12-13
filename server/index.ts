@@ -37,17 +37,6 @@ app.use((req, res, next) => {
 });
 app.use(express.static(path.join(__dirname, '../build')));
 
-
-app.get('/synctoken/:id?', (req, res) => {
-  const id = req.params.id;
-  res.send(tokenGenerator(id));
-});
-
-app.post('/synctoken', (req, res) => {
-  const id = req.body.id;
-  res.send(tokenGenerator(id));
-});
-
 app.get('/ping', function (req, res) {
   return res.send('pong');
 });

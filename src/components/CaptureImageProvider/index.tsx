@@ -18,7 +18,7 @@ type CaptureImageContextType = {
   setIsCaptureImageOpen: (isCaptureImageOpen: boolean) => void;
   setVideoOnCanvas: (video: HTMLElement) => HTMLCanvasElement | undefined;
   saveImageToStorage: () => void;
-  setPhotoFromCanvas: (canvas: HTMLCanvasElement) => void;
+  sendImageOnDataTrackAndShowPhoto: (canvas: HTMLCanvasElement) => void;
   annotateImage: () => void;
   createMarkerArea: (imageRef: React.MutableRefObject<HTMLImageElement> | null) => markerjs2.MarkerArea;
   isMarkupPanelOpen: boolean;
@@ -34,9 +34,6 @@ type CaptureImageContextType = {
   isGalleryOpen: boolean;
   setIsGalleryOpen: (isGalleryOpen: boolean) => void;
   getImagesFromDataStore: () => void;
-  retrieveSyncToken: () => Promise<string>;
-  createSyncClient: (token: string) => SyncClient | null;
-  client: SyncClient | null;
 };
 
 interface CanvasElement extends HTMLCanvasElement {
@@ -51,7 +48,6 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   const [annotatedPhoto, setAnnotatedPhoto] = useState('');
   const [imgRef, setImageRef] = useState<React.MutableRefObject<HTMLImageElement> | null>(null);
   const [photoBase64, setPhotoBase64] = useState<string>(defaultBase64Image);
-  const [client, setSyncClient] = useState<SyncClient | null>(null);
 
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
 
@@ -64,7 +60,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     [localDataTrackPublication] = [...room!.localParticipant.dataTracks.values()];
   }
 
-  // For now, assumption is that Remote User will be on mobile device and Agent will be on
+  // For now, assumption is that Remote User will be on mobile device and Agent will be on desktop
   const checkIsUser = () => {
     let isUser: boolean;
     window.navigator.appVersion.includes('Mobile') ? (isUser = true) : (isUser = false);
@@ -76,7 +72,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     if (video) {
       const canvas = setVideoOnCanvas(video);
       if (canvas) {
-        setPhotoFromCanvas(canvas);
+        sendImageOnDataTrackAndShowPhoto(canvas);
       }
     }
   };
@@ -110,8 +106,6 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         // TODO change this based on phone orientation
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
-        console.log(video.videoWidth);
-        console.log(video.videoHeight);
         if (scale) {
           ctx?.scale(scale, scale);
         }
@@ -130,7 +124,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     [scale]
   );
 
-  const setPhotoFromCanvas = async (canvas: HTMLCanvasElement) => {
+  const sendImageOnDataTrackAndShowPhoto = async (canvas: HTMLCanvasElement) => {
     const photo = document.getElementById('photo');
     const data = canvas.toDataURL('image/png');
     const ctx = canvas.getContext('2d');
@@ -154,8 +148,6 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         end = (i + 1) * CHUNK_LEN;
       console.log(start + ' - ' + (end - 1));
 
-      // img?.data.subarray(start, end);
-      // dataChannel.send(img.data.subarray(start, end));
       localDataTrackPublication.track.send(img?.data.subarray(start, end) as ArrayBuffer);
       console.log('i is - ' + i);
     }
@@ -166,27 +158,15 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
       console.log('last ' + (len! % CHUNK_LEN) + ' byte(s)');
       localDataTrackPublication.track.send(img?.data.subarray(n * CHUNK_LEN) as ArrayBuffer);
     }
-    // console.log(canvas);
-    // const stream = (document.getElementById('canvas') as CanvasElement).captureStream();
-    // console.log(stream);
-    // const tracks = stream.getVideoTracks();
-    // console.log(tracks);
+
     photo!.setAttribute('src', data);
     console.log('saving image to DataStore');
-
-    // const dataTrack = new LocalDataTrack();
-    // if (!client) {
-    //   return;
-    // }
 
     const file = dataURIToBlob(data) as File;
 
     console.log(file);
     console.log(await file.arrayBuffer());
 
-    // client?.document('dude').then(doc => {
-    //   doc.set({ Blob: file }); // too large!
-    // });
     // await DataStore.save(new Image({ name: 'test', base64Data: file }));
 
     // return photo;
@@ -309,21 +289,6 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
       // return images[images.length - 1].base64Data;
     }
   };
-
-  const retrieveSyncToken = async () => {
-    console.log('trying to get token from server');
-    const result = await axios.get('/synctoken/' + 'dude'); // TODO use a real identiy from participants.  Not sure if needed
-    const accessToken = result.data.token;
-    console.log(accessToken);
-    return accessToken;
-  };
-
-  const createSyncClient = (token: string) => {
-    setSyncClient(new SyncClient(token, { logLevel: 'info' }));
-    console.log(client);
-    return client;
-  };
-
   return (
     <CaptureImageContext.Provider
       value={{
@@ -334,7 +299,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         getVideoElementFromDialog,
         setVideoOnCanvas,
         saveImageToStorage,
-        setPhotoFromCanvas,
+        sendImageOnDataTrackAndShowPhoto,
         annotateImage,
         createMarkerArea,
         isMarkupPanelOpen,
@@ -350,9 +315,6 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         isGalleryOpen,
         setIsGalleryOpen,
         getImagesFromDataStore,
-        retrieveSyncToken,
-        createSyncClient,
-        client,
       }}
     >
       {children}
