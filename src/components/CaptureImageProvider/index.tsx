@@ -77,8 +77,6 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   };
 
   const captureImage = async () => {
-    const accessToken = await retrieveSyncToken();
-    createSyncClient(accessToken);
     const video = getVideoElementFromDialog();
     if (video) {
       const canvas = setVideoOnCanvas(video);

@@ -97,12 +97,6 @@ export default function CaptureImage() {
     videoTrack = remoteVideoTrack;
   }
 
-  useEffect(() => {
-    retrieveSyncToken().then(accessToken => {
-      createSyncClient(accessToken);
-    });
-  }, []);
-
   // const capabilities = videoTrack!.mediaStreamTrack.getCapabilities()
   // console.log(capabilities)
 
