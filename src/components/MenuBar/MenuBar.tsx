@@ -20,7 +20,6 @@ import CaptureImageButton from '../Buttons/CaptureImageButton/CaptureImageButton
 import AnnotateButton from '../Buttons/AnnotateButton/AnnotateButton';
 import ZoomButton from '../Buttons/ZoomButton/ZoomButton';
 import ToggleGalleryButton from '../Buttons/ToggleGalleryButton/ToggleGalleryButton';
-import RefreshImagePreviewButton from '../Buttons/RefreshImagePreviewButton/RefreshImagePreviewButton';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -133,7 +132,6 @@ export default function MenuBar() {
               {!noParticipants && <ToggleCaptureImageButton disabled={isReconnecting} />}
               {!isSharingScreen && !isMobile && <ToggleScreenShareButton disabled={isReconnecting} />}
               {process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && <ToggleChatButton />}
-              {isCaptureImageOpen && checkIsUser() ? <RefreshImagePreviewButton /> : ''}
               <Hidden smDown>
                 <Menu />
               </Hidden>
