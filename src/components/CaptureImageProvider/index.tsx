@@ -146,6 +146,8 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
 
     const CHUNK_LEN = 64000;
     const img = ctx?.getImageData(0, 0, canvas.width, canvas.height);
+    console.log(canvas.width);
+    console.log(canvas.height);
     console.log(img?.data);
     console.log(img?.data.byteLength);
     const len = img?.data.byteLength;

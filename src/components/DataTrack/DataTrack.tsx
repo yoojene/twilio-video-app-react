@@ -45,10 +45,10 @@ export default function DataTrack({ track }: { track: IDataTrack }) {
 
         const ctx = remotecanvas.getContext('2d');
         remotecanvas.width = 640; //video.videoWidth;
-        remotecanvas.height = 320; //video.videoHeight;
+        remotecanvas.height = 360; //video.videoHeight;
 
-        const img = ctx?.createImageData(640, 320);
-        img!.data.set(buf, 0);
+        const img = ctx?.createImageData(640, 360);
+        img!.data.set(buf);
         ctx?.putImageData(img!, 0, 0);
       }
     };
