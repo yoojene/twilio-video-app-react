@@ -1,16 +1,33 @@
 /* eslint-disable no-var */
 import { makeStyles } from '@material-ui/styles';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { DataTrack as IDataTrack } from 'twilio-video';
+import useCaptureImageContext from '../../hooks/useCaptureImageContext/useCaptureImageContext';
+import imagePlaceholder from '../../images/import_placeholder-90.png';
 
 const useStyles = makeStyles(() => ({
+  photoPreview: {
+    '@media (max-width: 1600px)': {
+      width: '787px',
+    },
+  },
   canvasContainer: {
     width: '100%',
     textAlign: 'center',
   },
+  photoContainer: {
+    width: '100%',
+    textAlign: 'center',
+    marginLeft: '16px',
+  },
 }));
 export default function RemoteImagePreview({ track }: { track: IDataTrack }) {
   const classes = useStyles();
+
+  const imgRef = useRef() as React.MutableRefObject<HTMLImageElement>;
+
+  const { setImageRef, isAnnotating } = useCaptureImageContext();
+  setImageRef(imgRef);
 
   useEffect(() => {
     let count = 0;
@@ -66,6 +83,19 @@ export default function RemoteImagePreview({ track }: { track: IDataTrack }) {
       <div className={classes.canvasContainer}>
         <canvas id="remotecanvas"></canvas>
       </div>
+      {isAnnotating ? (
+        <div className={classes.photoContainer}>
+          <img
+            id="photo"
+            src={imagePlaceholder}
+            alt="The screen capture will appear in this box."
+            className={classes.photoPreview}
+            ref={imgRef}
+          />
+        </div>
+      ) : (
+        ''
+      )}
     </>
   );
 }

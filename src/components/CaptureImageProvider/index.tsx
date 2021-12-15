@@ -36,6 +36,8 @@ type CaptureImageContextType = {
   isGalleryOpen: boolean;
   setIsGalleryOpen: (isGalleryOpen: boolean) => void;
   getImagesFromDataStore: () => void;
+  isAnnotating: boolean;
+  setIsAnnotating: (isAnnotating: boolean) => void;
 };
 
 interface CanvasElement extends HTMLCanvasElement {
@@ -52,6 +54,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   const [photoBase64, setPhotoBase64] = useState<string>(defaultBase64Image);
 
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+  const [isAnnotating, setIsAnnotating] = useState(false);
 
   const [scale, setScale] = useState(1);
   const { room } = useVideoContext();
@@ -94,6 +97,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
       markerArea.show();
     } else {
       markerArea.close();
+      setIsAnnotating(false);
     }
   };
 
@@ -129,6 +133,8 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     },
     [scale]
   );
+
+  const setRemoteImageOnCanvas = async () => {};
 
   const sendCanvasDimensionsOnDataTrack = async (canvas: HTMLCanvasElement) => {
     const canvasSizes = `canvas width:${canvas.width}, height:${canvas.height}`;
@@ -322,6 +328,8 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         isGalleryOpen,
         setIsGalleryOpen,
         getImagesFromDataStore,
+        isAnnotating,
+        setIsAnnotating,
       }}
     >
       {children}
