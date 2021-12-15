@@ -11,7 +11,6 @@ import {
   RemoteTrackPublication,
   Track,
 } from 'twilio-video';
-import DataTrack from '../DataTrack/DataTrack';
 
 interface PublicationProps {
   publication: LocalTrackPublication | RemoteTrackPublication;
@@ -37,8 +36,8 @@ export default function Publication({ publication, isLocalParticipant, videoOnly
       );
     case 'audio':
       return videoOnly ? null : <AudioTrack track={track as IAudioTrack} />;
-    case 'data':
-      return videoOnly ? null : <DataTrack track={track} />;
+    // case 'data':
+    //   return videoOnly ? null : <DataTrack track={track} />;
     default:
       return null;
   }
