@@ -12,13 +12,15 @@ import axios from 'axios';
 import { SyncClient } from 'twilio-sync';
 type CaptureImageContextType = {
   checkIsUser: () => boolean;
-  captureImage: () => void;
+  captureImage: (isAnnotating: boolean) => void;
   getVideoElementFromDialog: () => HTMLElement | null;
   isCaptureImageOpen: boolean;
   setIsCaptureImageOpen: (isCaptureImageOpen: boolean) => void;
   setVideoOnCanvas: (video: HTMLElement) => HTMLCanvasElement | undefined;
   saveImageToStorage: () => void;
-  sendImageOnDataTrackAndShowPhoto: (canvas: HTMLCanvasElement) => void;
+  sendCanvasDimensionsOnDataTrack: (canvas: HTMLCanvasElement) => Promise<unknown>;
+  sendImageOnDataTrack: (canvas: HTMLCanvasElement) => void;
+  showPhoto: (canvas: HTMLCanvasElement) => void;
   annotateImage: () => void;
   createMarkerArea: (imageRef: React.MutableRefObject<HTMLImageElement> | null) => markerjs2.MarkerArea;
   isMarkupPanelOpen: boolean;
@@ -67,12 +69,16 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     return isUser;
   };
 
-  const captureImage = async () => {
+  const captureImage = async (isAnnotating = false) => {
     const video = getVideoElementFromDialog();
     if (video) {
       const canvas = setVideoOnCanvas(video);
       if (canvas) {
-        sendImageOnDataTrackAndShowPhoto(canvas);
+        if (!isAnnotating) {
+          await sendCanvasDimensionsOnDataTrack(canvas);
+          await sendImageOnDataTrack(canvas);
+        }
+        showPhoto(canvas);
       }
     }
   };
@@ -124,15 +130,19 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     [scale]
   );
 
-  const sendImageOnDataTrackAndShowPhoto = async (canvas: HTMLCanvasElement) => {
-    const photo = document.getElementById('photo');
-    const data = canvas.toDataURL('image/png');
+  const sendCanvasDimensionsOnDataTrack = async (canvas: HTMLCanvasElement) => {
+    const canvasSizes = `canvas width:${canvas.width}, height:${canvas.height}`;
+
+    return new Promise(resolve => {
+      resolve(localDataTrackPublication.track.send(canvasSizes));
+    });
+  };
+
+  const sendImageOnDataTrack = async (canvas: HTMLCanvasElement) => {
     const ctx = canvas.getContext('2d');
 
     const CHUNK_LEN = 64000;
     const img = ctx?.getImageData(0, 0, canvas.width, canvas.height);
-    console.log(canvas.width);
-    console.log(canvas.height);
     console.log(img?.data);
     console.log(img?.data.byteLength);
     const len = img?.data.byteLength;
@@ -153,23 +163,16 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     }
 
     // send the reminder, if any
-
     if (len! % CHUNK_LEN) {
       console.log('last ' + (len! % CHUNK_LEN) + ' byte(s)');
       localDataTrackPublication.track.send(img?.data.subarray(n * CHUNK_LEN) as ArrayBuffer);
     }
+  };
 
+  const showPhoto = (canvas: HTMLCanvasElement) => {
+    const photo = document.getElementById('photo');
+    const data = canvas.toDataURL('image/png');
     photo!.setAttribute('src', data);
-    console.log('saving image to DataStore');
-
-    const file = dataURIToBlob(data) as File;
-
-    console.log(file);
-    console.log(await file.arrayBuffer());
-
-    // await DataStore.save(new Image({ name: 'test', base64Data: file }));
-
-    // return photo;
   };
 
   const saveImageToStorage = async () => {
@@ -250,6 +253,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
 
     markerArea.settings.displayMode = 'popup';
     markerArea.renderTarget = document.getElementById('canvas') as HTMLCanvasElement;
+    console.log(markerArea.renderTarget);
 
     // attach an event handler to assign annotated image back to our image element
     markerArea.addEventListener('render', async event => {
@@ -259,9 +263,11 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
       // (document.getElementsByClassName('__markerjs2_')[0] as HTMLElement).style.top = '296px';
       if (imageRef!.current) {
         imageRef!.current.src = event.dataUrl;
-        console.log('saving annotated image to DataStore');
-        await DataStore.save(new Image({ name: 'test', base64Data: event.dataUrl }));
-        setPhotoBase64(event.dataUrl);
+
+        console.log('about to send annotated canvas on datatrack');
+        const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+        await sendCanvasDimensionsOnDataTrack(canvas!);
+        await sendImageOnDataTrack(canvas!);
       }
     });
 
@@ -286,7 +292,6 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
       console.log(photoBase64);
       console.log(images[images.length - 1].base64Data);
       setPhotoBase64(images[images.length - 1].base64Data);
-      // return images[images.length - 1].base64Data;
     }
   };
   return (
@@ -299,7 +304,9 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         getVideoElementFromDialog,
         setVideoOnCanvas,
         saveImageToStorage,
-        sendImageOnDataTrackAndShowPhoto,
+        sendCanvasDimensionsOnDataTrack,
+        sendImageOnDataTrack,
+        showPhoto,
         annotateImage,
         createMarkerArea,
         isMarkupPanelOpen,

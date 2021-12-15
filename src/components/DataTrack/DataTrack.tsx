@@ -2,7 +2,6 @@ import { makeStyles } from '@material-ui/core';
 
 import React, { useEffect } from 'react';
 import { DataTrack as IDataTrack } from 'twilio-video';
-import useCaptureImageContext from '../../hooks/useCaptureImageContext/useCaptureImageContext';
 const useStyles = makeStyles(() => ({
   canvasContainer: {
     width: '100%',
@@ -17,7 +16,22 @@ export default function DataTrack({ track }: { track: IDataTrack }) {
     var count = 0;
     // eslint-disable-next-line no-var
     var buf: Uint8ClampedArray;
+    // eslint-disable-next-line no-var
+    let canvasWidthNum: number;
+    // eslint-disable-next-line no-var
+    let canvasHeightNum: number;
     const handleMessage = (event: ArrayBuffer | string) => {
+      if (typeof event === 'string' && event.startsWith('canvas')) {
+        // eslint-disable-next-line prefer-const
+        const canvasWidth = event.slice(event.indexOf(':') + 1, event.indexOf(','));
+        // eslint-disable-next-line prefer-const
+        const canvasHeight = event.slice(event.lastIndexOf(':') + 1);
+
+        canvasWidthNum = +canvasWidth;
+        canvasHeightNum = +canvasHeight;
+
+        return Promise.resolve([canvasWidthNum, canvasHeightNum]);
+      }
       if (typeof event === 'string') {
         // eslint-disable-next-line no-var
         buf = new Uint8ClampedArray(parseInt(event));
@@ -41,10 +55,10 @@ export default function DataTrack({ track }: { track: IDataTrack }) {
         const remotecanvas = document.getElementById('remotecanvas') as HTMLCanvasElement;
 
         const ctx = remotecanvas.getContext('2d');
-        remotecanvas.width = 640; //video.videoWidth;
-        remotecanvas.height = 360; //video.videoHeight;
+        remotecanvas.width = canvasWidthNum;
+        remotecanvas.height = canvasHeightNum;
 
-        const img = ctx?.createImageData(640, 360);
+        const img = ctx?.createImageData(canvasWidthNum, canvasHeightNum);
         img!.data.set(buf);
         ctx?.putImageData(img!, 0, 0);
       }
