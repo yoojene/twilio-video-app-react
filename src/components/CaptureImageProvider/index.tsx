@@ -12,7 +12,7 @@ import axios from 'axios';
 import { SyncClient } from 'twilio-sync';
 type CaptureImageContextType = {
   checkIsUser: () => boolean;
-  captureImage: (isAnnotating: boolean) => void;
+  captureImage: (isAnnotating?: boolean) => void;
   getVideoElementFromDialog: () => HTMLElement | null;
   isCaptureImageOpen: boolean;
   setIsCaptureImageOpen: (isCaptureImageOpen: boolean) => void;
