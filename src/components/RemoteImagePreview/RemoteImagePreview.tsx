@@ -26,7 +26,7 @@ export default function RemoteImagePreview({ track }: { track: IDataTrack }) {
 
   const imgRef = useRef() as React.MutableRefObject<HTMLImageElement>;
 
-  const { setImageRef, isAnnotating } = useCaptureImageContext();
+  const { setImageRef, isRemoteCanvasOpen, isRemoteImageOpen } = useCaptureImageContext();
   setImageRef(imgRef);
 
   useEffect(() => {
@@ -61,7 +61,7 @@ export default function RemoteImagePreview({ track }: { track: IDataTrack }) {
 
       if (count === buf.byteLength) {
         console.log('Done can render photo now');
-        const remotecanvas = document.getElementById('remotecanvas') as HTMLCanvasElement;
+        const remotecanvas = document.getElementById('canvas') as HTMLCanvasElement;
 
         const ctx = remotecanvas.getContext('2d');
         remotecanvas.width = canvasWidthNum;
@@ -80,22 +80,20 @@ export default function RemoteImagePreview({ track }: { track: IDataTrack }) {
 
   return (
     <>
-      <div className={classes.canvasContainer}>
-        <canvas id="remotecanvas"></canvas>
+      <div className={classes.canvasContainer} style={{ display: isRemoteCanvasOpen ? 'block' : 'none' }}>
+        <canvas id="canvas"></canvas>
       </div>
-      {isAnnotating ? (
-        <div className={classes.photoContainer}>
+      {
+        <div className={classes.photoContainer} style={{ display: isRemoteImageOpen ? 'block' : 'none' }}>
           <img
-            id="photo"
+            id="remotephoto"
             src={imagePlaceholder}
-            alt="The screen capture will appear in this box."
+            alt="The photo capture will appear in this box."
             className={classes.photoPreview}
             ref={imgRef}
           />
         </div>
-      ) : (
-        ''
-      )}
+      }
     </>
   );
 }

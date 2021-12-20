@@ -22,7 +22,10 @@ type CaptureImageContextType = {
   sendImageOnDataTrack: (canvas: HTMLCanvasElement) => void;
   showPhoto: (canvas: HTMLCanvasElement) => void;
   annotateImage: () => void;
-  createMarkerArea: (imageRef: React.MutableRefObject<HTMLImageElement> | null) => markerjs2.MarkerArea;
+  createMarkerArea: (
+    imageRef: React.MutableRefObject<HTMLImageElement> | null,
+    isRemote: boolean
+  ) => markerjs2.MarkerArea;
   isMarkupPanelOpen: boolean;
   setMarkupPanelOpen: (isMarkupPanelOpen: boolean) => void;
   annotatedPhoto: string;
@@ -38,6 +41,11 @@ type CaptureImageContextType = {
   getImagesFromDataStore: () => void;
   isAnnotating: boolean;
   setIsAnnotating: (isAnnotating: boolean) => void;
+  setRemoteImageFromCanvas: () => void;
+  isRemoteCanvasOpen: boolean;
+  setIsRemoteCanvasOpen: (isRemoteCanvasOpen: boolean) => void;
+  isRemoteImageOpen: boolean;
+  setIsRemoteImageOpen: (isRemoteImageOpen: boolean) => void;
 };
 
 interface CanvasElement extends HTMLCanvasElement {
@@ -55,6 +63,8 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
 
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [isAnnotating, setIsAnnotating] = useState(false);
+  const [isRemoteCanvasOpen, setIsRemoteCanvasOpen] = useState(true);
+  const [isRemoteImageOpen, setIsRemoteImageOpen] = useState(false);
 
   const [scale, setScale] = useState(1);
   const { room } = useVideoContext();
@@ -134,7 +144,22 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     [scale]
   );
 
-  const setRemoteImageOnCanvas = async () => {};
+  const setRemoteImageFromCanvas = async () => {
+    const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+    console.log(canvas);
+    setIsRemoteImageOpen(true);
+    const photo = document.getElementById('remotephoto');
+    console.log(photo);
+    const data = canvas.toDataURL('image/png');
+    setIsRemoteCanvasOpen(false);
+    console.log(data);
+    photo!.setAttribute('src', data);
+    // setIsRemoteImageOpen(false);
+    setIsRemoteCanvasOpen(true);
+    // setImageRef(imgRef);
+    // console.log(imgRef);
+    console.log('end of setRemoteImageFromCanvas');
+  };
 
   const sendCanvasDimensionsOnDataTrack = async (canvas: HTMLCanvasElement) => {
     const canvasSizes = `canvas width:${canvas.width}, height:${canvas.height}`;
@@ -251,6 +276,8 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
 
   const createMarkerArea = (imageRef: React.MutableRefObject<HTMLImageElement> | null) => {
     console.log(imageRef);
+    console.log(imageRef!.current);
+
     // create a marker.js MarkerArea
     const markerArea = new markerjs2.MarkerArea(imageRef!.current!);
 
@@ -266,7 +293,6 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
       console.log(imageRef);
       console.log(imageRef!.current);
       console.log(event);
-      // (document.getElementsByClassName('__markerjs2_')[0] as HTMLElement).style.top = '296px';
       if (imageRef!.current) {
         imageRef!.current.src = event.dataUrl;
 
@@ -330,6 +356,11 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         getImagesFromDataStore,
         isAnnotating,
         setIsAnnotating,
+        setRemoteImageFromCanvas,
+        isRemoteCanvasOpen,
+        setIsRemoteCanvasOpen,
+        isRemoteImageOpen,
+        setIsRemoteImageOpen,
       }}
     >
       {children}
