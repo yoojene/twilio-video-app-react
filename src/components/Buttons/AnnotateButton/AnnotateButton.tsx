@@ -17,8 +17,7 @@ export default function AnnotateButton() {
   const { isMarkupPanelOpen, captureImage, annotateImage } = useCaptureImageContext();
 
   const doAnnotateImage = () => {
-    const isAnnotating = true;
-    captureImage(isAnnotating);
+    captureImage(true);
     console.log('then annotate');
     annotateImage();
   };

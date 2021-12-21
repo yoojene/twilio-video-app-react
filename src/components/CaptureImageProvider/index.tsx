@@ -147,17 +147,11 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   const setRemoteImageFromCanvas = async () => {
     const canvas = document.getElementById('canvas') as HTMLCanvasElement;
     console.log(canvas);
-    setIsRemoteImageOpen(true);
     const photo = document.getElementById('remotephoto');
     console.log(photo);
     const data = canvas.toDataURL('image/png');
-    setIsRemoteCanvasOpen(false);
     console.log(data);
     photo!.setAttribute('src', data);
-    // setIsRemoteImageOpen(false);
-    setIsRemoteCanvasOpen(true);
-    // setImageRef(imgRef);
-    // console.log(imgRef);
     console.log('end of setRemoteImageFromCanvas');
   };
 
