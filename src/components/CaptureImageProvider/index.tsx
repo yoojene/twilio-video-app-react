@@ -42,6 +42,7 @@ type CaptureImageContextType = {
   isAnnotating: boolean;
   setIsAnnotating: (isAnnotating: boolean) => void;
   setRemoteImageFromCanvas: () => void;
+  setImageFromCanvas: () => void;
   isRemoteCanvasOpen: boolean;
   setIsRemoteCanvasOpen: (isRemoteCanvasOpen: boolean) => void;
   isRemoteImageOpen: boolean;
@@ -144,6 +145,16 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     [scale]
   );
 
+  const setImageFromCanvas = async () => {
+    const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+    console.log(canvas);
+    const photo = document.getElementById('photo');
+    console.log(photo);
+    const data = canvas.toDataURL('image/png');
+    console.log(data);
+    photo!.setAttribute('src', data);
+    console.log('end of setImageFromCanvas');
+  };
   const setRemoteImageFromCanvas = async () => {
     const canvas = document.getElementById('canvas') as HTMLCanvasElement;
     console.log(canvas);
@@ -351,6 +362,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         isAnnotating,
         setIsAnnotating,
         setRemoteImageFromCanvas,
+        setImageFromCanvas,
         isRemoteCanvasOpen,
         setIsRemoteCanvasOpen,
         isRemoteImageOpen,
