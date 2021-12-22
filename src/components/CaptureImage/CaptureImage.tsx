@@ -1,3 +1,4 @@
+/* eslint-disable no-var */
 import { makeStyles } from '@material-ui/styles';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import VideoTrack from '../VideoTrack/VideoTrack';
@@ -15,6 +16,7 @@ import useChatContext from '../../hooks/useChatContext/useChatContext';
 import ImagePreview from '../ImagePreview/ImagePreview';
 import RemoteImagePreview from '../RemoteImagePreview/RemoteImagePreview';
 import { DataTrack as IDataTrack } from 'twilio-video';
+import LivePointer from '../LivePointer/LivePointer';
 
 const useStyles = makeStyles(() => ({
   title: {
@@ -67,7 +69,7 @@ const useStyles = makeStyles(() => ({
 
 export default function CaptureImage() {
   const classes = useStyles();
-  const { checkIsUser, scale, isGalleryOpen } = useCaptureImageContext();
+  const { checkIsUser, scale, isGalleryOpen, isLivePointerOpen } = useCaptureImageContext();
 
   const { isChatWindowOpen } = useChatContext();
 
@@ -174,16 +176,67 @@ export default function CaptureImage() {
   //   console.log(domRect);
   // };
 
+  // eslint-disable-next-line no-var
+
+  // useEffect(() => {
+  //   const canvas = document.getElementById('videocanvas') as HTMLCanvasElement;
+  //   // eslint-disable-next-line no-var
+  //   var video = document.getElementById('capture-video') as HTMLVideoElement;
+
+  //   console.log(canvas);
+  //   console.log(video);
+  //   const context = canvas!.getContext('2d');
+
+  //   function calculateSize(srcSize: {
+  //     width: number;
+  //     height: number;
+  //   }, dstSize: {
+  //     width: number;
+  //     height: number;
+  //   }) {
+  //     const srcRatio = srcSize.width / srcSize.height;
+  //     const dstRatio = dstSize.width / dstSize.height;
+  //     if (dstRatio > srcRatio) {
+  //       return {
+  //         width: dstSize.height * srcRatio,
+  //         height: dstSize.height
+  //       };
+  //     } else {
+  //       return {
+  //         width: dstSize.width,
+  //         height: dstSize.width / srcRatio
+  //       };
+  //     }
+  //   }
+
+  //   function renderFrame() {
+  //     requestAnimationFrame(renderFrame);
+  //     canvas.width = canvas.scrollWidth;
+  //     canvas.height = canvas.scrollHeight;
+  //     const videoSize = { width: video.videoWidth, height: video.videoHeight };
+  //     const canvasSize = { width: canvas.width, height: canvas.height };
+  //     const renderSize = calculateSize(videoSize, canvasSize);
+  //     const xOffset = (canvasSize.width - renderSize.width) / 2;
+  //     context!.drawImage(video, xOffset, 0, renderSize.width, renderSize.height);
+
+  //   }
+
+  //   requestAnimationFrame(renderFrame);
+
+  // });
+
   return (
     <>
       <div className={classes.container}>
         <Grid container spacing={1}>
           <Grid item xs={6}>
-            {videoTrack && (
+            {!isLivePointerOpen && videoTrack && (
               <div className={classes.preview}>
                 <VideoTrack id={'capture-video'} track={videoTrack} scale={scale} />
               </div>
             )}
+            {isLivePointerOpen && videoTrack && <LivePointer videoTrack={videoTrack}></LivePointer>}
+
             {!checkIsUser() ? <ImagePreview track={dataTrack} /> : ''}
             {checkIsUser() && dataTrack ? <RemoteImagePreview track={dataTrack} /> : ''}
           </Grid>

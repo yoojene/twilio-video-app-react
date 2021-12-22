@@ -20,8 +20,8 @@ import CaptureImageButton from '../Buttons/CaptureImageButton/CaptureImageButton
 import AnnotateButton from '../Buttons/AnnotateButton/AnnotateButton';
 import ZoomButton from '../Buttons/ZoomButton/ZoomButton';
 import ToggleGalleryButton from '../Buttons/ToggleGalleryButton/ToggleGalleryButton';
-import RefreshImagePreviewButton from '../Buttons/RefreshImagePreviewButton/RefreshImagePreviewButton';
 import RemoteAnnotateButton from '../Buttons/RemoteAnnotateButton/RemoteAnnotateButton';
+import ToggleLivePointerButton from '../Buttons/ToggleLivePointerButton/ToggleLivePointerButton';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -147,6 +147,7 @@ export default function MenuBar() {
                   {!checkIsUser() ? <ZoomButton /> : ''}
                   {!checkIsUser() ? <SaveCaptureImageButton /> : ''}
                   {!checkIsUser() ? <ToggleGalleryButton /> : ''}
+                  {!checkIsUser() ? <ToggleLivePointerButton /> : ''}
                 </div>
               </Grid>
             ) : (

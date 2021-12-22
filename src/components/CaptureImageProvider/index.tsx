@@ -10,6 +10,7 @@ import { DataStore } from '@aws-amplify/datastore';
 import { Image } from '../../models';
 import axios from 'axios';
 import { SyncClient } from 'twilio-sync';
+import { booleanObjectType } from 'aws-sdk/clients/iam';
 type CaptureImageContextType = {
   checkIsUser: () => boolean;
   captureImage: (isAnnotating?: boolean) => void;
@@ -47,6 +48,8 @@ type CaptureImageContextType = {
   setIsRemoteCanvasOpen: (isRemoteCanvasOpen: boolean) => void;
   isRemoteImageOpen: boolean;
   setIsRemoteImageOpen: (isRemoteImageOpen: boolean) => void;
+  isLivePointerOpen: boolean;
+  setIsLivePointerOpen: (isLivePointerOpen: boolean) => void;
 };
 
 interface CanvasElement extends HTMLCanvasElement {
@@ -66,6 +69,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   const [isAnnotating, setIsAnnotating] = useState(false);
   const [isRemoteCanvasOpen, setIsRemoteCanvasOpen] = useState(true);
   const [isRemoteImageOpen, setIsRemoteImageOpen] = useState(false);
+  const [isLivePointerOpen, setIsLivePointerOpen] = useState(false);
 
   const [scale, setScale] = useState(1);
   const { room } = useVideoContext();
@@ -367,6 +371,8 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         setIsRemoteCanvasOpen,
         isRemoteImageOpen,
         setIsRemoteImageOpen,
+        isLivePointerOpen,
+        setIsLivePointerOpen,
       }}
     >
       {children}
