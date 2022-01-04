@@ -237,7 +237,7 @@ export default function CaptureImage() {
             )}
             {isLivePointerOpen && videoTrack && <LivePointer videoTrack={videoTrack}></LivePointer>}
 
-            {!checkIsUser() ? <ImagePreview track={dataTrack} /> : ''}
+            {!checkIsUser() && !isLivePointerOpen ? <ImagePreview track={dataTrack} /> : ''}
             {checkIsUser() && dataTrack ? <RemoteImagePreview track={dataTrack} /> : ''}
           </Grid>
           {isGalleryOpen ? (
