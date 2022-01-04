@@ -70,7 +70,14 @@ const useStyles = makeStyles(() => ({
 
 export default function CaptureImage() {
   const classes = useStyles();
-  const { checkIsUser, scale, isGalleryOpen, isLivePointerOpen, isRemoteLivePointerOpen } = useCaptureImageContext();
+  const {
+    checkIsUser,
+    scale,
+    isGalleryOpen,
+    isLivePointerOpen,
+    setIsRemoteLivePointerOpen,
+    isRemoteLivePointerOpen,
+  } = useCaptureImageContext();
 
   const { isChatWindowOpen } = useChatContext();
 
@@ -226,21 +233,44 @@ export default function CaptureImage() {
 
   // });
 
+  useEffect(() => {
+    if (dataTrack) {
+      const handleMessage = (event: any) => {
+        if (typeof event === 'string' && event.startsWith('{"isLivePointerOpen')) {
+          console.log('isLivePointer - toggle state');
+          console.log(isRemoteLivePointerOpen);
+          setIsRemoteLivePointerOpen(!isRemoteLivePointerOpen);
+          console.log(isRemoteLivePointerOpen);
+        }
+      };
+      dataTrack.on('message', handleMessage);
+      return () => {
+        dataTrack.off('message', handleMessage);
+      };
+    }
+  });
+
   return (
     <>
       <div className={classes.container}>
         <Grid container spacing={1}>
           <Grid item xs={6}>
-            {!isLivePointerOpen && videoTrack && (
+            {!isLivePointerOpen && !isRemoteLivePointerOpen && videoTrack && (
               <div className={classes.preview}>
                 <VideoTrack id={'capture-video'} track={videoTrack} scale={scale} />
               </div>
             )}
-            {isLivePointerOpen && videoTrack && <LivePointer videoTrack={videoTrack}></LivePointer>}
+            {isLivePointerOpen && !isRemoteLivePointerOpen && videoTrack && (
+              <LivePointer videoTrack={videoTrack}></LivePointer>
+            )}
 
             {!checkIsUser() && !isLivePointerOpen ? <ImagePreview track={dataTrack} /> : ''}
-            {checkIsUser() && dataTrack ? <RemoteImagePreview track={dataTrack} /> : ''}
-            {checkIsUser() && dataTrack ? <RemoteLivePointer track={dataTrack} /> : ''}
+            {checkIsUser() && !isRemoteLivePointerOpen && dataTrack ? <RemoteImagePreview track={dataTrack} /> : ''}
+            {checkIsUser() && isRemoteLivePointerOpen && dataTrack && videoTrack ? (
+              <RemoteLivePointer dataTrack={dataTrack} videoTrack={videoTrack} />
+            ) : (
+              ''
+            )}
           </Grid>
           {isGalleryOpen ? (
             <>

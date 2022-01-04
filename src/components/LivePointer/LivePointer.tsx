@@ -76,14 +76,18 @@ export default function LivePointer({ videoTrack, scale }: LivePointerProps): Re
         // Mouse position and event listener
         let mouseX = 0;
         let mouseY = 0;
+        const canvasWidth = canvas.width;
+        const canvasHeight = canvas.height;
 
         const setMousePosition = (e: MouseEvent) => {
           mouseX = e.clientX - canvasPos.x;
           mouseY = e.clientY - canvasPos.y;
           const mouseCoords = { mouseX, mouseY };
+          const canvasSize = { canvasWidth, canvasHeight };
           localDataTrackPublication.track.send(
             JSON.stringify({
               mouseCoords,
+              canvasSize,
             })
           );
         };

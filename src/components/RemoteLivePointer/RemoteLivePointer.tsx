@@ -4,6 +4,9 @@ import { DataTrack as IDataTrack, LocalDataTrackPublication } from 'twilio-video
 import React, { ReactElement, useEffect } from 'react';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import useCaptureImageContext from '../../hooks/useCaptureImageContext/useCaptureImageContext';
+import VideoTrack from '../VideoTrack/VideoTrack';
+
+import { IVideoTrack } from '../../types';
 
 const useStyles = makeStyles(() => ({
   preview: {
@@ -22,10 +25,17 @@ const useStyles = makeStyles(() => ({
   canvas: { position: 'absolute', top: '0', left: '0', zIndex: 1 },
 }));
 
-export default function RemoteLivePointer({ track }: { track: IDataTrack }): ReactElement {
+interface RemoteLivePointerProps {
+  videoTrack: IVideoTrack;
+  dataTrack: IDataTrack;
+  id?: string;
+  scale?: number;
+}
+
+export default function RemoteLivePointer({ videoTrack, dataTrack, scale }: RemoteLivePointerProps): ReactElement {
   const classes = useStyles();
   const { room } = useVideoContext();
-  const { drawLivePointer, setIsRemoteLivePointerOpen } = useCaptureImageContext();
+  const { drawLivePointer } = useCaptureImageContext();
 
   let localDataTrackPublication: LocalDataTrackPublication;
 
@@ -37,34 +47,36 @@ export default function RemoteLivePointer({ track }: { track: IDataTrack }): Rea
       console.log('in handleMessage RemoteLivePointer');
       console.log(event);
 
-      // if (typeof event === 'string' && event.startsWith('{"isLivePointerOpen')) {
-      //   const { isLivePointerOpen } = JSON.parse(event);
-      //   console.log({ isLivePointerOpen });
-      //   setIsRemoteLivePointerOpen(!isLivePointerOpen);
-
-      //   return;
-      // }
+      if (typeof event === 'string' && event.startsWith('{"isLivePointerOpen')) {
+        return;
+      }
 
       const {
         mouseCoords: { mouseX, mouseY },
       } = JSON.parse(event);
 
       console.log({ mouseX, mouseY });
+      const {
+        canvasSize: { canvasWidth, canvasHeight },
+      } = JSON.parse(event);
 
       const canvas = document.getElementById('videocanvas') as HTMLCanvasElement;
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
       drawLivePointer(canvas, mouseX, mouseY);
     };
 
-    track.on('message', handleMessage);
+    dataTrack.on('message', handleMessage);
     return () => {
-      track.off('message', handleMessage);
+      dataTrack.off('message', handleMessage);
     };
-  }, [track]);
+  }, [dataTrack]);
 
   return (
     <>
       <h2 className={classes.preview}>Remote Live Pointer</h2>
       <div className={classes.preview}>
+        <VideoTrack id={'capture-video'} track={videoTrack} scale={scale} />
         <canvas id="videocanvas" className={classes.canvas}></canvas>
       </div>
     </>
