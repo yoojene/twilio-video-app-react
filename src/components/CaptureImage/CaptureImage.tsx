@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/styles';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import VideoTrack from '../VideoTrack/VideoTrack';
 
-import { LocalVideoTrack, Participant, RemoteVideoTrack, Room } from 'twilio-video';
+import { LocalVideoTrack, Participant, RemoteVideoTrack, Room, LocalDataTrackPublication } from 'twilio-video';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import useCaptureImageContext from '../../hooks/useCaptureImageContext/useCaptureImageContext';
 import { Button, DialogActions, DialogTitle, Grid } from '@material-ui/core';
@@ -17,6 +17,7 @@ import ImagePreview from '../ImagePreview/ImagePreview';
 import RemoteImagePreview from '../RemoteImagePreview/RemoteImagePreview';
 import { DataTrack as IDataTrack } from 'twilio-video';
 import LivePointer from '../LivePointer/LivePointer';
+import RemoteLivePointer from '../RemoteLivePointer/RemoteLivePointer';
 
 const useStyles = makeStyles(() => ({
   title: {
@@ -69,7 +70,7 @@ const useStyles = makeStyles(() => ({
 
 export default function CaptureImage() {
   const classes = useStyles();
-  const { checkIsUser, scale, isGalleryOpen, isLivePointerOpen } = useCaptureImageContext();
+  const { checkIsUser, scale, isGalleryOpen, isLivePointerOpen, isRemoteLivePointerOpen } = useCaptureImageContext();
 
   const { isChatWindowOpen } = useChatContext();
 
@@ -239,6 +240,7 @@ export default function CaptureImage() {
 
             {!checkIsUser() && !isLivePointerOpen ? <ImagePreview track={dataTrack} /> : ''}
             {checkIsUser() && dataTrack ? <RemoteImagePreview track={dataTrack} /> : ''}
+            {checkIsUser() && dataTrack ? <RemoteLivePointer track={dataTrack} /> : ''}
           </Grid>
           {isGalleryOpen ? (
             <>

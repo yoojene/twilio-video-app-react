@@ -1,5 +1,7 @@
 import { makeStyles } from '@material-ui/core';
 import React, { ReactElement, useEffect } from 'react';
+import { LocalDataTrackPublication } from 'twilio-video';
+import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import { IVideoTrack } from '../../types';
 import VideoTrack from '../VideoTrack/VideoTrack';
 
@@ -28,6 +30,13 @@ interface LivePointerProps {
 
 export default function LivePointer({ videoTrack, scale }: LivePointerProps): ReactElement {
   const classes = useStyles();
+  const { room } = useVideoContext();
+
+  let localDataTrackPublication: LocalDataTrackPublication;
+
+  if (room) {
+    [localDataTrackPublication] = [...room!.localParticipant.dataTracks.values()];
+  }
 
   useEffect(() => {
     const canvas = document.getElementById('videocanvas') as HTMLCanvasElement;
@@ -71,6 +80,12 @@ export default function LivePointer({ videoTrack, scale }: LivePointerProps): Re
         const setMousePosition = (e: MouseEvent) => {
           mouseX = e.clientX - canvasPos.x;
           mouseY = e.clientY - canvasPos.y;
+          const mouseCoords = { mouseX, mouseY };
+          localDataTrackPublication.track.send(
+            JSON.stringify({
+              mouseCoords,
+            })
+          );
         };
 
         canvas.addEventListener('mousemove', setMousePosition, false);

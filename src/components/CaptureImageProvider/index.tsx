@@ -8,9 +8,7 @@ import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import { defaultBase64Image } from '../RemoteImagePreview/RemoteImagePreviewData';
 import { DataStore } from '@aws-amplify/datastore';
 import { Image } from '../../models';
-import axios from 'axios';
-import { SyncClient } from 'twilio-sync';
-import { booleanObjectType } from 'aws-sdk/clients/iam';
+
 type CaptureImageContextType = {
   checkIsUser: () => boolean;
   captureImage: (isAnnotating?: boolean) => void;
@@ -50,6 +48,9 @@ type CaptureImageContextType = {
   setIsRemoteImageOpen: (isRemoteImageOpen: boolean) => void;
   isLivePointerOpen: boolean;
   setIsLivePointerOpen: (isLivePointerOpen: boolean) => void;
+  isRemoteLivePointerOpen: boolean;
+  setIsRemoteLivePointerOpen: (isRemoteLivePointerOpen: boolean) => void;
+  drawLivePointer: (canvas: HTMLCanvasElement, mouseX: number, mouseY: number) => void;
 };
 
 interface CanvasElement extends HTMLCanvasElement {
@@ -70,6 +71,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   const [isRemoteCanvasOpen, setIsRemoteCanvasOpen] = useState(true);
   const [isRemoteImageOpen, setIsRemoteImageOpen] = useState(false);
   const [isLivePointerOpen, setIsLivePointerOpen] = useState(false);
+  const [isRemoteLivePointerOpen, setIsRemoteLivePointerOpen] = useState(false);
 
   const [scale, setScale] = useState(1);
   const { room } = useVideoContext();
@@ -207,6 +209,15 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
       console.log('last ' + (len! % CHUNK_LEN) + ' byte(s)');
       localDataTrackPublication.track.send(img?.data.subarray(n * CHUNK_LEN) as ArrayBuffer);
     }
+  };
+
+  const drawLivePointer = (canvas: HTMLCanvasElement, mouseX: number, mouseY: number) => {
+    const ctx = canvas.getContext('2d');
+    ctx!.beginPath();
+    ctx!.arc(mouseX, mouseY, 10, 0, 2 * Math.PI, true);
+    ctx!.fillStyle = '#FF6A6A'; // TODO toggle based on local/remote user
+    ctx!.fill();
+    requestAnimationFrame(() => drawLivePointer(canvas, mouseX, mouseY));
   };
 
   const showPhoto = (canvas: HTMLCanvasElement) => {
@@ -373,6 +384,9 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         setIsRemoteImageOpen,
         isLivePointerOpen,
         setIsLivePointerOpen,
+        isRemoteLivePointerOpen,
+        setIsRemoteLivePointerOpen,
+        drawLivePointer,
       }}
     >
       {children}
