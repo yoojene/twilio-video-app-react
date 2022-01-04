@@ -45,7 +45,39 @@ export default function LivePointer({ videoTrack, scale }: LivePointerProps): Re
 
         console.log(ctx);
 
+        // Canvas position calculation fn
+        const getPosition = (el: any) => {
+          let xPos = 0;
+          let yPos = 0;
+
+          while (el) {
+            xPos += el.offsetLeft - el.scrollLeft + el.clientLeft;
+            yPos += el.offsetTop - el.scrollTop + el.clientTop;
+            el = el.offsetParent;
+          }
+
+          return {
+            x: xPos,
+            y: yPos,
+          };
+        };
+
+        const canvasPos = getPosition(canvas);
+
+        // Mouse position and event listener
+        let mouseX = 0;
+        let mouseY = 0;
+
+        const setMousePosition = (e: MouseEvent) => {
+          mouseX = e.clientX - canvasPos.x;
+          mouseY = e.clientY - canvasPos.y;
+        };
+
+        canvas.addEventListener('mousemove', setMousePosition, false);
+
         if (ctx) {
+          // Draw video image onto canvas
+
           const drawToCanvas = () => {
             // draw the current frame of localVideo onto the canvas,
             // starting at 0, 0 (top-left corner) and covering its full
@@ -56,17 +88,30 @@ export default function LivePointer({ videoTrack, scale }: LivePointerProps): Re
             //the browser's build-in requestAnimationFrame method
             requestAnimationFrame(drawToCanvas);
           };
-
           drawToCanvas();
+
+          // Drawing pointer circle on canvas
+          const drawCircle = () => {
+            ctx!.beginPath();
+            ctx!.arc(mouseX, mouseY, 10, 0, 2 * Math.PI, true);
+            ctx!.fillStyle = '#FF6A6A'; // TODO toggle based on local/remote user
+            ctx!.fill();
+            requestAnimationFrame(drawCircle);
+          };
+
+          drawCircle();
         }
       }, 500);
     }
   });
 
   return (
-    <div className={classes.preview}>
-      <VideoTrack id={'capture-video'} track={videoTrack} scale={scale} />
-      <canvas id="videocanvas" className={classes.canvas}></canvas>
-    </div>
+    <>
+      <h2 className={classes.preview}>Live Pointer</h2>
+      <div className={classes.preview}>
+        <VideoTrack id={'capture-video'} track={videoTrack} scale={scale} />
+        <canvas id="videocanvas" className={classes.canvas}></canvas>
+      </div>
+    </>
   );
 }
