@@ -213,6 +213,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
 
   const drawLivePointer = (canvas: HTMLCanvasElement, mouseX: number, mouseY: number) => {
     const ctx = canvas.getContext('2d');
+    ctx!.clearRect(0, 0, canvas.width, canvas.height);
     ctx!.beginPath();
     ctx!.arc(mouseX, mouseY, 10, 0, 2 * Math.PI, true);
     ctx!.fillStyle = '#FF6A6A'; // TODO toggle based on local/remote user
