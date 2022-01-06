@@ -260,8 +260,10 @@ export default function CaptureImage() {
                 <VideoTrack id={'capture-video'} track={videoTrack} scale={scale} />
               </div>
             )}
-            {isLivePointerOpen && !isRemoteLivePointerOpen && videoTrack && (
-              <LivePointer videoTrack={videoTrack}></LivePointer>
+            {isLivePointerOpen && !isRemoteLivePointerOpen && videoTrack && dataTrack ? (
+              <LivePointer dataTrack={dataTrack} videoTrack={videoTrack}></LivePointer>
+            ) : (
+              ''
             )}
 
             {!checkIsUser() && !isLivePointerOpen ? <ImagePreview track={dataTrack} /> : ''}

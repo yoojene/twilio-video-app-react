@@ -1,9 +1,11 @@
 import { makeStyles } from '@material-ui/core';
 import React, { ReactElement, useEffect } from 'react';
-import { LocalDataTrackPublication } from 'twilio-video';
+import { DataTrack as IDataTrack, LocalDataTrackPublication } from 'twilio-video';
+import useCaptureImageContext from '../../hooks/useCaptureImageContext/useCaptureImageContext';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import { IVideoTrack } from '../../types';
 import VideoTrack from '../VideoTrack/VideoTrack';
+import ColorHash from 'color-hash';
 
 const useStyles = makeStyles(() => ({
   preview: {
@@ -24,19 +26,24 @@ const useStyles = makeStyles(() => ({
 
 interface LivePointerProps {
   videoTrack: IVideoTrack;
+  dataTrack: IDataTrack;
   id?: string;
   scale?: number;
 }
 
-export default function LivePointer({ videoTrack, scale }: LivePointerProps): ReactElement {
+export default function LivePointer({ videoTrack, dataTrack, scale }: LivePointerProps): ReactElement {
   const classes = useStyles();
   const { room } = useVideoContext();
+  const { getPosition, sendMouseCoordsAndCanvasSize, drawVideoToCanvas, drawLivePointer } = useCaptureImageContext();
 
   let localDataTrackPublication: LocalDataTrackPublication;
 
   if (room) {
     [localDataTrackPublication] = [...room!.localParticipant.dataTracks.values()];
   }
+
+  const color = new ColorHash().hex(dataTrack.name);
+  console.log(color);
 
   useEffect(() => {
     const canvas = document.getElementById('videocanvas') as HTMLCanvasElement;
@@ -54,76 +61,95 @@ export default function LivePointer({ videoTrack, scale }: LivePointerProps): Re
 
         console.log(ctx);
 
-        // Canvas position calculation fn
-        const getPosition = (el: any) => {
-          let xPos = 0;
-          let yPos = 0;
-
-          while (el) {
-            xPos += el.offsetLeft - el.scrollLeft + el.clientLeft;
-            yPos += el.offsetTop - el.scrollTop + el.clientTop;
-            el = el.offsetParent;
-          }
-
-          return {
-            x: xPos,
-            y: yPos,
-          };
-        };
-
         const canvasPos = getPosition(canvas);
 
         // Mouse position and event listener
-        let mouseX = 0;
-        let mouseY = 0;
+        // eslint-disable-next-line no-var
+        var mouseX = 0;
+        // eslint-disable-next-line no-var
+        var mouseY = 0;
         const canvasWidth = canvas.width;
         const canvasHeight = canvas.height;
 
-        const setMousePosition = (e: MouseEvent) => {
-          mouseX = e.clientX - canvasPos.x;
-          mouseY = e.clientY - canvasPos.y;
-          const mouseCoords = { mouseX, mouseY };
-          const canvasSize = { canvasWidth, canvasHeight };
-          localDataTrackPublication.track.send(
-            JSON.stringify({
-              mouseCoords,
-              canvasSize,
-            })
-          );
-        };
-
-        canvas.addEventListener('mousemove', setMousePosition, false);
+        canvas.addEventListener(
+          'mousemove',
+          (e: MouseEvent) => {
+            const { mouseCoords } = sendMouseCoordsAndCanvasSize(e, canvas, canvasPos, color);
+            mouseX = mouseCoords.mouseX;
+            mouseY = mouseCoords.mouseY;
+          },
+          false
+        );
 
         if (ctx) {
           // Draw video image onto canvas
 
-          const drawToCanvas = () => {
-            // draw the current frame of localVideo onto the canvas,
-            // starting at 0, 0 (top-left corner) and covering its full
-            // width and heigth
-            ctx!.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+          // const drawToCanvas = () => {
+          //   // draw the current frame of localVideo onto the canvas,
+          //   // starting at 0, 0 (top-left corner) and covering its full
+          //   // width and heigth
+          //   ctx!.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
 
-            //repeat this every time a new frame becomes available using
-            //the browser's build-in requestAnimationFrame method
-            requestAnimationFrame(drawToCanvas);
-          };
-          drawToCanvas();
+          //   //repeat this every time a new frame becomes available using
+          //   //the browser's build-in requestAnimationFrame method
+          //   requestAnimationFrame(drawToCanvas);
+          // };
+          drawVideoToCanvas(canvas, video);
 
           // Drawing pointer circle on canvas
           const drawCircle = () => {
+            console.log('using drawCircle()');
             ctx!.clearRect(0, 0, canvasWidth, canvasHeight);
             ctx!.beginPath();
             ctx!.arc(mouseX, mouseY, 10, 0, 2 * Math.PI, true);
-            ctx!.fillStyle = '#FF6A6A'; // TODO toggle based on local/remote user
+            ctx!.fillStyle = color; // TODO toggle based on local/remote user
             ctx!.fill();
             requestAnimationFrame(drawCircle);
           };
 
           drawCircle();
+          // drawLivePointer(canvas, mouseX, mouseY);
         }
       }, 500);
     }
   });
+
+  useEffect(() => {
+    const handleMessage = (event: any) => {
+      // console.log('datatrack' + dataTrack);
+
+      // console.log('in handleMessage LivePointer');
+      // console.log(event);
+
+      if (typeof event === 'string' && event.startsWith('{"isLivePointerOpen')) {
+        return;
+      }
+
+      const {
+        mouseCoords: { mouseX, mouseY },
+      } = JSON.parse(event);
+
+      // console.log({ mouseX, mouseY });
+      const {
+        canvasSize: { canvasWidth, canvasHeight },
+      } = JSON.parse(event);
+
+      const {
+        trackColor: { color },
+      } = JSON.parse(event);
+
+      const canvas = document.getElementById('videocanvas') as HTMLCanvasElement;
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
+
+      drawLivePointer(canvas, mouseX, mouseY, color);
+    };
+
+    dataTrack.on('message', handleMessage);
+    return () => {
+      dataTrack.off('message', handleMessage);
+    };
+  }, [dataTrack]);
 
   return (
     <>

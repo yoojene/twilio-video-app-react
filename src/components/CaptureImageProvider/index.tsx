@@ -50,7 +50,20 @@ type CaptureImageContextType = {
   setIsLivePointerOpen: (isLivePointerOpen: boolean) => void;
   isRemoteLivePointerOpen: boolean;
   setIsRemoteLivePointerOpen: (isRemoteLivePointerOpen: boolean) => void;
-  drawLivePointer: (canvas: HTMLCanvasElement, mouseX: number, mouseY: number) => void;
+  drawLivePointer: (canvas: HTMLCanvasElement, mouseX: number, mouseY: number, color: string) => void;
+  getPosition: (element: any) => { x: number; y: number };
+  sendMouseCoordsAndCanvasSize: (
+    e: MouseEvent,
+    canvas: HTMLCanvasElement,
+    canvasPos: { x: number; y: number },
+    color: string
+  ) => {
+    mouseCoords: {
+      mouseX: number;
+      mouseY: number;
+    };
+  };
+  drawVideoToCanvas: (canvas: HTMLCanvasElement, video: HTMLVideoElement) => void;
 };
 
 interface CanvasElement extends HTMLCanvasElement {
@@ -211,16 +224,6 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     }
   };
 
-  const drawLivePointer = (canvas: HTMLCanvasElement, mouseX: number, mouseY: number) => {
-    const ctx = canvas.getContext('2d');
-    ctx!.clearRect(0, 0, canvas.width, canvas.height);
-    ctx!.beginPath();
-    ctx!.arc(mouseX, mouseY, 10, 0, 2 * Math.PI, true);
-    ctx!.fillStyle = '#FF6A6A'; // TODO toggle based on local/remote user
-    ctx!.fill();
-    requestAnimationFrame(() => drawLivePointer(canvas, mouseX, mouseY));
-  };
-
   const showPhoto = (canvas: HTMLCanvasElement) => {
     const photo = document.getElementById('photo');
     const data = canvas.toDataURL('image/png');
@@ -347,6 +350,96 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
       setPhotoBase64(images[images.length - 1].base64Data);
     }
   };
+
+  // *** Draw Live Pointer *** /
+
+  const drawLivePointer = (canvas: HTMLCanvasElement, mouseX: number, mouseY: number, color: string) => {
+    // console.log('using draw live pointer fn');
+    const ctx = canvas.getContext('2d');
+    ctx!.clearRect(0, 0, canvas.width, canvas.height);
+    ctx!.beginPath();
+    ctx!.arc(mouseX, mouseY, 10, 0, 2 * Math.PI, true);
+    // ctx!.fillStyle = '#FF6A6A'; // TODO toggle based on local/remote user
+    ctx!.fillStyle = color; // TODO toggle based on local/remote user
+    ctx!.fill();
+    requestAnimationFrame(() => drawLivePointer(canvas, mouseX, mouseY, color));
+  };
+
+  const drawRemoteLivePointer = (canvas: HTMLCanvasElement, mouseX: number, mouseY: number) => {
+    console.log('using draw live pointer fn');
+    const ctx = canvas.getContext('2d');
+    ctx!.clearRect(0, 0, canvas.width, canvas.height);
+    ctx!.beginPath();
+    ctx!.arc(mouseX, mouseY, 10, 0, 2 * Math.PI, true);
+    ctx!.fillStyle = '#0000FF'; // TODO toggle based on local/remote user
+    ctx!.fill();
+    requestAnimationFrame(() => drawRemoteLivePointer(canvas, mouseX, mouseY));
+  };
+
+  // Canvas position calculation fn
+  const getPosition = (el: any) => {
+    let xPos = 0;
+    let yPos = 0;
+
+    while (el) {
+      xPos += el.offsetLeft - el.scrollLeft + el.clientLeft;
+      yPos += el.offsetTop - el.scrollTop + el.clientTop;
+      el = el.offsetParent;
+    }
+
+    return {
+      x: xPos,
+      y: yPos,
+    };
+  };
+
+  // Send mouse position and coords over DataTrack
+  const sendMouseCoordsAndCanvasSize = (
+    e: MouseEvent,
+    canvas: HTMLCanvasElement,
+    canvasPos: { x: number; y: number },
+    color: string
+  ): {
+    mouseCoords: {
+      mouseX: number;
+      mouseY: number;
+    };
+  } => {
+    const canvasWidth = canvas.width;
+    const canvasHeight = canvas.height;
+    let mouseX = 0;
+    let mouseY = 0;
+    mouseX = e.clientX - canvasPos.x;
+    mouseY = e.clientY - canvasPos.y;
+    const mouseCoords = { mouseX, mouseY };
+    const canvasSize = { canvasWidth, canvasHeight };
+    const trackColor = { color };
+    localDataTrackPublication.track.send(
+      JSON.stringify({
+        mouseCoords,
+        canvasSize,
+        trackColor,
+      })
+    );
+
+    return {
+      mouseCoords,
+    };
+  };
+
+  const drawVideoToCanvas = (canvas: HTMLCanvasElement, video: HTMLVideoElement) => {
+    const ctx = canvas!.getContext('2d');
+
+    // draw the current frame of localVideo onto the canvas,
+    // starting at 0, 0 (top-left corner) and covering its full
+    // width and heigth
+    ctx!.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+
+    //repeat this every time a new frame becomes available using
+    //the browser's build-in requestAnimationFrame method
+    requestAnimationFrame(() => drawVideoToCanvas(canvas, video));
+  };
+
   return (
     <CaptureImageContext.Provider
       value={{
@@ -388,6 +481,9 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         isRemoteLivePointerOpen,
         setIsRemoteLivePointerOpen,
         drawLivePointer,
+        getPosition,
+        sendMouseCoordsAndCanvasSize,
+        drawVideoToCanvas,
       }}
     >
       {children}
