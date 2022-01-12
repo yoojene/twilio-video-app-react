@@ -53,7 +53,7 @@ type CaptureImageContextType = {
   drawLivePointer: (canvas: HTMLCanvasElement, mouseX: number, mouseY: number, color: string) => void;
   getPosition: (element: any) => { x: number; y: number };
   sendMouseCoordsAndCanvasSize: (
-    e: MouseEvent,
+    e: MouseEvent | Touch,
     canvas: HTMLCanvasElement,
     canvasPos: { x: number; y: number },
     color: string
@@ -395,7 +395,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
 
   // Send mouse position and coords over DataTrack
   const sendMouseCoordsAndCanvasSize = (
-    e: MouseEvent,
+    e: MouseEvent | Touch,
     canvas: HTMLCanvasElement,
     canvasPos: { x: number; y: number },
     color: string

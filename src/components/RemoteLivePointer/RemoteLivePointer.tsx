@@ -1,5 +1,5 @@
 import { makeStyles } from '@material-ui/core';
-import { DataTrack as IDataTrack, LocalDataTrackPublication } from 'twilio-video';
+import { DataTrack as IDataTrack } from 'twilio-video';
 import React, { ReactElement, useEffect } from 'react';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import useCaptureImageContext from '../../hooks/useCaptureImageContext/useCaptureImageContext';
@@ -33,16 +33,53 @@ interface RemoteLivePointerProps {
 
 export default function RemoteLivePointer({ videoTrack, dataTrack, scale }: RemoteLivePointerProps): ReactElement {
   const classes = useStyles();
-  const { room } = useVideoContext();
-  const { drawLivePointer, getPosition, sendMouseCoordsAndCanvasSize } = useCaptureImageContext();
-
-  let localDataTrackPublication: LocalDataTrackPublication;
-
-  if (room) {
-    [localDataTrackPublication] = [...room!.localParticipant.dataTracks.values()];
-  }
+  const { drawLivePointer, getPosition, sendMouseCoordsAndCanvasSize, drawVideoToCanvas } = useCaptureImageContext();
 
   const remoteColor = new ColorHash().hex(dataTrack.name);
+
+  useEffect(() => {
+    console.log('drawing remotelivepointer');
+    const canvas = document.getElementById('videocanvas') as HTMLCanvasElement;
+    const video = document.getElementById('capture-video') as HTMLVideoElement;
+
+    const canvasPos = getPosition(canvas);
+
+    // eslint-disable-next-line no-var
+    var mouseX = 0;
+    // eslint-disable-next-line no-var
+    var mouseY = 0;
+
+    canvas.addEventListener('touchstart', e => console.log(e));
+    canvas.addEventListener(
+      'touchmove',
+      (e: TouchEvent) => {
+        e.preventDefault();
+        // console.log('touchmove ', e);
+        console.log(e.touches[0].clientX);
+        console.log(e.touches[0].clientY);
+        const { mouseCoords } = sendMouseCoordsAndCanvasSize(e.touches[0], canvas, canvasPos, remoteColor);
+        mouseX = mouseCoords.mouseX;
+        mouseY = mouseCoords.mouseY;
+      },
+      false
+    );
+
+    drawVideoToCanvas(canvas, video);
+
+    const ctx = canvas!.getContext('2d');
+
+    const drawCircle = () => {
+      // console.log('using drawCircle in RemoteLivePointer()');
+      ctx!.clearRect(0, 0, canvas.width, canvas.height);
+      ctx!.beginPath();
+      ctx!.arc(mouseX, mouseY, 10, 0, 2 * Math.PI, true);
+      ctx!.fillStyle = remoteColor; // TODO toggle based on local/remote user
+      ctx!.fill();
+      requestAnimationFrame(drawCircle);
+    };
+
+    drawCircle();
+  });
 
   useEffect(() => {
     const handleMessage = (event: any) => {
@@ -79,40 +116,6 @@ export default function RemoteLivePointer({ videoTrack, dataTrack, scale }: Remo
       dataTrack.off('message', handleMessage);
     };
   }, [dataTrack]);
-
-  useEffect(() => {
-    console.log('second useEffect');
-    const canvas = document.getElementById('videocanvas') as HTMLCanvasElement;
-    const canvasPos = getPosition(canvas);
-
-    // eslint-disable-next-line no-var
-    var mouseX = 0;
-    // eslint-disable-next-line no-var
-    var mouseY = 0;
-    canvas.addEventListener(
-      'mousemove',
-      (e: MouseEvent) => {
-        const { mouseCoords } = sendMouseCoordsAndCanvasSize(e, canvas, canvasPos, remoteColor);
-        mouseX = mouseCoords.mouseX;
-        mouseY = mouseCoords.mouseY;
-      },
-      false
-    );
-
-    const ctx = canvas!.getContext('2d');
-
-    const drawCircle = () => {
-      console.log('using drawCircle in remove LivePointer()');
-      ctx!.clearRect(0, 0, canvas.width, canvas.height);
-      ctx!.beginPath();
-      ctx!.arc(mouseX, mouseY, 10, 0, 2 * Math.PI, true);
-      ctx!.fillStyle = remoteColor; // TODO toggle based on local/remote user
-      ctx!.fill();
-      requestAnimationFrame(drawCircle);
-    };
-
-    drawCircle();
-  });
 
   return (
     <>
