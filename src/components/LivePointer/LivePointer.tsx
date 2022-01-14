@@ -21,7 +21,12 @@ const useStyles = makeStyles(() => ({
     },
     position: 'relative',
   },
-  canvas: { position: 'absolute', top: '0', left: '0', zIndex: 1 },
+  canvas: {
+    position: 'absolute',
+    top: '50',
+    left: '0',
+    zIndex: 1,
+  },
 }));
 
 interface LivePointerProps {
@@ -114,11 +119,6 @@ export default function LivePointer({ videoTrack, dataTrack, scale }: LivePointe
 
   useEffect(() => {
     const handleMessage = (event: any) => {
-      // console.log('datatrack' + dataTrack);
-
-      // console.log('in handleMessage LivePointer');
-      // console.log(event);
-
       if (typeof event === 'string' && event.startsWith('{"isLivePointerOpen')) {
         return;
       }
@@ -152,7 +152,7 @@ export default function LivePointer({ videoTrack, dataTrack, scale }: LivePointe
   return (
     <>
       <h2 className={classes.preview}>Live Pointer</h2>
-      <div className={classes.preview}>
+      <div>
         <VideoTrack id={'capture-video'} track={videoTrack} scale={scale} />
         <canvas id="videocanvas" className={classes.canvas}></canvas>
       </div>
