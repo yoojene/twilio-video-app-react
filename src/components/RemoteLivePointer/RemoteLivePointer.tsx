@@ -5,7 +5,7 @@ import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import useCaptureImageContext from '../../hooks/useCaptureImageContext/useCaptureImageContext';
 import VideoTrack from '../VideoTrack/VideoTrack';
 import { IVideoTrack } from '../../types';
-import ColorHash from 'color-hash';
+import { REMOTE_POINTER_COLOR } from '../../utils';
 
 const useStyles = makeStyles(() => ({
   preview: {
@@ -35,50 +35,60 @@ export default function RemoteLivePointer({ videoTrack, dataTrack, scale }: Remo
   const classes = useStyles();
   const { drawLivePointer, getPosition, sendMouseCoordsAndCanvasSize, drawVideoToCanvas } = useCaptureImageContext();
 
-  const remoteColor = new ColorHash().hex(dataTrack.name);
+  const remoteColor = REMOTE_POINTER_COLOR;
 
   useEffect(() => {
     console.log('drawing remotelivepointer');
     const canvas = document.getElementById('videocanvas') as HTMLCanvasElement;
     const video = document.getElementById('capture-video') as HTMLVideoElement;
 
-    const canvasPos = getPosition(canvas);
+    console.log(canvas);
+    console.log(video);
 
-    // eslint-disable-next-line no-var
-    var mouseX = 0;
-    // eslint-disable-next-line no-var
-    var mouseY = 0;
+    if (canvas && video) {
+      setTimeout(() => {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const canvasPos = getPosition(canvas);
 
-    canvas.addEventListener('touchstart', e => console.log(e));
-    canvas.addEventListener(
-      'touchmove',
-      (e: TouchEvent) => {
-        e.preventDefault();
-        // console.log('touchmove ', e);
-        console.log(e.touches[0].clientX);
-        console.log(e.touches[0].clientY);
-        const { mouseCoords } = sendMouseCoordsAndCanvasSize(e.touches[0], canvas, canvasPos, remoteColor);
-        mouseX = mouseCoords.mouseX;
-        mouseY = mouseCoords.mouseY;
-      },
-      false
-    );
+        // eslint-disable-next-line no-var
+        var mouseX = 0;
+        // eslint-disable-next-line no-var
+        var mouseY = 0;
 
-    drawVideoToCanvas(canvas, video);
+        canvas.addEventListener('touchstart', (e: TouchEvent) => {
+          console.log(e);
+        });
+        canvas.addEventListener(
+          'touchmove',
+          (e: TouchEvent) => {
+            e.preventDefault();
+            // console.log('touchmove ', e);
+            console.log(e.touches[0].clientX);
+            console.log(e.touches[0].clientY);
+            const { mouseCoords } = sendMouseCoordsAndCanvasSize(e.touches[0], canvas, canvasPos, remoteColor);
+            mouseX = mouseCoords.mouseX;
+            mouseY = mouseCoords.mouseY;
+            drawCircle();
+          },
+          false
+        );
 
-    const ctx = canvas!.getContext('2d');
+        drawVideoToCanvas(canvas, video);
 
-    const drawCircle = () => {
-      // console.log('using drawCircle in RemoteLivePointer()');
-      ctx!.clearRect(0, 0, canvas.width, canvas.height);
-      ctx!.beginPath();
-      ctx!.arc(mouseX, mouseY, 10, 0, 2 * Math.PI, true);
-      ctx!.fillStyle = remoteColor; // TODO toggle based on local/remote user
-      ctx!.fill();
-      requestAnimationFrame(drawCircle);
-    };
+        const ctx = canvas!.getContext('2d');
 
-    drawCircle();
+        const drawCircle = () => {
+          // console.log('using drawCircle in RemoteLivePointer()');
+          ctx!.clearRect(0, 0, canvas.width, canvas.height);
+          ctx!.beginPath();
+          ctx!.arc(mouseX, mouseY, 10, 0, 2 * Math.PI, true);
+          ctx!.fillStyle = remoteColor; // TODO toggle based on local/remote user
+          ctx!.fill();
+          requestAnimationFrame(drawCircle);
+        };
+      }, 500);
+    }
   });
 
   useEffect(() => {

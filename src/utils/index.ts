@@ -49,3 +49,6 @@ export async function isPermissionDenied(name: PermissionName) {
     return false;
   }
 }
+
+export const REMOTE_POINTER_COLOR = '#FF0000';
+export const LOCAL_POINTER_COLOR = '#00FF00';

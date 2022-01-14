@@ -5,7 +5,7 @@ import useCaptureImageContext from '../../hooks/useCaptureImageContext/useCaptur
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import { IVideoTrack } from '../../types';
 import VideoTrack from '../VideoTrack/VideoTrack';
-import ColorHash from 'color-hash';
+import { LOCAL_POINTER_COLOR } from '../../utils';
 
 const useStyles = makeStyles(() => ({
   preview: {
@@ -42,7 +42,7 @@ export default function LivePointer({ videoTrack, dataTrack, scale }: LivePointe
     [localDataTrackPublication] = [...room!.localParticipant.dataTracks.values()];
   }
 
-  const color = new ColorHash().hex(dataTrack.name);
+  const color = LOCAL_POINTER_COLOR;
   console.log(color);
 
   useEffect(() => {
@@ -77,39 +77,37 @@ export default function LivePointer({ videoTrack, dataTrack, scale }: LivePointe
             const { mouseCoords } = sendMouseCoordsAndCanvasSize(e, canvas, canvasPos, color);
             mouseX = mouseCoords.mouseX;
             mouseY = mouseCoords.mouseY;
+            drawCircle();
           },
           false
         );
 
-        if (ctx) {
-          // Draw video image onto canvas
+        // Draw video image onto canvas
 
-          // const drawToCanvas = () => {
-          //   // draw the current frame of localVideo onto the canvas,
-          //   // starting at 0, 0 (top-left corner) and covering its full
-          //   // width and heigth
-          //   ctx!.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+        // const drawToCanvas = () => {
+        //   // draw the current frame of localVideo onto the canvas,
+        //   // starting at 0, 0 (top-left corner) and covering its full
+        //   // width and heigth
+        //   ctx!.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
 
-          //   //repeat this every time a new frame becomes available using
-          //   //the browser's build-in requestAnimationFrame method
-          //   requestAnimationFrame(drawToCanvas);
-          // };
-          drawVideoToCanvas(canvas, video);
+        //   //repeat this every time a new frame becomes available using
+        //   //the browser's build-in requestAnimationFrame method
+        //   requestAnimationFrame(drawToCanvas);
+        // };
+        drawVideoToCanvas(canvas, video);
 
-          // Drawing pointer circle on canvas
-          const drawCircle = () => {
-            console.log('using drawCircle()');
-            ctx!.clearRect(0, 0, canvasWidth, canvasHeight);
-            ctx!.beginPath();
-            ctx!.arc(mouseX, mouseY, 10, 0, 2 * Math.PI, true);
-            ctx!.fillStyle = color; // TODO toggle based on local/remote user
-            ctx!.fill();
-            requestAnimationFrame(drawCircle);
-          };
+        // Drawing pointer circle on canvas
+        const drawCircle = () => {
+          console.log('using drawCircle()');
+          ctx!.clearRect(0, 0, canvasWidth, canvasHeight);
+          ctx!.beginPath();
+          ctx!.arc(mouseX, mouseY, 10, 0, 2 * Math.PI, true);
+          ctx!.fillStyle = color; // TODO toggle based on local/remote user
+          ctx!.fill();
+          requestAnimationFrame(drawCircle);
+        };
 
-          drawCircle();
-          // drawLivePointer(canvas, mouseX, mouseY);
-        }
+        // drawLivePointer(canvas, mouseX, mouseY);
       }, 500);
     }
   });
