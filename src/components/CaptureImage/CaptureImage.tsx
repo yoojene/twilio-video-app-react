@@ -129,7 +129,9 @@ export default function CaptureImage() {
     <div className={classes.container}>
       {!isLivePointerOpen && !isRemoteLivePointerOpen && videoTrack && (
         // Main video track for Agent
-        <VideoTrack id={'capture-video'} track={videoTrack} scale={scale} />
+        <div className={classes.preview}>
+          <VideoTrack id={'capture-video'} track={videoTrack} scale={scale} />
+        </div>
       )}
       {isLivePointerOpen && !isRemoteLivePointerOpen && videoTrack && dataTrack ? (
         // Agent Live Pointer

@@ -129,7 +129,7 @@ export default function RemoteLivePointer({ videoTrack, dataTrack, scale }: Remo
   return (
     <>
       <h2 className={classes.preview}>Remote Live Pointer</h2>
-      <div>
+      <div className={classes.preview}>
         <VideoTrack id={'capture-video'} track={videoTrack} scale={scale} />
         <canvas id="videocanvas" className={classes.canvas}></canvas>
       </div>

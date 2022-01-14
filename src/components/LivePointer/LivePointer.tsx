@@ -151,7 +151,7 @@ export default function LivePointer({ videoTrack, dataTrack, scale }: LivePointe
   return (
     <>
       <h2 className={classes.preview}>Live Pointer</h2>
-      <div>
+      <div className={classes.preview}>
         <VideoTrack id={'capture-video'} track={videoTrack} scale={scale} />
         <canvas id="videocanvas" className={classes.canvas}></canvas>
       </div>

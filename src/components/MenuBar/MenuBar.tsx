@@ -132,7 +132,7 @@ export default function MenuBar() {
               <ToggleAudioButton disabled={isReconnecting} />
               <ToggleVideoButton disabled={isReconnecting} />
               {!noParticipants && <ToggleCaptureImageButton disabled={isReconnecting} />}
-              {checkIsUser() ? <RemoteAnnotateButton /> : ''}
+              {checkIsUser() && isCaptureImageOpen ? <RemoteAnnotateButton /> : ''}
               {/* {!isSharingScreen && !isMobile && <ToggleScreenShareButton disabled={isReconnecting} />} */}
               {process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && <ToggleChatButton />}
               <Hidden smDown>
