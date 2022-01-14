@@ -77,6 +77,7 @@ export default function CaptureImage() {
     isLivePointerOpen,
     setIsRemoteLivePointerOpen,
     isRemoteLivePointerOpen,
+    isCaptureMode,
   } = useCaptureImageContext();
 
   const { isChatWindowOpen } = useChatContext();
@@ -251,59 +252,108 @@ export default function CaptureImage() {
   });
 
   return (
-    <>
-      <div className={classes.container}>
-        <Grid container spacing={1}>
-          <Grid item xs={6}>
-            {!isLivePointerOpen && !isRemoteLivePointerOpen && videoTrack && (
-              <div className={classes.preview}>
-                <VideoTrack id={'capture-video'} track={videoTrack} scale={scale} />
-              </div>
-            )}
-            {isLivePointerOpen && !isRemoteLivePointerOpen && videoTrack && dataTrack ? (
-              <LivePointer dataTrack={dataTrack} videoTrack={videoTrack}></LivePointer>
-            ) : (
-              ''
-            )}
+    <div className={classes.container}>
+      {!isLivePointerOpen && !isRemoteLivePointerOpen && videoTrack && (
+        // Main video track
+        <VideoTrack id={'capture-video'} track={videoTrack} scale={scale} />
+      )}
+      {isLivePointerOpen && !isRemoteLivePointerOpen && videoTrack && dataTrack ? (
+        <LivePointer dataTrack={dataTrack} videoTrack={videoTrack}></LivePointer>
+      ) : (
+        ''
+      )}
 
-            {!checkIsUser() && !isLivePointerOpen ? <ImagePreview track={dataTrack} /> : ''}
-            {checkIsUser() && !isRemoteLivePointerOpen && dataTrack ? <RemoteImagePreview track={dataTrack} /> : ''}
-            {checkIsUser() && isRemoteLivePointerOpen && dataTrack && videoTrack ? (
-              <RemoteLivePointer dataTrack={dataTrack} videoTrack={videoTrack} />
-            ) : (
-              ''
-            )}
-          </Grid>
-          {isGalleryOpen ? (
-            <>
-              {isChatWindowOpen ? (
-                <Grid item xs={3}>
-                  <div className={classes.galleryContainer}>
-                    <DialogTitle>Saved Images</DialogTitle>
-                    <SavedImageGallery></SavedImageGallery>
-                  </div>
-                </Grid>
-              ) : (
-                <Grid item xs={6}>
-                  <DialogTitle className={classes.galleryTitle}>Saved Images</DialogTitle>
-                  <div className={classes.galleryContainer}>
-                    <SavedImageGallery></SavedImageGallery>
-                  </div>
-                </Grid>
-              )}
-            </>
-          ) : (
-            ''
-          )}
+      {checkIsUser() && isRemoteLivePointerOpen && dataTrack && videoTrack ? (
+        <RemoteLivePointer dataTrack={dataTrack} videoTrack={videoTrack} />
+      ) : (
+        ''
+      )}
+
+      {!checkIsUser() && !isLivePointerOpen ? <ImagePreview track={dataTrack} /> : ''}
+      {checkIsUser() && !isRemoteLivePointerOpen && dataTrack ? <RemoteImagePreview track={dataTrack} /> : ''}
+
+      {isGalleryOpen ? (
+        <>
           {isChatWindowOpen ? (
             <Grid item xs={3}>
-              <ChatWindow />
+              <div className={classes.galleryContainer}>
+                <DialogTitle>Saved Images</DialogTitle>
+                <SavedImageGallery></SavedImageGallery>
+              </div>
             </Grid>
           ) : (
-            ''
+            <Grid item xs={6}>
+              <DialogTitle className={classes.galleryTitle}>Saved Images</DialogTitle>
+              <div className={classes.galleryContainer}>
+                <SavedImageGallery></SavedImageGallery>
+              </div>
+            </Grid>
           )}
+        </>
+      ) : (
+        ''
+      )}
+
+      {isChatWindowOpen ? (
+        <Grid item xs={3}>
+          <ChatWindow />
         </Grid>
-      </div>
-    </>
+      ) : (
+        ''
+      )}
+    </div>
+
+    // <>
+    //   <div className={classes.container}>
+    //     <Grid container spacing={1}>
+    //       <Grid item xs={6}>
+    //         {!isLivePointerOpen && !isRemoteLivePointerOpen && videoTrack && (
+    //           <div className={classes.preview}>
+    //             <VideoTrack id={'capture-video'} track={videoTrack} scale={scale} />
+    //           </div>
+    //         )}
+    //         {isLivePointerOpen && !isRemoteLivePointerOpen && videoTrack && dataTrack ? (
+    //           <LivePointer dataTrack={dataTrack} videoTrack={videoTrack}></LivePointer>
+    //         ) : (
+    //           ''
+    //         )}
+
+    //         {checkIsUser() && isRemoteLivePointerOpen && dataTrack && videoTrack ? (
+    //           <RemoteLivePointer dataTrack={dataTrack} videoTrack={videoTrack} />
+    //         ) : (
+    //           ''
+    //         )}
+    //       </Grid>
+    //       {isGalleryOpen ? (
+    //         <>
+    //           {isChatWindowOpen ? (
+    //             <Grid item xs={3}>
+    //               <div className={classes.galleryContainer}>
+    //                 <DialogTitle>Saved Images</DialogTitle>
+    //                 <SavedImageGallery></SavedImageGallery>
+    //               </div>
+    //             </Grid>
+    //           ) : (
+    //             <Grid item xs={6}>
+    //               <DialogTitle className={classes.galleryTitle}>Saved Images</DialogTitle>
+    //               <div className={classes.galleryContainer}>
+    //                 <SavedImageGallery></SavedImageGallery>
+    //               </div>
+    //             </Grid>
+    //           )}
+    //         </>
+    //       ) : (
+    //         ''
+    //       )}
+    //       {isChatWindowOpen ? (
+    //         <Grid item xs={3}>
+    //           <ChatWindow />
+    //         </Grid>
+    //       ) : (
+    //         ''
+    //       )}
+    //     </Grid>
+    //   </div>
+    // </>
   );
 }

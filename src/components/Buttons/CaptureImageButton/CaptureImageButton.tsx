@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function CaptureImageButton() {
   const classes = useStyles();
 
-  const { captureImage } = useCaptureImageContext();
+  const { captureImage, isCaptureMode } = useCaptureImageContext();
 
   const doCaptureImage = () => {
     captureImage();

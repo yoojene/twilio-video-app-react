@@ -103,7 +103,6 @@ export default function LivePointer({ videoTrack, dataTrack, scale }: LivePointe
 
         // Drawing pointer circle on canvas
         const drawCircle = () => {
-          console.log('using drawCircle()');
           ctx!.clearRect(0, 0, canvasWidth, canvasHeight);
           ctx!.beginPath();
           ctx!.arc(mouseX, mouseY, 10, 0, 2 * Math.PI, true);

@@ -6,6 +6,9 @@ import useCaptureImageContext from '../../hooks/useCaptureImageContext/useCaptur
 import imagePlaceholder from '../../images/import_placeholder-90.png';
 
 const useStyles = makeStyles(() => ({
+  title: {
+    marginLeft: '16px',
+  },
   photoPreview: {
     '@media (max-width: 1600px)': {
       width: '787px',
@@ -55,6 +58,9 @@ export default function RemoteImagePreview({ track }: { track: IDataTrack }) {
         canvasWidthNum = +canvasWidth;
         canvasHeightNum = +canvasHeight;
 
+        console.log(canvasWidthNum);
+        console.log(canvasHeightNum);
+
         return Promise.resolve([canvasWidthNum, canvasHeightNum]);
       }
       if (typeof event === 'string') {
@@ -69,6 +75,9 @@ export default function RemoteImagePreview({ track }: { track: IDataTrack }) {
 
       buf.set(data, count);
       count += data.byteLength;
+
+      console.log(count);
+      console.log(buf.byteLength);
 
       if (count === buf.byteLength) {
         console.log('Done can render photo now');
@@ -94,6 +103,7 @@ export default function RemoteImagePreview({ track }: { track: IDataTrack }) {
 
   return (
     <>
+      <h2 className={classes.title}>Remote Image Preview</h2>
       <div className={classes.canvasContainer} style={{ display: isRemoteCanvasOpen ? 'block' : 'none' }}>
         <canvas id="canvas"></canvas>
       </div>

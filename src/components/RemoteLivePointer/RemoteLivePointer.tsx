@@ -79,7 +79,6 @@ export default function RemoteLivePointer({ videoTrack, dataTrack, scale }: Remo
         const ctx = canvas!.getContext('2d');
 
         const drawCircle = () => {
-          // console.log('using drawCircle in RemoteLivePointer()');
           ctx!.clearRect(0, 0, canvas.width, canvas.height);
           ctx!.beginPath();
           ctx!.arc(mouseX, mouseY, 10, 0, 2 * Math.PI, true);

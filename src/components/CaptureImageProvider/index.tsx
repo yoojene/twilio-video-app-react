@@ -64,6 +64,8 @@ type CaptureImageContextType = {
     };
   };
   drawVideoToCanvas: (canvas: HTMLCanvasElement, video: HTMLVideoElement) => void;
+  isCaptureMode: boolean;
+  setIsCaptureMode: (isCaptureMode: boolean) => void;
 };
 
 interface CanvasElement extends HTMLCanvasElement {
@@ -85,6 +87,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   const [isRemoteImageOpen, setIsRemoteImageOpen] = useState(false);
   const [isLivePointerOpen, setIsLivePointerOpen] = useState(false);
   const [isRemoteLivePointerOpen, setIsRemoteLivePointerOpen] = useState(false);
+  const [isCaptureMode, setIsCaptureMode] = useState(false);
 
   const [scale, setScale] = useState(1);
   const { room } = useVideoContext();
@@ -103,6 +106,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   };
 
   const captureImage = async (isAnnotating = false) => {
+    console.log('in cappture image');
     const video = getVideoElementFromDialog();
     if (video) {
       const canvas = setVideoOnCanvas(video);
@@ -484,6 +488,8 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         getPosition,
         sendMouseCoordsAndCanvasSize,
         drawVideoToCanvas,
+        isCaptureMode,
+        setIsCaptureMode,
       }}
     >
       {children}
