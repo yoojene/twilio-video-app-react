@@ -108,132 +108,6 @@ export default function CaptureImage() {
     videoTrack = remoteVideoTrack;
   }
 
-  // const capabilities = videoTrack!.mediaStreamTrack.getCapabilities()
-  // console.log(capabilities)
-
-  // const settings = videoTrack!.mediaStreamTrack.getSettings();
-  // console.log(settings)
-
-  // videoTrack!.mediaStreamTrack.applyConstraints({ "advanced": [{ "zoom": 2.0 }]  as any})
-
-  // const media = navigator.mediaDevices.getUserMedia({video: true});
-
-  // media.then(mediaStream => {
-  //   console.log(mediaStream);
-
-  //   const track = mediaStream.getVideoTracks()[0];
-  //   const capabilities = track.getCapabilities();
-  //   const settings = track.getSettings();
-
-  //   console.log(track)
-  //   console.log(capabilities)
-  //   console.log(settings)
-
-  //   // get current zoom level
-  //   const currentZoomLevel = (settings as any).zoom;
-  //   console.log(currentZoomLevel)
-  //apply new zoom level of '2.0'
-  // track.applyConstraints({ advanced: [{ "zoom": 2.0 }] } as any);
-
-  // })
-
-  // if (videoTrack) {
-  //   const capabilities = videoTrack.mediaStreamTrack.getCapabilities();
-  //   console.log('capabilities')
-  //   console.log(capabilities)
-  //   const settings = videoTrack.mediaStreamTrack.getSettings();
-
-  //   console.log('settings')
-  //   console.log(settings)
-
-  //   // console.log(capabilities.zoom)
-
-  //   // videoTrack.mediaStreamTrack.applyConstraints({ advanced: [{ zoom: 2.0 }] } as any)
-  //   // videoTrack.mediaStreamTrack.applyConstraints({ advanced: [{ torch: true }] } as any)
-  // }
-
-  // const media = navigator.mediaDevices.getUserMedia({video: true});
-
-  // media.then(mediaStream => {
-  //   console.log('in navigator get user media then');
-  //   console.log(mediaStream);
-
-  //   const tracks = mediaStream.getVideoTracks();
-
-  //   console.log(tracks)
-
-  //   const track = mediaStream.getVideoTracks()[0];
-  //   const capabilities = track.getCapabilities();
-  //   const settings = track.getSettings();
-
-  //   console.log(track)
-  //   console.log(capabilities)
-  //   console.log(settings)
-
-  // get current zoom level
-  // const currentZoomLevel = (settings as any).zoom;
-  // console.log(currentZoomLevel)
-  // apply new zoom level of '2.0'
-  // track.applyConstraints({ advanced: [{ "zoom": 2.0 }] } as any);
-
-  // })
-
-  // const performOCR = () => {
-  //   // Get element.getBoundingClientRect from image with marker
-  //   const boundingBox = document.getElementsByTagName('rect')[0]; // appears to show two rects for rectangle marker
-  //   const domRect = boundingBox.getBoundingClientRect();
-  //   console.log(domRect);
-  // };
-
-  // eslint-disable-next-line no-var
-
-  // useEffect(() => {
-  //   const canvas = document.getElementById('videocanvas') as HTMLCanvasElement;
-  //   // eslint-disable-next-line no-var
-  //   var video = document.getElementById('capture-video') as HTMLVideoElement;
-
-  //   console.log(canvas);
-  //   console.log(video);
-  //   const context = canvas!.getContext('2d');
-
-  //   function calculateSize(srcSize: {
-  //     width: number;
-  //     height: number;
-  //   }, dstSize: {
-  //     width: number;
-  //     height: number;
-  //   }) {
-  //     const srcRatio = srcSize.width / srcSize.height;
-  //     const dstRatio = dstSize.width / dstSize.height;
-  //     if (dstRatio > srcRatio) {
-  //       return {
-  //         width: dstSize.height * srcRatio,
-  //         height: dstSize.height
-  //       };
-  //     } else {
-  //       return {
-  //         width: dstSize.width,
-  //         height: dstSize.width / srcRatio
-  //       };
-  //     }
-  //   }
-
-  //   function renderFrame() {
-  //     requestAnimationFrame(renderFrame);
-  //     canvas.width = canvas.scrollWidth;
-  //     canvas.height = canvas.scrollHeight;
-  //     const videoSize = { width: video.videoWidth, height: video.videoHeight };
-  //     const canvasSize = { width: canvas.width, height: canvas.height };
-  //     const renderSize = calculateSize(videoSize, canvasSize);
-  //     const xOffset = (canvasSize.width - renderSize.width) / 2;
-  //     context!.drawImage(video, xOffset, 0, renderSize.width, renderSize.height);
-
-  //   }
-
-  //   requestAnimationFrame(renderFrame);
-
-  // });
-
   useEffect(() => {
     if (dataTrack) {
       const handleMessage = (event: any) => {
@@ -254,23 +128,27 @@ export default function CaptureImage() {
   return (
     <div className={classes.container}>
       {!isLivePointerOpen && !isRemoteLivePointerOpen && videoTrack && (
-        // Main video track
+        // Main video track for Agent
         <VideoTrack id={'capture-video'} track={videoTrack} scale={scale} />
       )}
       {isLivePointerOpen && !isRemoteLivePointerOpen && videoTrack && dataTrack ? (
+        // Agent Live Pointer
         <LivePointer dataTrack={dataTrack} videoTrack={videoTrack}></LivePointer>
       ) : (
         ''
       )}
 
       {checkIsUser() && isRemoteLivePointerOpen && dataTrack && videoTrack ? (
+        // User Live Pointer
         <RemoteLivePointer dataTrack={dataTrack} videoTrack={videoTrack} />
       ) : (
         ''
       )}
 
-      {!checkIsUser() && !isLivePointerOpen ? <ImagePreview track={dataTrack} /> : ''}
-      {checkIsUser() && !isRemoteLivePointerOpen && dataTrack ? <RemoteImagePreview track={dataTrack} /> : ''}
+      {// Agent Image Preview
+      !checkIsUser() && !isLivePointerOpen ? <ImagePreview track={dataTrack} /> : ''}
+      {// User Image Preview
+      checkIsUser() && !isRemoteLivePointerOpen && dataTrack ? <RemoteImagePreview track={dataTrack} /> : ''}
 
       {isGalleryOpen ? (
         <>
@@ -302,58 +180,5 @@ export default function CaptureImage() {
         ''
       )}
     </div>
-
-    // <>
-    //   <div className={classes.container}>
-    //     <Grid container spacing={1}>
-    //       <Grid item xs={6}>
-    //         {!isLivePointerOpen && !isRemoteLivePointerOpen && videoTrack && (
-    //           <div className={classes.preview}>
-    //             <VideoTrack id={'capture-video'} track={videoTrack} scale={scale} />
-    //           </div>
-    //         )}
-    //         {isLivePointerOpen && !isRemoteLivePointerOpen && videoTrack && dataTrack ? (
-    //           <LivePointer dataTrack={dataTrack} videoTrack={videoTrack}></LivePointer>
-    //         ) : (
-    //           ''
-    //         )}
-
-    //         {checkIsUser() && isRemoteLivePointerOpen && dataTrack && videoTrack ? (
-    //           <RemoteLivePointer dataTrack={dataTrack} videoTrack={videoTrack} />
-    //         ) : (
-    //           ''
-    //         )}
-    //       </Grid>
-    //       {isGalleryOpen ? (
-    //         <>
-    //           {isChatWindowOpen ? (
-    //             <Grid item xs={3}>
-    //               <div className={classes.galleryContainer}>
-    //                 <DialogTitle>Saved Images</DialogTitle>
-    //                 <SavedImageGallery></SavedImageGallery>
-    //               </div>
-    //             </Grid>
-    //           ) : (
-    //             <Grid item xs={6}>
-    //               <DialogTitle className={classes.galleryTitle}>Saved Images</DialogTitle>
-    //               <div className={classes.galleryContainer}>
-    //                 <SavedImageGallery></SavedImageGallery>
-    //               </div>
-    //             </Grid>
-    //           )}
-    //         </>
-    //       ) : (
-    //         ''
-    //       )}
-    //       {isChatWindowOpen ? (
-    //         <Grid item xs={3}>
-    //           <ChatWindow />
-    //         </Grid>
-    //       ) : (
-    //         ''
-    //       )}
-    //     </Grid>
-    //   </div>
-    // </>
   );
 }
