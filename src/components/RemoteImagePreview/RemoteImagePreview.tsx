@@ -10,9 +10,10 @@ const useStyles = makeStyles(() => ({
     marginLeft: '16px',
   },
   photoPreview: {
-    '@media (max-width: 1600px)': {
-      width: '787px',
-    },
+    // '@media (max-width: 1600px)': {
+    //   width: '787px',
+    // },
+    width: '100vw',
   },
   canvasContainer: {
     width: '100%',
@@ -103,7 +104,7 @@ export default function RemoteImagePreview({ track }: { track: IDataTrack }) {
 
   return (
     <>
-      <h2 className={classes.title}>Remote Image Preview</h2>
+      {/* <h2 className={classes.title}>Remote Image Preview</h2> */}
       <div className={classes.canvasContainer} style={{ display: isRemoteCanvasOpen ? 'block' : 'none' }}>
         <canvas id="canvas"></canvas>
       </div>
@@ -111,8 +112,8 @@ export default function RemoteImagePreview({ track }: { track: IDataTrack }) {
         <div className={classes.photoContainer} style={{ display: isRemoteImageOpen ? 'block' : 'none' }}>
           <img
             id="remotephoto"
-            src={imagePlaceholder}
-            alt="The photo capture will appear in this box."
+            // src={imagePlaceholder}
+            // alt="The photo capture will appear in this box."
             className={classes.photoPreview}
             ref={imgRef}
           />
