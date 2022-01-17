@@ -34,11 +34,11 @@ const useStyles = makeStyles(() => ({
     overflowY: 'scroll',
   },
   preview: {
-    width: '1000px',
-    marginLeft: '16px',
-    '@media (max-width: 1600px)': {
-      width: '500px',
-    },
+    width: '100vw',
+    // width: '1000px',
+    // '@media (max-width: 1600px)': {
+    //   width: '1000px',
+    // },
     maxHeight: '600px',
     margin: '0.5em auto',
     '& video': {
