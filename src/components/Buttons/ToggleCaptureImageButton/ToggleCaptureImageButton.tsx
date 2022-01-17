@@ -8,19 +8,22 @@ import { ReactComponent as CameraIcon } from '../../../icons/camera-outline.svg'
 
 const useStyles = makeStyles({
   iconContainer: {
-    position: 'relative',
-    display: 'flex',
+    width: '15px',
   },
 });
 
 export default function ToggleCaptureImageButton(props: { disabled?: boolean; className?: string }) {
   const classes = useStyles();
   const { hasVideoInputDevices } = useDevices();
-  const { isCaptureImageOpen, setIsCaptureImageOpen } = useCaptureImageContext();
+  const { isCaptureImageOpen, setIsCaptureImageOpen, checkIsUser } = useCaptureImageContext();
 
   const openCaptureImage = () => {
     console.log('capture image clicked!!!');
     setIsCaptureImageOpen(!isCaptureImageOpen);
+    console.log(isCaptureImageOpen);
+    // if (!isCaptureImageOpen) {
+    //   document.querySelectorAll('main')[0].style.overflow = 'hidden';
+    // }
   };
 
   return (
@@ -34,7 +37,7 @@ export default function ToggleCaptureImageButton(props: { disabled?: boolean; cl
         </div>
       }
     >
-      Capture Image
+      Capture Mode {isCaptureImageOpen ? 'On' : 'Off'}
     </Button>
   );
 }

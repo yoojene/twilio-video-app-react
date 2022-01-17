@@ -12,6 +12,7 @@ const useStyles = makeStyles({
   iconContainer: {
     position: 'relative',
     display: 'flex',
+    width: '15px',
   },
   circle: {
     width: '10px',

@@ -36,8 +36,7 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: '0 1.43em',
       zIndex: 10,
       [theme.breakpoints.down('sm')]: {
-        height: `${theme.mobileFooterHeight}px`,
-        padding: 0,
+        textAlign: 'center',
       },
     },
     screenShareBanner: {
@@ -78,9 +77,9 @@ const useStyles = makeStyles((theme: Theme) =>
       // }
     },
     buttonGridContainer: {
-      [theme.breakpoints.down('sm')]: {
-        marginTop: `-57px`,
-      },
+      // [theme.breakpoints.down('sm')]: {
+      //   marginTop: `-57px`,
+      // },
     },
     buttonContainer: {
       // marginTop: '-5rem',
@@ -127,18 +126,15 @@ export default function MenuBar() {
               <Typography variant="body1">{room!.name}</Typography>
             </Grid>
           </Hidden>
-          <Grid item className={classes.buttonGridItem}>
-            <Grid container justifyContent="center" className={classes.buttonGridContainer}>
-              <ToggleAudioButton disabled={isReconnecting} />
-              <ToggleVideoButton disabled={isReconnecting} />
-              {!noParticipants && <ToggleCaptureImageButton disabled={isReconnecting} />}
-              {checkIsUser() && isCaptureImageOpen ? <RemoteAnnotateButton /> : ''}
-              {/* {!isSharingScreen && !isMobile && <ToggleScreenShareButton disabled={isReconnecting} />} */}
-              {process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && <ToggleChatButton />}
-              <Hidden smDown>
-                <Menu />
-              </Hidden>
-            </Grid>
+          <Grid className={classes.buttonGridItem}>
+            <ToggleAudioButton disabled={isReconnecting} />
+            <ToggleVideoButton disabled={isReconnecting} />
+            {!noParticipants && <ToggleCaptureImageButton disabled={isReconnecting} />}
+            {checkIsUser() && isCaptureImageOpen ? <RemoteAnnotateButton /> : ''}
+            {process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && <ToggleChatButton />}
+            <Hidden smDown>
+              <Menu />
+            </Hidden>
             {isCaptureImageOpen ? (
               <Grid container>
                 <div className={classes.buttonContainer}>
