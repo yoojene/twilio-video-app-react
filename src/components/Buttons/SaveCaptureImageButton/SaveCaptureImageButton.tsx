@@ -1,9 +1,13 @@
 import { Button, createStyles, makeStyles, Theme } from '@material-ui/core';
 import React from 'react';
 import useCaptureImageContext from '../../../hooks/useCaptureImageContext/useCaptureImageContext';
+import { ReactComponent as SaveIcon } from '../../../icons/save-outline.svg';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    iconContainer: {
+      width: '15px',
+    },
     button: {
       textAlign: 'center',
       marginLeft: '8px',
@@ -20,7 +24,15 @@ export default function SaveCaptureImageButton() {
   };
 
   return (
-    <Button color="primary" variant="contained" className={classes.button} onClick={saveImage}>
+    <Button
+      className={classes.button}
+      onClick={saveImage}
+      startIcon={
+        <div className={classes.iconContainer}>
+          <SaveIcon />
+        </div>
+      }
+    >
       Save
     </Button>
   );

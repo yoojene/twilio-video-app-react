@@ -75,7 +75,7 @@ interface CanvasElement extends HTMLCanvasElement {
 export const CaptureImageContext = createContext<CaptureImageContextType>(null!);
 
 export const CaptureImageProvider: React.FC = ({ children }) => {
-  const [isCaptureImageOpen, setIsCaptureImageOpen] = useState(false);
+  const [isCaptureImageOpen, setIsCaptureImageOpen] = useState(true);
   const [isMarkupPanelOpen, setMarkupPanelOpen] = useState(false);
   const [annotatedPhoto, setAnnotatedPhoto] = useState('');
   const [imgRef, setImageRef] = useState<React.MutableRefObject<HTMLImageElement> | null>(null);

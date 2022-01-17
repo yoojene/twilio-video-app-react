@@ -14,7 +14,6 @@ import ToggleVideoButton from '../Buttons/ToggleVideoButton/ToggleVideoButton';
 import ToggleScreenShareButton from '../Buttons/ToogleScreenShareButton/ToggleScreenShareButton';
 import useParticipants from '../../hooks/useParticipants/useParticipants';
 import useCaptureImageContext from '../../hooks/useCaptureImageContext/useCaptureImageContext';
-import ToggleCaptureImageButton from '../Buttons/ToggleCaptureImageButton/ToggleCaptureImageButton';
 import SaveCaptureImageButton from '../Buttons/SaveCaptureImageButton/SaveCaptureImageButton';
 import CaptureImageButton from '../Buttons/CaptureImageButton/CaptureImageButton';
 import AnnotateButton from '../Buttons/AnnotateButton/AnnotateButton';
@@ -128,27 +127,33 @@ export default function MenuBar() {
           </Hidden>
           <Grid className={classes.buttonGridItem}>
             <ToggleAudioButton disabled={isReconnecting} />
-            <ToggleVideoButton disabled={isReconnecting} />
-            {!noParticipants && <ToggleCaptureImageButton disabled={isReconnecting} />}
-            {checkIsUser() && isCaptureImageOpen ? <RemoteAnnotateButton /> : ''}
-            {process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && <ToggleChatButton />}
+            {!noParticipants ? (
+              <>
+                {!checkIsUser() ? <CaptureImageButton /> : ''}
+                {!checkIsUser() ? <AnnotateButton /> : ''}
+                {!checkIsUser() ? <SaveCaptureImageButton /> : ''}
+                {!checkIsUser() ? <ToggleGalleryButton /> : ''}
+                {!checkIsUser() ? <ToggleLivePointerButton /> : ''}
+                {checkIsUser() && isCaptureImageOpen ? <RemoteAnnotateButton /> : ''}
+                {process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && <ToggleChatButton />}
+              </>
+            ) : (
+              ''
+            )}
+
             <Hidden smDown>
               <Menu />
             </Hidden>
-            {isCaptureImageOpen ? (
+            {/* TODO revisit Zoom function later {isCaptureImageOpen ? (
               <Grid container>
                 <div className={classes.buttonContainer}>
-                  {!checkIsUser() ? <CaptureImageButton /> : ''}
-                  {!checkIsUser() ? <AnnotateButton /> : ''}
                   {!checkIsUser() ? <ZoomButton /> : ''}
-                  {!checkIsUser() ? <SaveCaptureImageButton /> : ''}
-                  {!checkIsUser() ? <ToggleGalleryButton /> : ''}
-                  {!checkIsUser() ? <ToggleLivePointerButton /> : ''}
+                  
                 </div>
               </Grid>
             ) : (
               ''
-            )}
+            )} */}
           </Grid>
           <Hidden smDown>
             <Grid style={{ flex: 1 }}>

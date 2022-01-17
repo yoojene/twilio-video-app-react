@@ -4,9 +4,13 @@ import { LocalDataTrackPublication } from 'twilio-video';
 
 import useCaptureImageContext from '../../../hooks/useCaptureImageContext/useCaptureImageContext';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
+import { ReactComponent as LivePointerIcon } from '../../../icons/color-wand-outline.svg';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    iconContainer: {
+      width: '18px',
+    },
     button: {
       textAlign: 'center',
       marginLeft: '8px',
@@ -36,7 +40,15 @@ export default function ToggleLivePointerButton(): ReactElement {
   };
 
   return (
-    <Button color="primary" variant="contained" className={classes.button} onClick={doOpenLivePointer}>
+    <Button
+      className={classes.button}
+      onClick={doOpenLivePointer}
+      startIcon={
+        <div className={classes.iconContainer}>
+          <LivePointerIcon />
+        </div>
+      }
+    >
       {isLivePointerOpen ? 'Close' : 'Open'} Live Pointer
     </Button>
   );

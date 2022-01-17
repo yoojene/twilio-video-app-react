@@ -17,6 +17,7 @@ import Amplify from 'aws-amplify';
 import { AmazonAIPredictionsProvider } from '@aws-amplify/predictions';
 
 import awsconfig from './aws-exports';
+import useParticipants from './hooks/useParticipants/useParticipants';
 Amplify.configure(awsconfig);
 Amplify.addPluggable(new AmazonAIPredictionsProvider());
 
@@ -28,7 +29,7 @@ const Container = styled('div')({
 const Main = styled('main')(({ theme }: { theme: Theme }) => ({
   // overflow: 'hidden',
   // paddingBottom: `${theme.footerHeight}px`, // Leave some space for the footer
-  background: 'black',
+  background: 'white',
   // [theme.breakpoints.down('sm')]: {
   //   paddingBottom: `${theme.mobileFooterHeight + theme.mobileTopBarHeight}px`, // Leave some space for the mobile header and footer
   // },
@@ -36,6 +37,11 @@ const Main = styled('main')(({ theme }: { theme: Theme }) => ({
 
 export default function App() {
   const roomState = useRoomState();
+
+  const participants = useParticipants();
+  const noParticipants = participants.length === 0;
+
+  console.log(noParticipants);
   const { isCaptureImageOpen } = useCaptureImageContext();
 
   // Here we would like the height of the main container to be the height of the viewport.
@@ -53,10 +59,10 @@ export default function App() {
         <Main>
           <ReconnectingNotification />
           <RecordingNotifications />
-          {!isCaptureImageOpen ? (
+          {noParticipants ? (
             <>
               <MobileTopMenuBar />
-              <Room />{' '}
+              <h1>You are the only one in the call, please wait for the next participant....</h1>
             </>
           ) : (
             <>

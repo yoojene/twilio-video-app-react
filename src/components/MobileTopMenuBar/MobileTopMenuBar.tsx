@@ -6,6 +6,7 @@ import Menu from '../MenuBar/Menu/Menu';
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
+    width: '100vw',
     background: 'white',
     paddingLeft: '1em',
     display: 'none',
