@@ -43,6 +43,7 @@ export default function ToggleLivePointerButton(): ReactElement {
     <Button
       className={classes.button}
       onClick={doOpenLivePointer}
+      color={isLivePointerOpen ? 'secondary' : undefined}
       startIcon={
         <div className={classes.iconContainer}>
           <LivePointerIcon />

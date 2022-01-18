@@ -31,6 +31,7 @@ export default function AnnotateButton() {
       className={classes.button}
       onClick={doAnnotateImage}
       disabled={isMarkupPanelOpen}
+      color={isMarkupPanelOpen ? 'secondary' : undefined}
       startIcon={
         <div className={classes.iconContainer}>
           <PencilIcon />
