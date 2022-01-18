@@ -9,16 +9,28 @@ import { REMOTE_POINTER_COLOR } from '../../utils';
 
 const useStyles = makeStyles(() => ({
   preview: {
-    width: '100vw',
+    // display: 'flex',
+    // justifyContent: 'center',
+    // width: '100vw',
 
-    maxHeight: '600px',
-    margin: '0.5em auto',
+    // maxHeight: '800px',
+    // margin: '0.5em auto',
     '& video': {
-      maxHeight: '600px',
+      width: '100vw',
     },
     position: 'relative',
   },
-  canvas: { position: 'absolute', top: '0', left: '0', zIndex: 1 },
+  canvas: {
+    position: 'absolute',
+    top: '0',
+    left: '0',
+    zIndex: 1,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    right: '0',
+    textAlign: 'center',
+    width: '100vw',
+  },
 }));
 
 interface RemoteLivePointerProps {
@@ -42,8 +54,8 @@ export default function RemoteLivePointer({ videoTrack, dataTrack, scale }: Remo
 
   useEffect(() => {
     console.log('drawing remotelivepointer');
-    const canvas = document.getElementById('videocanvas') as HTMLCanvasElement;
-    const video = document.getElementById('capture-video') as HTMLVideoElement;
+    const canvas = document.getElementById('remotevideocanvas') as HTMLCanvasElement;
+    const video = document.getElementById('remote-capture-video') as HTMLVideoElement;
 
     console.log(canvas);
     console.log(video);
@@ -121,9 +133,14 @@ export default function RemoteLivePointer({ videoTrack, dataTrack, scale }: Remo
         trackColor: { color },
       } = JSON.parse(event);
 
-      const canvas = document.getElementById('videocanvas') as HTMLCanvasElement;
-      canvas.width = canvasWidth;
-      canvas.height = canvasHeight;
+      const canvas = document.getElementById('remotevideocanvas') as HTMLCanvasElement;
+      const video = document.getElementById('remote-capture-video') as HTMLVideoElement;
+
+      console.log(video);
+      console.log(video.videoHeight);
+      console.log(video.videoWidth);
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
       drawLivePointer(canvas, mouseX, mouseY, color);
     };
 
@@ -137,8 +154,8 @@ export default function RemoteLivePointer({ videoTrack, dataTrack, scale }: Remo
     <>
       {/* <h2 className={classes.preview}>Remote Live Pointer</h2> */}
       <div className={classes.preview}>
-        <VideoTrack id={'capture-video'} track={videoTrack} scale={scale} />
-        <canvas id="videocanvas" className={classes.canvas}></canvas>
+        <VideoTrack id={'remote-capture-video'} track={videoTrack} scale={scale} />
+        <canvas id="remotevideocanvas" className={classes.canvas}></canvas>
       </div>
     </>
   );

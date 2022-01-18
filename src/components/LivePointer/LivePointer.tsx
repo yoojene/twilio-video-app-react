@@ -9,12 +9,14 @@ import { LOCAL_POINTER_COLOR } from '../../utils';
 
 const useStyles = makeStyles(() => ({
   preview: {
-    width: '100vw',
+    // display: 'flex',
+    // justifyContent: 'center',
+    // width: '100vw',
 
-    maxHeight: '100vw',
-    //   margin: '0.5em auto',
+    // maxHeight: '800px',
+    // margin: '0.5em auto',
     '& video': {
-      maxHeight: '100vw',
+      width: '100vw',
     },
     position: 'relative',
   },
@@ -27,6 +29,7 @@ const useStyles = makeStyles(() => ({
     marginRight: 'auto',
     right: '0',
     textAlign: 'center',
+    width: '100vw',
   },
 }));
 
