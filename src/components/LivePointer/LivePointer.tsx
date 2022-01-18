@@ -11,18 +11,22 @@ const useStyles = makeStyles(() => ({
   preview: {
     width: '100vw',
 
-    maxHeight: '600px',
-    margin: '0.5em auto',
+    maxHeight: '100vw',
+    //   margin: '0.5em auto',
     '& video': {
-      maxHeight: '600px',
+      maxHeight: '100vw',
     },
     position: 'relative',
   },
   canvas: {
     position: 'absolute',
-    top: '50',
+    top: '0',
     left: '0',
     zIndex: 1,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    right: '0',
+    textAlign: 'center',
   },
 }));
 
