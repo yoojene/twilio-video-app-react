@@ -9,11 +9,8 @@ import { REMOTE_POINTER_COLOR } from '../../utils';
 
 const useStyles = makeStyles(() => ({
   preview: {
-    width: '1000px',
-    marginLeft: '16px',
-    '@media (max-width: 1600px)': {
-      width: '500px',
-    },
+    width: '100vw',
+
     maxHeight: '600px',
     margin: '0.5em auto',
     '& video': {
@@ -33,7 +30,13 @@ interface RemoteLivePointerProps {
 
 export default function RemoteLivePointer({ videoTrack, dataTrack, scale }: RemoteLivePointerProps): ReactElement {
   const classes = useStyles();
-  const { drawLivePointer, getPosition, sendMouseCoordsAndCanvasSize, drawVideoToCanvas } = useCaptureImageContext();
+  const {
+    drawLivePointer,
+    getPosition,
+    sendMouseCoordsAndCanvasSize,
+    drawVideoToCanvas,
+    isLivePointerOpen,
+  } = useCaptureImageContext();
 
   const remoteColor = REMOTE_POINTER_COLOR;
 
@@ -98,6 +101,10 @@ export default function RemoteLivePointer({ videoTrack, dataTrack, scale }: Remo
       console.log(event);
 
       if (typeof event === 'string' && event.startsWith('{"isLivePointerOpen')) {
+        if (!isLivePointerOpen) {
+          console.log('here');
+          document.querySelectorAll('main')[0].style.overflow = 'unset';
+        }
         return;
       }
 
@@ -128,7 +135,7 @@ export default function RemoteLivePointer({ videoTrack, dataTrack, scale }: Remo
 
   return (
     <>
-      <h2 className={classes.preview}>Remote Live Pointer</h2>
+      {/* <h2 className={classes.preview}>Remote Live Pointer</h2> */}
       <div className={classes.preview}>
         <VideoTrack id={'capture-video'} track={videoTrack} scale={scale} />
         <canvas id="videocanvas" className={classes.canvas}></canvas>

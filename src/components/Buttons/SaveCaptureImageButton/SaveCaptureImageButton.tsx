@@ -6,7 +6,7 @@ import { ReactComponent as SaveIcon } from '../../../icons/save-outline.svg';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     iconContainer: {
-      width: '15px',
+      width: `${theme.iconButtonWidth}px`,
     },
     button: {
       textAlign: 'center',
@@ -32,8 +32,6 @@ export default function SaveCaptureImageButton() {
           <SaveIcon />
         </div>
       }
-    >
-      Save
-    </Button>
+    ></Button>
   );
 }

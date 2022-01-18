@@ -34,8 +34,6 @@ export default function RemoteAnnotateButton() {
           <PencilIcon />
         </div>
       }
-    >
-      Annotate
-    </Button>
+    ></Button>
   );
 }

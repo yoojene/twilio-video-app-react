@@ -6,7 +6,7 @@ import { ReactComponent as GalleryIcon } from '../../../icons/images-outline.svg
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     iconContainer: {
-      width: '18px',
+      width: `${theme.iconButtonWidth}px`,
     },
     button: {
       textAlign: 'center',
@@ -32,8 +32,6 @@ export default function ToggleGalleryButton() {
           <GalleryIcon />
         </div>
       }
-    >
-      {isGalleryOpen ? 'Close' : 'Open'} Gallery
-    </Button>
+    ></Button>
   );
 }

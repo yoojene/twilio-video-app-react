@@ -9,7 +9,7 @@ import { ReactComponent as LivePointerIcon } from '../../../icons/color-wand-out
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     iconContainer: {
-      width: '18px',
+      width: `${theme.iconButtonWidth}px`,
     },
     button: {
       textAlign: 'center',
@@ -48,8 +48,6 @@ export default function ToggleLivePointerButton(): ReactElement {
           <LivePointerIcon />
         </div>
       }
-    >
-      {isLivePointerOpen ? 'Close' : 'Open'} Live Pointer
-    </Button>
+    ></Button>
   );
 }

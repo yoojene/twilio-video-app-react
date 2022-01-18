@@ -6,7 +6,7 @@ import { ReactComponent as PencilIcon } from '../../../icons/pencil-outline.svg'
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     iconContainer: {
-      width: '18px',
+      width: `${theme.iconButtonWidth}px`,
     },
     button: {
       textAlign: 'center',
@@ -36,8 +36,6 @@ export default function AnnotateButton() {
           <PencilIcon />
         </div>
       }
-    >
-      Annotate
-    </Button>
+    ></Button>
   );
 }

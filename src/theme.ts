@@ -11,6 +11,7 @@ declare module '@material-ui/core/styles/createTheme' {
     sidebarMobilePadding: number;
     participantBorderWidth: number;
     rightDrawerWidth: number;
+    iconButtonWidth: number;
   }
 
   // allow configuration using `createMuiTheme`
@@ -24,6 +25,7 @@ declare module '@material-ui/core/styles/createTheme' {
     sidebarMobilePadding: number;
     participantBorderWidth: number;
     rightDrawerWidth?: number;
+    iconButtonWidth?: number;
   }
 }
 
@@ -124,4 +126,8 @@ export default createTheme({
   participantBorderWidth: 2,
   mobileTopBarHeight: 52,
   rightDrawerWidth: 320,
+
+  // Added styles
+
+  iconButtonWidth: 18,
 });

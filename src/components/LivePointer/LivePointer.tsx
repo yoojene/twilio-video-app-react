@@ -9,11 +9,8 @@ import { LOCAL_POINTER_COLOR } from '../../utils';
 
 const useStyles = makeStyles(() => ({
   preview: {
-    width: '1000px',
-    marginLeft: '16px',
-    '@media (max-width: 1600px)': {
-      width: '500px',
-    },
+    width: '100vw',
+
     maxHeight: '600px',
     margin: '0.5em auto',
     '& video': {
