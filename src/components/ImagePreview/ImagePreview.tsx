@@ -33,8 +33,6 @@ export default function ImagePreview({ track }: { track?: IDataTrack }) {
 
   const classes = useStyles();
 
-  console.log(imgRef);
-
   useEffect(() => {
     if (track) {
       let count = 0;
