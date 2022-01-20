@@ -145,6 +145,7 @@ export default function CaptureImage() {
 
   const firstUpdate = useRef(true);
 
+  // Capture effect
   useEffect(() => {
     if (isCaptureMode) {
       console.log('calling captureImage() in layout eeffect');
@@ -160,6 +161,22 @@ export default function CaptureImage() {
       setIsVideoOpen(!isVideoOpen);
     }
   }, [isCaptureMode]);
+
+  // useEffect(() => {
+  //   console.log('annotation mode effect');
+  //   console.log(isAnnotationMode);
+
+  //   if (isAnnotationMode) {
+  //     // Update remote client into Annotation Mode
+
+  //     localDataTrackPublication.track.send(
+  //       JSON.stringify({
+  //         isAnnotationMode: !isAnnotationMode,
+  //       })
+  //     );
+
+  //   }
+  // }, [isAnnotationMode]);
 
   return (
     <div className={classes.container}>

@@ -11,7 +11,7 @@ import { Image } from '../../models';
 
 type CaptureImageContextType = {
   checkIsUser: () => boolean;
-  captureImage: (isAnnotating?: boolean) => void;
+  captureImage: () => void;
   getVideoElementFromDialog: () => Promise<HTMLElement | null>;
   isCaptureImageOpen: boolean;
   setIsCaptureImageOpen: (isCaptureImageOpen: boolean) => void;
@@ -38,8 +38,6 @@ type CaptureImageContextType = {
   isGalleryOpen: boolean;
   setIsGalleryOpen: (isGalleryOpen: boolean) => void;
   getImagesFromDataStore: () => void;
-  isAnnotating: boolean;
-  setIsAnnotating: (isAnnotating: boolean) => void;
   setRemoteImageFromCanvas: () => void;
   setImageFromCanvas: () => void;
   isRemoteCanvasOpen: boolean;
@@ -66,6 +64,8 @@ type CaptureImageContextType = {
   drawVideoToCanvas: (canvas: HTMLCanvasElement, video: HTMLVideoElement) => void;
   isCaptureMode: boolean;
   setIsCaptureMode: (isCaptureMode: boolean) => void;
+  isAnnotationMode: boolean;
+  setIsAnnotationMode: (isAnnotationMode: boolean) => void;
   isBackdropOpen: boolean;
   setIsBackdropOpen: (isBackdropOpen: boolean) => void;
   isImagePreviewOpen: boolean;
@@ -88,12 +88,12 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   const [photoBase64, setPhotoBase64] = useState<string>(defaultBase64Image);
 
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
-  const [isAnnotating, setIsAnnotating] = useState(false);
   const [isRemoteCanvasOpen, setIsRemoteCanvasOpen] = useState(true);
   const [isRemoteImageOpen, setIsRemoteImageOpen] = useState(false);
   const [isLivePointerOpen, setIsLivePointerOpen] = useState(false);
   const [isRemoteLivePointerOpen, setIsRemoteLivePointerOpen] = useState(false);
   const [isCaptureMode, setIsCaptureMode] = useState(false);
+  const [isAnnotationMode, setIsAnnotationMode] = useState(false);
   const [isImagePreviewOpen, setIsImagePreviewOpen] = useState(false);
   const [isVideoOpen, setIsVideoOpen] = useState(true);
   const [isBackdropOpen, setIsBackdropOpen] = useState(false);
@@ -114,7 +114,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     return isUser;
   };
 
-  const captureImage = async (isAnnotating = false) => {
+  const captureImage = async () => {
     const video = await getVideoElementFromDialog();
     setIsImagePreviewOpen(!isImagePreviewOpen);
     if (video) {
@@ -141,7 +141,6 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
       markerArea.show();
     } else {
       markerArea.close();
-      setIsAnnotating(false);
     }
   };
 
@@ -348,6 +347,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
 
     markerArea.addEventListener('close', () => {
       console.log('close');
+      setIsAnnotationMode(false);
       setMarkupPanelOpen(false);
     });
 
@@ -475,8 +475,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         isGalleryOpen,
         setIsGalleryOpen,
         getImagesFromDataStore,
-        isAnnotating,
-        setIsAnnotating,
+
         setRemoteImageFromCanvas,
         setImageFromCanvas,
         isRemoteCanvasOpen,
@@ -493,6 +492,8 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         drawVideoToCanvas,
         isCaptureMode,
         setIsCaptureMode,
+        isAnnotationMode,
+        setIsAnnotationMode,
         isBackdropOpen,
         setIsBackdropOpen,
         isImagePreviewOpen,
