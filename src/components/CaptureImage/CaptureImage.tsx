@@ -6,7 +6,7 @@ import VideoTrack from '../VideoTrack/VideoTrack';
 import { LocalVideoTrack, Participant, RemoteVideoTrack, Room, LocalDataTrackPublication } from 'twilio-video';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import useCaptureImageContext from '../../hooks/useCaptureImageContext/useCaptureImageContext';
-import { Backdrop, CircularProgress, Button, DialogActions, DialogTitle, Grid } from '@material-ui/core';
+import { Backdrop, CircularProgress, Button, DialogActions, DialogTitle, Grid, Snackbar } from '@material-ui/core';
 import useParticipants from '../../hooks/useParticipants/useParticipants';
 import usePublications from '../../hooks/usePublications/usePublications';
 import useTrack from '../../hooks/useTrack/useTrack';
@@ -88,10 +88,13 @@ export default function CaptureImage() {
     setIsBackdropOpen,
     isImagePreviewOpen,
     captureImage,
-    setIsCaptureMode,
     isVideoOpen,
     setIsImagePreviewOpen,
     setIsVideoOpen,
+    setIsRemoteCaptureMode,
+    isRemoteCaptureMode,
+    isAnnotationSnackOpen,
+    setIsAnnotationSnackOpen,
   } = useCaptureImageContext();
 
   const { isChatWindowOpen } = useChatContext();
@@ -131,6 +134,13 @@ export default function CaptureImage() {
           setIsRemoteLivePointerOpen(!isRemoteLivePointerOpen);
           console.log(isRemoteLivePointerOpen);
         }
+        if (typeof event === 'string' && event.startsWith('{"isCaptureMode')) {
+          console.log('isCaptureMode - toggle state');
+          console.log(isRemoteCaptureMode);
+          setIsRemoteCaptureMode(!isRemoteCaptureMode);
+          console.log(isRemoteCaptureMode);
+          setIsVideoOpen(!isVideoOpen);
+        }
       };
       dataTrack.on('message', handleMessage);
       return () => {
@@ -139,8 +149,15 @@ export default function CaptureImage() {
     }
   });
 
+  useEffect(() => {
+    if (isRemoteCaptureMode) {
+      setIsAnnotationSnackOpen(true);
+    }
+  }, [isRemoteCaptureMode]);
+
   const handleClose = () => {
-    setIsBackdropOpen(false);
+    // setIsBackdropOpen(false);
+    setIsAnnotationSnackOpen(false);
   };
 
   const firstUpdate = useRef(true);
@@ -180,9 +197,19 @@ export default function CaptureImage() {
 
   return (
     <div className={classes.container}>
-      <Backdrop className={classes.backdrop} open={isBackdropOpen} onClick={handleClose}>
+      {/* <Backdrop className={classes.backdrop} open={isBackdropOpen} onClick={handleClose}>
         <CircularProgress color="inherit" />
-      </Backdrop>
+      </Backdrop> */}
+      <Snackbar
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+        message="Annotation mode"
+        open={isAnnotationSnackOpen}
+        autoHideDuration={6000}
+        onClose={handleClose}
+      />
 
       {isVideoOpen && videoTrack && !isLivePointerOpen && !isRemoteLivePointerOpen && (
         // Main video track
@@ -207,7 +234,11 @@ export default function CaptureImage() {
       {// Agent Image Preview
       !checkIsUser() && !isLivePointerOpen && isImagePreviewOpen ? <ImagePreview track={dataTrack} /> : ''}
       {// User Image Preview
-      checkIsUser() && !isRemoteLivePointerOpen && dataTrack ? <RemoteImagePreview track={dataTrack} /> : ''}
+      checkIsUser() && !isRemoteLivePointerOpen && isRemoteCaptureMode && dataTrack ? (
+        <RemoteImagePreview track={dataTrack} />
+      ) : (
+        ''
+      )}
 
       {isGalleryOpen ? (
         <>

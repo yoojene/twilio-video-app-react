@@ -40,10 +40,6 @@ type CaptureImageContextType = {
   getImagesFromDataStore: () => void;
   setRemoteImageFromCanvas: () => void;
   setImageFromCanvas: () => void;
-  isRemoteCanvasOpen: boolean;
-  setIsRemoteCanvasOpen: (isRemoteCanvasOpen: boolean) => void;
-  isRemoteImageOpen: boolean;
-  setIsRemoteImageOpen: (isRemoteImageOpen: boolean) => void;
   isLivePointerOpen: boolean;
   setIsLivePointerOpen: (isLivePointerOpen: boolean) => void;
   isRemoteLivePointerOpen: boolean;
@@ -64,6 +60,8 @@ type CaptureImageContextType = {
   drawVideoToCanvas: (canvas: HTMLCanvasElement, video: HTMLVideoElement) => void;
   isCaptureMode: boolean;
   setIsCaptureMode: (isCaptureMode: boolean) => void;
+  isRemoteCaptureMode: boolean;
+  setIsRemoteCaptureMode: (isRemoteCaptureMode: boolean) => void;
   isAnnotationMode: boolean;
   setIsAnnotationMode: (isAnnotationMode: boolean) => void;
   isBackdropOpen: boolean;
@@ -72,6 +70,8 @@ type CaptureImageContextType = {
   setIsImagePreviewOpen: (isImagePreviewOpen: boolean) => void;
   isVideoOpen: boolean;
   setIsVideoOpen: (isImagePreviewOpen: boolean) => void;
+  isAnnotationSnackOpen: boolean;
+  setIsAnnotationSnackOpen: (isAnnotationSnackOpen: boolean) => void;
 };
 
 interface CanvasElement extends HTMLCanvasElement {
@@ -88,15 +88,15 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   const [photoBase64, setPhotoBase64] = useState<string>(defaultBase64Image);
 
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
-  const [isRemoteCanvasOpen, setIsRemoteCanvasOpen] = useState(true);
-  const [isRemoteImageOpen, setIsRemoteImageOpen] = useState(false);
   const [isLivePointerOpen, setIsLivePointerOpen] = useState(false);
   const [isRemoteLivePointerOpen, setIsRemoteLivePointerOpen] = useState(false);
   const [isCaptureMode, setIsCaptureMode] = useState(false);
+  const [isRemoteCaptureMode, setIsRemoteCaptureMode] = useState(false);
   const [isAnnotationMode, setIsAnnotationMode] = useState(false);
   const [isImagePreviewOpen, setIsImagePreviewOpen] = useState(false);
   const [isVideoOpen, setIsVideoOpen] = useState(true);
   const [isBackdropOpen, setIsBackdropOpen] = useState(false);
+  const [isAnnotationSnackOpen, setIsAnnotationSnackOpen] = React.useState(false);
 
   const [scale, setScale] = useState(1);
   const { room } = useVideoContext();
@@ -121,8 +121,9 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
       const canvas = await setVideoOnCanvas(video);
       if (canvas) {
         // if (!isAnnotating) {
-        //   await sendCanvasDimensionsOnDataTrack(canvas);
-        //   await sendImageOnDataTrack(canvas);
+        console.log('here');
+        await sendCanvasDimensionsOnDataTrack(canvas);
+        await sendImageOnDataTrack(canvas);
         // }
         showPhoto(canvas);
         setIsVideoOpen(!isVideoOpen);
@@ -475,14 +476,8 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         isGalleryOpen,
         setIsGalleryOpen,
         getImagesFromDataStore,
-
         setRemoteImageFromCanvas,
         setImageFromCanvas,
-        isRemoteCanvasOpen,
-        setIsRemoteCanvasOpen,
-        isRemoteImageOpen,
-        setIsRemoteImageOpen,
-        isLivePointerOpen,
         setIsLivePointerOpen,
         isRemoteLivePointerOpen,
         setIsRemoteLivePointerOpen,
@@ -492,6 +487,8 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         drawVideoToCanvas,
         isCaptureMode,
         setIsCaptureMode,
+        isRemoteCaptureMode,
+        setIsRemoteCaptureMode,
         isAnnotationMode,
         setIsAnnotationMode,
         isBackdropOpen,
@@ -500,6 +497,8 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         setIsImagePreviewOpen,
         isVideoOpen,
         setIsVideoOpen,
+        isAnnotationSnackOpen,
+        setIsAnnotationSnackOpen,
       }}
     >
       {children}

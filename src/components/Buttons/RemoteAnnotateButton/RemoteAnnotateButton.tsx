@@ -18,11 +18,8 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function RemoteAnnotateButton() {
   const classes = useStyles();
 
-  const { annotateImage, setIsAnnotating } = useCaptureImageContext();
-
+  const { annotateImage } = useCaptureImageContext();
   const doAnnotate = async () => {
-    setIsAnnotating(true);
-    console.log('then annotate');
     annotateImage();
   };
   return (

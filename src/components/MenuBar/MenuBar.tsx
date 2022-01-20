@@ -105,7 +105,7 @@ export default function MenuBar() {
   const isReconnecting = roomState === 'reconnecting';
   const noParticipants = participants.length === 0;
   const { room } = useVideoContext();
-  const { isCaptureImageOpen, checkIsUser } = useCaptureImageContext();
+  const { isRemoteCaptureMode, checkIsUser } = useCaptureImageContext();
 
   // Local testing
   // switch noParticipants to !noParticipants when not testing on single feed
@@ -134,7 +134,7 @@ export default function MenuBar() {
                 {!checkIsUser() ? <SaveCaptureImageButton /> : ''}
                 {!checkIsUser() ? <ToggleGalleryButton /> : ''}
                 {!checkIsUser() ? <ToggleLivePointerButton /> : ''}
-                {checkIsUser() && isCaptureImageOpen ? <RemoteAnnotateButton /> : ''}
+                {checkIsUser() && isRemoteCaptureMode ? <RemoteAnnotateButton /> : ''}
                 {process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && <ToggleChatButton />}
               </>
             ) : (

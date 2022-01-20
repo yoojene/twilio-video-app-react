@@ -19,6 +19,9 @@ const useStyles = makeStyles(() => ({
     width: '100%',
     textAlign: 'center',
   },
+  canvas: {
+    display: 'none',
+  },
   photoContainer: {
     width: '100%',
     textAlign: 'center',
@@ -105,11 +108,13 @@ export default function RemoteImagePreview({ track }: { track: IDataTrack }) {
   return (
     <>
       {/* <h2 className={classes.title}>Remote Image Preview</h2> */}
-      <div className={classes.canvasContainer} style={{ display: isRemoteCanvasOpen ? 'block' : 'none' }}>
-        <canvas id="canvas"></canvas>
+      {/* style={{ display: isRemoteCanvasOpen ? 'block' : 'none' } */}
+      {/* style={{ display: isRemoteCanvasOpen ? 'block' : 'none' } */}
+      <div className={classes.canvasContainer}>
+        <canvas id="canvas" className={classes.canvas}></canvas>
       </div>
       {
-        <div className={classes.photoContainer} style={{ display: isRemoteImageOpen ? 'block' : 'none' }}>
+        <div className={classes.photoContainer}>
           <img
             id="remotephoto"
             // src={imagePlaceholder}
