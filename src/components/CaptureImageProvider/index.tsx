@@ -371,7 +371,6 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   };
 
   // *** Draw Live Pointer *** /
-
   const drawLivePointer = (canvas: HTMLCanvasElement, mouseX: number, mouseY: number, color: string) => {
     // console.log('using draw live pointer fn');
     const ctx = canvas.getContext('2d');
@@ -382,17 +381,6 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     ctx!.fillStyle = color; // TODO toggle based on local/remote user
     ctx!.fill();
     requestAnimationFrame(() => drawLivePointer(canvas, mouseX, mouseY, color));
-  };
-
-  const drawRemoteLivePointer = (canvas: HTMLCanvasElement, mouseX: number, mouseY: number) => {
-    console.log('using draw live pointer fn');
-    const ctx = canvas.getContext('2d');
-    ctx!.clearRect(0, 0, canvas.width, canvas.height);
-    ctx!.beginPath();
-    ctx!.arc(mouseX, mouseY, 10, 0, 2 * Math.PI, true);
-    ctx!.fillStyle = '#0000FF'; // TODO toggle based on local/remote user
-    ctx!.fill();
-    requestAnimationFrame(() => drawRemoteLivePointer(canvas, mouseX, mouseY));
   };
 
   // Canvas position calculation fn

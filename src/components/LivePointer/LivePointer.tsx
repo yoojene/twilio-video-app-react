@@ -16,7 +16,8 @@ const useStyles = makeStyles(() => ({
     // maxHeight: '800px',
     // margin: '0.5em auto',
     '& video': {
-      width: '100vw',
+      width: '80vw',
+      marginLeft: '10vw',
     },
     position: 'relative',
   },
@@ -29,7 +30,7 @@ const useStyles = makeStyles(() => ({
     marginRight: 'auto',
     right: '0',
     textAlign: 'center',
-    width: '100vw',
+    width: '80vw',
   },
 }));
 
@@ -80,16 +81,14 @@ export default function LivePointer({ videoTrack, dataTrack, scale }: LivePointe
         const canvasWidth = canvas.width;
         const canvasHeight = canvas.height;
 
-        canvas.addEventListener(
-          'mousemove',
-          (e: MouseEvent) => {
-            const { mouseCoords } = sendMouseCoordsAndCanvasSize(e, canvas, canvasPos, color);
-            mouseX = mouseCoords.mouseX;
-            mouseY = mouseCoords.mouseY;
-            drawCircle();
-          },
-          false
-        );
+        const mouseMove = (e: MouseEvent) => {
+          const { mouseCoords } = sendMouseCoordsAndCanvasSize(e, canvas, canvasPos, color);
+          mouseX = mouseCoords.mouseX;
+          mouseY = mouseCoords.mouseY;
+          drawCircle();
+        };
+
+        canvas.addEventListener('mousemove', mouseMove, false);
 
         // Draw video image onto canvas
 
@@ -116,6 +115,9 @@ export default function LivePointer({ videoTrack, dataTrack, scale }: LivePointe
         };
 
         // drawLivePointer(canvas, mouseX, mouseY);
+        return () => {
+          canvas.removeEventListener('mousemove', mouseMove);
+        };
       }, 500);
     }
   });
@@ -154,7 +156,7 @@ export default function LivePointer({ videoTrack, dataTrack, scale }: LivePointe
 
   return (
     <>
-      <h2 className={classes.preview}>Live Pointer</h2>
+      {/* <h2 className={classes.preview}>Live Pointer</h2> */}
       <div className={classes.preview}>
         <VideoTrack id={'capture-video'} track={videoTrack} scale={scale} />
         <canvas id="videocanvas" className={classes.canvas}></canvas>

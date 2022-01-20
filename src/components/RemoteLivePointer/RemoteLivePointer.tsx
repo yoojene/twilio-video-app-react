@@ -71,23 +71,21 @@ export default function RemoteLivePointer({ videoTrack, dataTrack, scale }: Remo
         // eslint-disable-next-line no-var
         var mouseY = 0;
 
-        canvas.addEventListener('touchstart', (e: TouchEvent) => {
-          console.log(e);
-        });
-        canvas.addEventListener(
-          'touchmove',
-          (e: TouchEvent) => {
-            e.preventDefault();
-            // console.log('touchmove ', e);
-            console.log(e.touches[0].clientX);
-            console.log(e.touches[0].clientY);
-            const { mouseCoords } = sendMouseCoordsAndCanvasSize(e.touches[0], canvas, canvasPos, remoteColor);
-            mouseX = mouseCoords.mouseX;
-            mouseY = mouseCoords.mouseY;
-            drawCircle();
-          },
-          false
-        );
+        const touchMove = (e: TouchEvent) => {
+          e.preventDefault();
+          // console.log('touchmove ', e);
+          console.log(e.touches[0].clientX);
+          console.log(e.touches[0].clientY);
+          const { mouseCoords } = sendMouseCoordsAndCanvasSize(e.touches[0], canvas, canvasPos, remoteColor);
+          mouseX = mouseCoords.mouseX;
+          mouseY = mouseCoords.mouseY;
+          drawCircle();
+        };
+
+        const touchStart = () => {};
+        canvas.addEventListener('touchstart', touchStart);
+
+        canvas.addEventListener('touchmove', touchMove, false);
 
         drawVideoToCanvas(canvas, video);
 
@@ -101,17 +99,17 @@ export default function RemoteLivePointer({ videoTrack, dataTrack, scale }: Remo
           ctx!.fill();
           requestAnimationFrame(drawCircle);
         };
+
+        return () => {
+          canvas.removeEventListener('touchmove', touchMove);
+          canvas.removeEventListener('touchstart', touchStart);
+        };
       }, 500);
     }
   });
 
   useEffect(() => {
     const handleMessage = (event: any) => {
-      console.log(dataTrack);
-
-      console.log('in handleMessage RemoteLivePointer');
-      console.log(event);
-
       if (typeof event === 'string' && event.startsWith('{"isLivePointerOpen')) {
         if (!isLivePointerOpen) {
           console.log('here');
