@@ -1,12 +1,12 @@
 /* eslint-disable no-var */
 import { makeStyles } from '@material-ui/styles';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import VideoTrack from '../VideoTrack/VideoTrack';
 
 import { LocalVideoTrack, Participant, RemoteVideoTrack, Room, LocalDataTrackPublication } from 'twilio-video';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import useCaptureImageContext from '../../hooks/useCaptureImageContext/useCaptureImageContext';
-import { Button, DialogActions, DialogTitle, Grid } from '@material-ui/core';
+import { Backdrop, CircularProgress, Button, DialogActions, DialogTitle, Grid } from '@material-ui/core';
 import useParticipants from '../../hooks/useParticipants/useParticipants';
 import usePublications from '../../hooks/usePublications/usePublications';
 import useTrack from '../../hooks/useTrack/useTrack';
@@ -20,6 +20,12 @@ import LivePointer from '../LivePointer/LivePointer';
 import RemoteLivePointer from '../RemoteLivePointer/RemoteLivePointer';
 
 const useStyles = makeStyles(() => ({
+  backdrop: {
+    zIndex: 1,
+    color: '#000000',
+    backgroundColor: '#ffffff',
+  },
+
   title: {
     textAlign: 'center',
     fontWeight: 'bold',
@@ -78,6 +84,14 @@ export default function CaptureImage() {
     setIsRemoteLivePointerOpen,
     isRemoteLivePointerOpen,
     isCaptureMode,
+    isBackdropOpen,
+    setIsBackdropOpen,
+    isImagePreviewOpen,
+    captureImage,
+    setIsCaptureMode,
+    isVideoOpen,
+    setIsImagePreviewOpen,
+    setIsVideoOpen,
   } = useCaptureImageContext();
 
   const { isChatWindowOpen } = useChatContext();
@@ -125,10 +139,36 @@ export default function CaptureImage() {
     }
   });
 
+  const handleClose = () => {
+    setIsBackdropOpen(false);
+  };
+
+  const firstUpdate = useRef(true);
+
+  useEffect(() => {
+    if (isCaptureMode) {
+      console.log('calling captureImage() in layout eeffect');
+      captureImage();
+    }
+    if (firstUpdate.current) {
+      firstUpdate.current = false;
+      return;
+    }
+    if (!isCaptureMode) {
+      console.log('capture off effect');
+      setIsImagePreviewOpen(!isImagePreviewOpen);
+      setIsVideoOpen(!isVideoOpen);
+    }
+  }, [isCaptureMode]);
+
   return (
     <div className={classes.container}>
-      {!isLivePointerOpen && !isRemoteLivePointerOpen && videoTrack && (
-        // Main video track for Agent
+      <Backdrop className={classes.backdrop} open={isBackdropOpen} onClick={handleClose}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
+
+      {isVideoOpen && videoTrack && !isLivePointerOpen && !isRemoteLivePointerOpen && (
+        // Main video track
         <div className={classes.preview}>
           <VideoTrack id={'capture-video'} track={videoTrack} scale={scale} />
         </div>
@@ -148,7 +188,7 @@ export default function CaptureImage() {
       )}
 
       {// Agent Image Preview
-      !checkIsUser() && !isLivePointerOpen ? <ImagePreview track={dataTrack} /> : ''}
+      !checkIsUser() && !isLivePointerOpen && isImagePreviewOpen ? <ImagePreview track={dataTrack} /> : ''}
       {// User Image Preview
       checkIsUser() && !isRemoteLivePointerOpen && dataTrack ? <RemoteImagePreview track={dataTrack} /> : ''}
 

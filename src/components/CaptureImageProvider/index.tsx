@@ -12,10 +12,10 @@ import { Image } from '../../models';
 type CaptureImageContextType = {
   checkIsUser: () => boolean;
   captureImage: (isAnnotating?: boolean) => void;
-  getVideoElementFromDialog: () => HTMLElement | null;
+  getVideoElementFromDialog: () => Promise<HTMLElement | null>;
   isCaptureImageOpen: boolean;
   setIsCaptureImageOpen: (isCaptureImageOpen: boolean) => void;
-  setVideoOnCanvas: (video: HTMLElement) => HTMLCanvasElement | undefined;
+  setVideoOnCanvas: (video: HTMLElement) => Promise<HTMLCanvasElement | undefined>;
   saveImageToStorage: () => void;
   sendCanvasDimensionsOnDataTrack: (canvas: HTMLCanvasElement) => Promise<unknown>;
   sendImageOnDataTrack: (canvas: HTMLCanvasElement) => void;
@@ -66,6 +66,12 @@ type CaptureImageContextType = {
   drawVideoToCanvas: (canvas: HTMLCanvasElement, video: HTMLVideoElement) => void;
   isCaptureMode: boolean;
   setIsCaptureMode: (isCaptureMode: boolean) => void;
+  isBackdropOpen: boolean;
+  setIsBackdropOpen: (isBackdropOpen: boolean) => void;
+  isImagePreviewOpen: boolean;
+  setIsImagePreviewOpen: (isImagePreviewOpen: boolean) => void;
+  isVideoOpen: boolean;
+  setIsVideoOpen: (isImagePreviewOpen: boolean) => void;
 };
 
 interface CanvasElement extends HTMLCanvasElement {
@@ -88,6 +94,9 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   const [isLivePointerOpen, setIsLivePointerOpen] = useState(false);
   const [isRemoteLivePointerOpen, setIsRemoteLivePointerOpen] = useState(false);
   const [isCaptureMode, setIsCaptureMode] = useState(false);
+  const [isImagePreviewOpen, setIsImagePreviewOpen] = useState(false);
+  const [isVideoOpen, setIsVideoOpen] = useState(true);
+  const [isBackdropOpen, setIsBackdropOpen] = useState(false);
 
   const [scale, setScale] = useState(1);
   const { room } = useVideoContext();
@@ -106,16 +115,17 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   };
 
   const captureImage = async (isAnnotating = false) => {
-    console.log('in cappture image');
-    const video = getVideoElementFromDialog();
+    const video = await getVideoElementFromDialog();
+    setIsImagePreviewOpen(!isImagePreviewOpen);
     if (video) {
-      const canvas = setVideoOnCanvas(video);
+      const canvas = await setVideoOnCanvas(video);
       if (canvas) {
-        if (!isAnnotating) {
-          await sendCanvasDimensionsOnDataTrack(canvas);
-          await sendImageOnDataTrack(canvas);
-        }
+        // if (!isAnnotating) {
+        //   await sendCanvasDimensionsOnDataTrack(canvas);
+        //   await sendImageOnDataTrack(canvas);
+        // }
         showPhoto(canvas);
+        setIsVideoOpen(!isVideoOpen);
       }
     }
   };
@@ -135,14 +145,19 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     }
   };
 
-  const getVideoElementFromDialog = useCallback(() => {
+  const getVideoElementFromDialog = useCallback(async () => {
     const video = document.getElementById('capture-video');
     return video;
   }, []);
 
   const setVideoOnCanvas = useCallback(
-    video => {
+    async video => {
+      // setIsCaptureMode(!isCaptureMode);
+
       const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+      console.log(video);
+      console.log('set video on canvas');
+      console.log(canvas);
 
       if (canvas) {
         const ctx = canvas.getContext('2d');
@@ -490,6 +505,12 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         drawVideoToCanvas,
         isCaptureMode,
         setIsCaptureMode,
+        isBackdropOpen,
+        setIsBackdropOpen,
+        isImagePreviewOpen,
+        setIsImagePreviewOpen,
+        isVideoOpen,
+        setIsVideoOpen,
       }}
     >
       {children}

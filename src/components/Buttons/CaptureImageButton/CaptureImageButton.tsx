@@ -1,5 +1,6 @@
 import { Button, createStyles, makeStyles, Theme } from '@material-ui/core';
-import React from 'react';
+import { truncate } from 'lodash';
+import React, { useEffect, useLayoutEffect } from 'react';
 import useCaptureImageContext from '../../../hooks/useCaptureImageContext/useCaptureImageContext';
 import { ReactComponent as CameraIcon } from '../../../icons/camera-outline.svg';
 
@@ -17,16 +18,17 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function CaptureImageButton() {
   const classes = useStyles();
 
-  const { captureImage, isCaptureMode } = useCaptureImageContext();
+  const { setIsCaptureMode, isCaptureMode } = useCaptureImageContext();
 
   const doCaptureImage = () => {
-    captureImage();
+    setIsCaptureMode(!isCaptureMode);
   };
 
   return (
     <Button
       className={classes.button}
       onClick={doCaptureImage}
+      color={isCaptureMode ? 'secondary' : undefined}
       startIcon={
         <div className={classes.iconContainer}>
           <CameraIcon />

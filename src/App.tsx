@@ -41,7 +41,6 @@ export default function App() {
   const participants = useParticipants();
   const noParticipants = participants.length === 0;
 
-  console.log(noParticipants);
   const { isCaptureImageOpen } = useCaptureImageContext();
 
   // Here we would like the height of the main container to be the height of the viewport.
