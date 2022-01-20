@@ -16,8 +16,10 @@ const useStyles = makeStyles(() => ({
     // maxHeight: '800px',
     // margin: '0.5em auto',
     '& video': {
-      width: '80vw',
-      marginLeft: '10vw',
+      // width: '80vw',
+      // marginLeft: '10vw',
+      // height: '100vh',
+      maxHeight: '600px',
     },
     position: 'relative',
   },
@@ -30,7 +32,9 @@ const useStyles = makeStyles(() => ({
     marginRight: 'auto',
     right: '0',
     textAlign: 'center',
-    width: '80vw',
+    // width: '80vw',
+    // height: '100vh'
+    maxHeight: '600px',
   },
 }));
 
@@ -65,8 +69,8 @@ export default function LivePointer({ videoTrack, dataTrack, scale }: LivePointe
       setTimeout(() => {
         console.log(video.videoWidth);
         console.log(video.videoHeight);
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
+        canvas.width = 320;
+        canvas.height = 600;
         const ctx = canvas!.getContext('2d');
 
         console.log(ctx);

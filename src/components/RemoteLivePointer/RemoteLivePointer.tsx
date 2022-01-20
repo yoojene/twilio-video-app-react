@@ -16,7 +16,7 @@ const useStyles = makeStyles(() => ({
     // maxHeight: '800px',
     // margin: '0.5em auto',
     '& video': {
-      width: '100vw',
+      maxHeight: '600px',
     },
     position: 'relative',
   },
@@ -29,7 +29,7 @@ const useStyles = makeStyles(() => ({
     marginRight: 'auto',
     right: '0',
     textAlign: 'center',
-    width: '100vw',
+    maxHeight: '600px',
   },
 }));
 
@@ -62,8 +62,8 @@ export default function RemoteLivePointer({ videoTrack, dataTrack, scale }: Remo
 
     if (canvas && video) {
       setTimeout(() => {
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
+        canvas.width = 320;
+        canvas.height = 600;
         const canvasPos = getPosition(canvas);
 
         // eslint-disable-next-line no-var
@@ -137,8 +137,8 @@ export default function RemoteLivePointer({ videoTrack, dataTrack, scale }: Remo
       console.log(video);
       console.log(video.videoHeight);
       console.log(video.videoWidth);
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
+      canvas.width = 360;
+      canvas.height = 600;
       drawLivePointer(canvas, mouseX, mouseY, color);
     };
 
