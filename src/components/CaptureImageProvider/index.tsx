@@ -478,6 +478,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         getImagesFromDataStore,
         setRemoteImageFromCanvas,
         setImageFromCanvas,
+        isLivePointerOpen,
         setIsLivePointerOpen,
         isRemoteLivePointerOpen,
         setIsRemoteLivePointerOpen,
