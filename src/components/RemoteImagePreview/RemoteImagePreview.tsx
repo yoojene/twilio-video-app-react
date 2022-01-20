@@ -33,14 +33,7 @@ export default function RemoteImagePreview({ track }: { track: IDataTrack }) {
 
   const imgRef = useRef() as React.MutableRefObject<HTMLImageElement>;
 
-  const {
-    setImageRef,
-    isRemoteCanvasOpen,
-    isRemoteImageOpen,
-    setRemoteImageFromCanvas,
-    setIsRemoteCanvasOpen,
-    setIsRemoteImageOpen,
-  } = useCaptureImageContext();
+  const { setImageRef, setRemoteImageFromCanvas } = useCaptureImageContext();
 
   useEffect(() => {
     console.log('setting imgRef in useEffect');
@@ -94,9 +87,7 @@ export default function RemoteImagePreview({ track }: { track: IDataTrack }) {
         const img = ctx?.createImageData(canvasWidthNum, canvasHeightNum);
         img!.data.set(buf);
         ctx?.putImageData(img!, 0, 0);
-        setIsRemoteImageOpen(true);
         setRemoteImageFromCanvas();
-        setIsRemoteCanvasOpen(false);
       }
     };
     track.on('message', handleMessage);
