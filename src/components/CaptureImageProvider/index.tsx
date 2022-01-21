@@ -72,6 +72,9 @@ type CaptureImageContextType = {
   setIsVideoOpen: (isImagePreviewOpen: boolean) => void;
   isAnnotationSnackOpen: boolean;
   setIsAnnotationSnackOpen: (isAnnotationSnackOpen: boolean) => void;
+  isZoomMode: boolean;
+  setIsZoomMode: (isZoomMode: boolean) => void;
+  onZoomChange: (event: any, scale: any) => void;
 };
 
 interface CanvasElement extends HTMLCanvasElement {
@@ -99,6 +102,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   const [isAnnotationSnackOpen, setIsAnnotationSnackOpen] = React.useState(false);
 
   const [scale, setScale] = useState(1);
+  const [isZoomMode, setIsZoomMode] = useState(false);
   const { room } = useVideoContext();
 
   let localDataTrackPublication: LocalDataTrackPublication;
@@ -247,6 +251,20 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     const photo = document.getElementById('photo');
     const data = canvas.toDataURL('image/png');
     photo!.setAttribute('src', data);
+  };
+
+  // Zoom
+
+  const onZoomChange = (event: any, scale: any) => {
+    console.log('on Zoom change');
+    // console.log(event);
+    console.log(scale);
+
+    setScale(scale);
+
+    // if (Array.isArray(scale)) {
+    //   setScale(scale[0]);
+    // }
   };
 
   const saveImageToStorage = async () => {
@@ -500,6 +518,9 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         setIsVideoOpen,
         isAnnotationSnackOpen,
         setIsAnnotationSnackOpen,
+        isZoomMode,
+        setIsZoomMode,
+        onZoomChange,
       }}
     >
       {children}

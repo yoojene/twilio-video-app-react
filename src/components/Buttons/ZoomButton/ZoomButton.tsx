@@ -1,9 +1,13 @@
 import { Button, createStyles, makeStyles, Theme } from '@material-ui/core';
 import React from 'react';
 import useCaptureImageContext from '../../../hooks/useCaptureImageContext/useCaptureImageContext';
+import { ReactComponent as ZoomIcon } from '../../../icons/search-outline.svg';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    iconContainer: {
+      width: `${theme.iconButtonWidth}px`,
+    },
     button: {
       textAlign: 'center',
       marginLeft: '8px',
@@ -13,29 +17,24 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function ZoomButton() {
   const classes = useStyles();
 
-  const { setScale } = useCaptureImageContext();
+  const { setIsZoomMode, isZoomMode } = useCaptureImageContext();
 
-  const zoomOne = () => {
-    setScale(1);
-  };
-  const zoomTwo = () => {
-    setScale(2);
-  };
-  const zoomThree = () => {
-    setScale(3);
+  const doToggleZoom = () => {
+    setIsZoomMode(!isZoomMode);
   };
 
   return (
     <>
-      <Button color="primary" variant="contained" className={classes.button} onClick={zoomOne}>
-        1X
-      </Button>
-      <Button color="primary" variant="contained" className={classes.button} onClick={zoomTwo}>
-        2X
-      </Button>
-      <Button color="primary" variant="contained" className={classes.button} onClick={zoomThree}>
-        3X
-      </Button>
+      <Button
+        className={classes.button}
+        onClick={doToggleZoom}
+        color={isZoomMode ? 'secondary' : undefined}
+        startIcon={
+          <div className={classes.iconContainer}>
+            <ZoomIcon />
+          </div>
+        }
+      ></Button>
     </>
   );
 }

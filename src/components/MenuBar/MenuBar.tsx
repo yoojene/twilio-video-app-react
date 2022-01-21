@@ -133,6 +133,7 @@ export default function MenuBar() {
                 {!checkIsUser() ? <AnnotateButton /> : ''}
                 {!checkIsUser() ? <SaveCaptureImageButton /> : ''}
                 {!checkIsUser() ? <ToggleGalleryButton /> : ''}
+                {!checkIsUser() ? <ZoomButton /> : ''}
                 {!checkIsUser() ? <ToggleLivePointerButton /> : ''}
                 {checkIsUser() && isRemoteCaptureMode ? <RemoteAnnotateButton /> : ''}
                 {process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && <ToggleChatButton />}

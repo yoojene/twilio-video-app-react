@@ -6,7 +6,17 @@ import VideoTrack from '../VideoTrack/VideoTrack';
 import { LocalVideoTrack, Participant, RemoteVideoTrack, Room, LocalDataTrackPublication } from 'twilio-video';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import useCaptureImageContext from '../../hooks/useCaptureImageContext/useCaptureImageContext';
-import { Backdrop, CircularProgress, Button, DialogActions, DialogTitle, Grid, Snackbar } from '@material-ui/core';
+import {
+  Backdrop,
+  CircularProgress,
+  Button,
+  DialogActions,
+  DialogTitle,
+  Grid,
+  Snackbar,
+  Drawer,
+  Slider,
+} from '@material-ui/core';
 import useParticipants from '../../hooks/useParticipants/useParticipants';
 import usePublications from '../../hooks/usePublications/usePublications';
 import useTrack from '../../hooks/useTrack/useTrack';
@@ -72,6 +82,11 @@ const useStyles = makeStyles(() => ({
   galleryContainer: {
     textAlign: 'center',
   },
+  zoomSlider: {
+    width: 400,
+    left: '50%',
+    transform: 'translateX(-50%)',
+  },
 }));
 
 export default function CaptureImage() {
@@ -95,6 +110,9 @@ export default function CaptureImage() {
     isRemoteCaptureMode,
     isAnnotationSnackOpen,
     setIsAnnotationSnackOpen,
+    setIsZoomMode,
+    isZoomMode,
+    onZoomChange,
   } = useCaptureImageContext();
 
   const { isChatWindowOpen } = useChatContext();
@@ -195,6 +213,13 @@ export default function CaptureImage() {
   //   }
   // }, [isAnnotationMode]);
 
+  const [open, setOpen] = useState(true);
+
+  const toggleDrawer = () => {
+    setIsZoomMode(false);
+    setOpen(!open);
+  };
+
   return (
     <div className={classes.container}>
       {/* <Backdrop className={classes.backdrop} open={isBackdropOpen} onClick={handleClose}>
@@ -210,6 +235,26 @@ export default function CaptureImage() {
         autoHideDuration={6000}
         onClose={handleClose}
       />
+
+      <Drawer anchor="bottom" open={isZoomMode} onClose={toggleDrawer}>
+        <br></br>
+        <br></br>
+        <h3 className={classes.galleryTitle}>Zoom</h3>
+        <Slider
+          className={classes.zoomSlider}
+          defaultValue={scale}
+          aria-labelledby="discrete-slider-small-steps"
+          step={1}
+          marks
+          min={1}
+          max={3}
+          value={scale}
+          onChange={onZoomChange}
+          valueLabelDisplay="auto"
+        />
+        <br></br>
+        <br></br>
+      </Drawer>
 
       {isVideoOpen && videoTrack && !isLivePointerOpen && !isRemoteLivePointerOpen && (
         // Main video track
