@@ -1,4 +1,4 @@
-import { Button, createStyles, makeStyles, Theme } from '@material-ui/core';
+import { createStyles, IconButton, makeStyles, Theme } from '@material-ui/core';
 
 import React from 'react';
 import useCaptureImageContext from '../../../hooks/useCaptureImageContext/useCaptureImageContext';
@@ -9,8 +9,16 @@ const useStyles = makeStyles((theme: Theme) =>
     iconContainer: {
       width: '15px',
     },
-    button: {
-      textAlign: 'center',
+    button: {},
+    paper: {
+      padding: theme.spacing(1),
+    },
+    iconButton: {
+      display: 'flex',
+      flexDirection: 'column',
+    },
+    label: {
+      fontSize: '12px',
     },
   })
 );
@@ -23,14 +31,13 @@ export default function RemoteAnnotateButton() {
     annotateImage();
   };
   return (
-    <Button
-      className={classes.button}
-      onClick={doAnnotate}
-      startIcon={
+    <>
+      <IconButton classes={{ label: classes.iconButton }} onClick={doAnnotate}>
         <div className={classes.iconContainer}>
           <PencilIcon />
         </div>
-      }
-    ></Button>
+        <div className={classes.label}>Annotate</div>
+      </IconButton>
+    </>
   );
 }
