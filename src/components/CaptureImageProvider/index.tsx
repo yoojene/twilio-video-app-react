@@ -75,6 +75,11 @@ type CaptureImageContextType = {
   isZoomMode: boolean;
   setIsZoomMode: (isZoomMode: boolean) => void;
   onZoomChange: (event: any, scale: any) => void;
+  captureOCR: () => void;
+  isOCRMode: boolean;
+  setIsOCRMode: (isOCRMode: boolean) => void;
+  OCRText: string;
+  setOCRText: (OCRText: string) => void;
 };
 
 interface CanvasElement extends HTMLCanvasElement {
@@ -103,6 +108,8 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
 
   const [scale, setScale] = useState(1);
   const [isZoomMode, setIsZoomMode] = useState(false);
+  const [isOCRMode, setIsOCRMode] = useState(false);
+  const [OCRText, setOCRText] = useState<string>('');
   const { room } = useVideoContext();
 
   let localDataTrackPublication: LocalDataTrackPublication;
@@ -261,10 +268,36 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     console.log(scale);
 
     setScale(scale);
+  };
 
-    // if (Array.isArray(scale)) {
-    //   setScale(scale[0]);
-    // }
+  // OCR
+
+  const captureOCR = async () => {
+    const photoURI = document.getElementById('photo')!.getAttribute('src')!;
+
+    const file = dataURIToBlob(photoURI) as File;
+
+    console.log(file);
+
+    // Pass file to Predictions API
+    Predictions.identify({
+      text: {
+        source: {
+          file,
+        },
+        format: 'PLAIN',
+      },
+    }).then(async response => {
+      setIsOCRMode(true);
+      setIsCaptureSnackOpen(false);
+
+      console.log({ response });
+
+      const text = response.text.fullText;
+
+      console.log(text);
+      setOCRText(text);
+    });
   };
 
   const saveImageToStorage = async () => {
@@ -521,6 +554,11 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         isZoomMode,
         setIsZoomMode,
         onZoomChange,
+        captureOCR,
+        isOCRMode,
+        setIsOCRMode,
+        OCRText,
+        setOCRText,
       }}
     >
       {children}

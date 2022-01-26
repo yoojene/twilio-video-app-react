@@ -21,6 +21,7 @@ import ZoomButton from '../Buttons/ZoomButton/ZoomButton';
 import ToggleGalleryButton from '../Buttons/ToggleGalleryButton/ToggleGalleryButton';
 import RemoteAnnotateButton from '../Buttons/RemoteAnnotateButton/RemoteAnnotateButton';
 import ToggleLivePointerButton from '../Buttons/ToggleLivePointerButton/ToggleLivePointerButton';
+import OCRButton from '../Buttons/OCRButton/OCRButton';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -131,6 +132,7 @@ export default function MenuBar() {
               <>
                 {!checkIsUser() ? <CaptureImageButton /> : ''}
                 {!checkIsUser() ? <AnnotateButton /> : ''}
+                {!checkIsUser() ? <OCRButton /> : ''}
                 {!checkIsUser() ? <SaveCaptureImageButton /> : ''}
                 {!checkIsUser() ? <ToggleGalleryButton /> : ''}
                 {!checkIsUser() ? <ZoomButton /> : ''}

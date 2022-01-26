@@ -87,6 +87,9 @@ const useStyles = makeStyles(() => ({
     left: '50%',
     transform: 'translateX(-50%)',
   },
+  ocrText: {
+    padding: '16px',
+  },
 }));
 
 export default function CaptureImage() {
@@ -113,6 +116,9 @@ export default function CaptureImage() {
     setIsZoomMode,
     isZoomMode,
     onZoomChange,
+    isOCRMode,
+    setIsOCRMode,
+    OCRText,
   } = useCaptureImageContext();
 
   const { isChatWindowOpen } = useChatContext();
@@ -215,9 +221,14 @@ export default function CaptureImage() {
 
   const [open, setOpen] = useState(true);
 
-  const toggleDrawer = () => {
+  const toggleZoomDrawer = () => {
     setIsZoomMode(false);
     setOpen(!open);
+  };
+
+  const toggleDrawer = () => {
+    console.log('toggleDrawer');
+    setIsOCRMode(false);
   };
 
   return (
@@ -236,7 +247,7 @@ export default function CaptureImage() {
         onClose={handleClose}
       />
 
-      <Drawer anchor="bottom" open={isZoomMode} onClose={toggleDrawer}>
+      <Drawer anchor="bottom" open={isZoomMode} onClose={toggleZoomDrawer}>
         <br></br>
         <br></br>
         <h3 className={classes.galleryTitle}>Zoom</h3>
@@ -252,6 +263,15 @@ export default function CaptureImage() {
           onChange={onZoomChange}
           valueLabelDisplay="auto"
         />
+        <br></br>
+        <br></br>
+      </Drawer>
+
+      <Drawer anchor="right" open={isOCRMode} onClose={toggleDrawer}>
+        <br></br>
+        <br></br>
+        <h3 className={classes.galleryTitle}>Captured Text</h3>
+        <div className={classes.ocrText}>{OCRText}</div>
         <br></br>
         <br></br>
       </Drawer>
