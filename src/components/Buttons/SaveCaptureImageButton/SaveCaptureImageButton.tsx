@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function SaveCaptureImageButton() {
   const classes = useStyles();
 
-  const { saveImageToStorage } = useCaptureImageContext();
+  const { isCaptureMode, saveImageToStorage } = useCaptureImageContext();
 
   const saveImage = async () => {
     saveImageToStorage();
@@ -32,7 +32,7 @@ export default function SaveCaptureImageButton() {
 
   return (
     <>
-      <IconButton classes={{ label: classes.iconButton }} onClick={saveImage}>
+      <IconButton classes={{ label: classes.iconButton }} onClick={saveImage} disabled={!isCaptureMode}>
         <div className={classes.iconContainer}>
           <SaveIcon />
         </div>

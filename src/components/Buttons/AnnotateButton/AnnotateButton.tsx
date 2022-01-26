@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function AnnotateButton() {
   const classes = useStyles();
 
-  const { annotateImage, setIsAnnotationMode } = useCaptureImageContext();
+  const { isMarkupPanelOpen, isCaptureMode, annotateImage, setIsAnnotationMode } = useCaptureImageContext();
 
   const doAnnotateImage = async () => {
     setIsAnnotationMode(true);
@@ -34,7 +34,11 @@ export default function AnnotateButton() {
 
   return (
     <>
-      <IconButton classes={{ label: classes.iconButton }} onClick={doAnnotateImage}>
+      <IconButton
+        classes={{ label: classes.iconButton }}
+        onClick={doAnnotateImage}
+        disabled={isMarkupPanelOpen || !isCaptureMode}
+      >
         <div className={classes.iconContainer}>
           <PencilIcon />
         </div>
