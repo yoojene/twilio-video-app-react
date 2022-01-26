@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Button from '@material-ui/core/Button';
 import ChatIcon from '../../../icons/ChatIcon';
 import clsx from 'clsx';
-import { createStyles, makeStyles, Theme } from '@material-ui/core';
+import { createStyles, IconButton, makeStyles, Theme } from '@material-ui/core';
 import useChatContext from '../../../hooks/useChatContext/useChatContext';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 
@@ -11,8 +11,6 @@ export const ANIMATION_DURATION = 700;
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     iconContainer: {
-      position: 'relative',
-      display: 'flex',
       width: `${theme.iconButtonWidth}px`,
     },
     circle: {
@@ -21,8 +19,8 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: '#5BB75B',
       borderRadius: '50%',
       position: 'absolute',
-      top: '-3px',
-      left: '13px',
+      top: '12px',
+      left: '28px',
       opacity: 0,
       transition: `opacity ${ANIMATION_DURATION * 0.5}ms ease-in`,
     },
@@ -35,8 +33,8 @@ const useStyles = makeStyles((theme: Theme) =>
       height: '14px',
       width: '14px',
       position: 'absolute',
-      left: '11px',
-      top: '-5px',
+      left: '26px',
+      top: '9px',
       opacity: 0,
     },
     animateRing: {
@@ -55,6 +53,13 @@ const useStyles = makeStyles((theme: Theme) =>
         transform: 'scale(1.4, 1.4)',
         opacity: 0,
       },
+    },
+    iconButton: {
+      display: 'flex',
+      flexDirection: 'column',
+    },
+    label: {
+      fontSize: '12px',
     },
   })
 );
@@ -87,17 +92,33 @@ export default function ToggleChatButton() {
   }, [conversation, isChatWindowOpen]);
 
   return (
-    <Button
-      data-cy-chat-button
-      onClick={toggleChatWindow}
-      disabled={!conversation}
-      startIcon={
+    <>
+      {/* <Button
+        data-cy-chat-button
+        onClick={toggleChatWindow}
+        disabled={!conversation}
+        startIcon={
+          <div className={classes.iconContainer}>
+            <ChatIcon />
+            <div className={clsx(classes.ring, { [classes.animateRing]: shouldAnimate })} />
+            <div className={clsx(classes.circle, { [classes.hasUnreadMessages]: hasUnreadMessages })} />
+          </div>
+        }
+      ></Button> */}
+
+      <IconButton
+        data-cy-chat-button
+        classes={{ label: classes.iconButton }}
+        onClick={toggleChatWindow}
+        disabled={!conversation}
+      >
         <div className={classes.iconContainer}>
           <ChatIcon />
           <div className={clsx(classes.ring, { [classes.animateRing]: shouldAnimate })} />
           <div className={clsx(classes.circle, { [classes.hasUnreadMessages]: hasUnreadMessages })} />
         </div>
-      }
-    ></Button>
+        <div className={classes.label}>Chat</div>
+      </IconButton>
+    </>
   );
 }
