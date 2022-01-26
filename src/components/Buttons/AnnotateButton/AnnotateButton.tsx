@@ -1,4 +1,4 @@
-import { makeStyles, Theme, createStyles, Button, Popover, Typography } from '@material-ui/core';
+import { makeStyles, Theme, createStyles, IconButton } from '@material-ui/core';
 import React from 'react';
 import useCaptureImageContext from '../../../hooks/useCaptureImageContext/useCaptureImageContext';
 import { ReactComponent as PencilIcon } from '../../../icons/pencil-outline.svg';
@@ -8,12 +8,16 @@ const useStyles = makeStyles((theme: Theme) =>
     iconContainer: {
       width: `${theme.iconButtonWidth}px`,
     },
-    button: {
-      textAlign: 'center',
-      marginLeft: '8px',
-    },
+    button: {},
     paper: {
       padding: theme.spacing(1),
+    },
+    iconButton: {
+      display: 'flex',
+      flexDirection: 'column',
+    },
+    label: {
+      fontSize: '12px',
     },
   })
 );
@@ -21,18 +25,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function AnnotateButton() {
   const classes = useStyles();
 
-  const { isMarkupPanelOpen, isCaptureMode, annotateImage, setIsAnnotationMode } = useCaptureImageContext();
-
-  const [anchorEl, setAnchorEl] = React.useState(null);
-
-  const handlePopoverOpen = (event: any) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handlePopoverClose = () => {
-    setAnchorEl(null);
-  };
-  const open = Boolean(anchorEl);
+  const { annotateImage, setIsAnnotationMode } = useCaptureImageContext();
 
   const doAnnotateImage = async () => {
     setIsAnnotationMode(true);
@@ -41,37 +34,12 @@ export default function AnnotateButton() {
 
   return (
     <>
-      <Button
-        className={classes.button}
-        onClick={doAnnotateImage}
-        disabled={isMarkupPanelOpen || !isCaptureMode}
-        color={isMarkupPanelOpen ? 'secondary' : undefined}
-        onMouseEnter={handlePopoverOpen}
-        startIcon={
-          <div className={classes.iconContainer}>
-            <PencilIcon />
-          </div>
-        }
-      ></Button>
-      <Popover
-        id={'annotate-mouse-over-popover'}
-        open={open}
-        classes={{
-          paper: classes.paper,
-        }}
-        anchorEl={anchorEl}
-        onClose={handlePopoverClose}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'center',
-        }}
-        transformOrigin={{
-          vertical: 'bottom',
-          horizontal: 'center',
-        }}
-      >
-        <Typography>Annotate</Typography>
-      </Popover>
+      <IconButton classes={{ label: classes.iconButton }} onClick={doAnnotateImage}>
+        <div className={classes.iconContainer}>
+          <PencilIcon />
+        </div>
+        <div className={classes.label}>Annotate</div>
+      </IconButton>
     </>
   );
 }

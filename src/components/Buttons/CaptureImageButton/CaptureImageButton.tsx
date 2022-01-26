@@ -1,4 +1,4 @@
-import { Button, createStyles, makeStyles, Popover, Theme, Typography } from '@material-ui/core';
+import { createStyles, IconButton, makeStyles, Theme } from '@material-ui/core';
 import React, { useEffect, useLayoutEffect } from 'react';
 import { LocalDataTrackPublication } from 'twilio-video';
 import useCaptureImageContext from '../../../hooks/useCaptureImageContext/useCaptureImageContext';
@@ -11,11 +11,17 @@ const useStyles = makeStyles((theme: Theme) =>
       width: `${theme.iconButtonWidth}px`,
     },
     button: {
-      textAlign: 'center',
-      marginLeft: '8px',
+      // color: '#000000'
     },
     paper: {
       padding: theme.spacing(1),
+    },
+    iconButton: {
+      display: 'flex',
+      flexDirection: 'column',
+    },
+    label: {
+      fontSize: '12px',
     },
   })
 );
@@ -31,17 +37,6 @@ export default function CaptureImageButton() {
     [localDataTrackPublication] = [...room!.localParticipant.dataTracks.values()];
   }
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
-
-  const handlePopoverOpen = (event: any) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handlePopoverClose = () => {
-    setAnchorEl(null);
-  };
-  const open = Boolean(anchorEl);
-
   const doCaptureImage = () => {
     setIsCaptureMode(!isCaptureMode);
     console.log('about to send isCaptureMode on DT');
@@ -54,36 +49,16 @@ export default function CaptureImageButton() {
 
   return (
     <>
-      <Button
-        className={classes.button}
+      <IconButton
+        classes={{ label: classes.iconButton, root: classes.button }}
         onClick={doCaptureImage}
-        color={isCaptureMode ? 'secondary' : undefined}
-        onMouseEnter={handlePopoverOpen}
-        startIcon={
-          <div className={classes.iconContainer}>
-            <CameraIcon />
-          </div>
-        }
-      ></Button>
-      <Popover
-        id={'capture-mouse-over-popover'}
-        open={open}
-        classes={{
-          paper: classes.paper,
-        }}
-        anchorEl={anchorEl}
-        onClose={handlePopoverClose}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'center',
-        }}
-        transformOrigin={{
-          vertical: 'bottom',
-          horizontal: 'center',
-        }}
+        color={isCaptureMode ? 'secondary' : 'default'}
       >
-        <Typography>Capture Mode</Typography>
-      </Popover>
+        <div className={classes.iconContainer}>
+          <CameraIcon />
+        </div>
+        <div className={classes.label}>Capture Mode</div>
+      </IconButton>
     </>
   );
 }

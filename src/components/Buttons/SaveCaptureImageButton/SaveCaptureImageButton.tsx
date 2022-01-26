@@ -1,4 +1,4 @@
-import { Button, createStyles, makeStyles, Popover, Theme, Typography } from '@material-ui/core';
+import { createStyles, IconButton, makeStyles, Theme } from '@material-ui/core';
 import React from 'react';
 import useCaptureImageContext from '../../../hooks/useCaptureImageContext/useCaptureImageContext';
 import { ReactComponent as SaveIcon } from '../../../icons/save-outline.svg';
@@ -8,12 +8,16 @@ const useStyles = makeStyles((theme: Theme) =>
     iconContainer: {
       width: `${theme.iconButtonWidth}px`,
     },
-    button: {
-      textAlign: 'center',
-      marginLeft: '8px',
-    },
+    button: {},
     paper: {
       padding: theme.spacing(1),
+    },
+    iconButton: {
+      display: 'flex',
+      flexDirection: 'column',
+    },
+    label: {
+      fontSize: '12px',
     },
   })
 );
@@ -22,51 +26,18 @@ export default function SaveCaptureImageButton() {
 
   const { saveImageToStorage } = useCaptureImageContext();
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
-
-  const handlePopoverOpen = (event: any) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handlePopoverClose = () => {
-    setAnchorEl(null);
-  };
-  const open = Boolean(anchorEl);
   const saveImage = async () => {
     saveImageToStorage();
   };
 
   return (
     <>
-      <Button
-        className={classes.button}
-        onClick={saveImage}
-        onMouseEnter={handlePopoverOpen}
-        startIcon={
-          <div className={classes.iconContainer}>
-            <SaveIcon />
-          </div>
-        }
-      ></Button>
-      <Popover
-        id={'saveimage-mouse-over-popover'}
-        open={open}
-        classes={{
-          paper: classes.paper,
-        }}
-        anchorEl={anchorEl}
-        onClose={handlePopoverClose}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'center',
-        }}
-        transformOrigin={{
-          vertical: 'bottom',
-          horizontal: 'center',
-        }}
-      >
-        <Typography>Save</Typography>
-      </Popover>
+      <IconButton classes={{ label: classes.iconButton }} onClick={saveImage}>
+        <div className={classes.iconContainer}>
+          <SaveIcon />
+        </div>
+        <div className={classes.label}>Save</div>
+      </IconButton>
     </>
   );
 }

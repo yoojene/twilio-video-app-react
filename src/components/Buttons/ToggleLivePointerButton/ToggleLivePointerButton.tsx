@@ -1,4 +1,4 @@
-import { Button, createStyles, makeStyles, Popover, Theme, Typography } from '@material-ui/core';
+import { createStyles, IconButton, makeStyles, Theme } from '@material-ui/core';
 import React, { ReactElement } from 'react';
 import { LocalDataTrackPublication } from 'twilio-video';
 
@@ -11,12 +11,16 @@ const useStyles = makeStyles((theme: Theme) =>
     iconContainer: {
       width: `${theme.iconButtonWidth}px`,
     },
-    button: {
-      textAlign: 'center',
-      marginLeft: '8px',
-    },
+    button: {},
     paper: {
       padding: theme.spacing(1),
+    },
+    iconButton: {
+      display: 'flex',
+      flexDirection: 'column',
+    },
+    label: {
+      fontSize: '12px',
     },
   })
 );
@@ -25,18 +29,6 @@ export default function ToggleLivePointerButton(): ReactElement {
 
   const { setIsLivePointerOpen, isLivePointerOpen } = useCaptureImageContext();
   const { room } = useVideoContext();
-
-  const [anchorEl, setAnchorEl] = React.useState(null);
-
-  const handlePopoverOpen = (event: any) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handlePopoverClose = () => {
-    setAnchorEl(null);
-  };
-
-  const open = Boolean(anchorEl);
 
   let localDataTrackPublication: LocalDataTrackPublication;
 
@@ -56,36 +48,16 @@ export default function ToggleLivePointerButton(): ReactElement {
 
   return (
     <>
-      <Button
-        className={classes.button}
+      <IconButton
+        classes={{ label: classes.iconButton }}
         onClick={doOpenLivePointer}
-        onMouseEnter={handlePopoverOpen}
         color={isLivePointerOpen ? 'secondary' : undefined}
-        startIcon={
-          <div className={classes.iconContainer}>
-            <LivePointerIcon />
-          </div>
-        }
-      ></Button>
-      <Popover
-        id={'livepointer-mouse-over-popover'}
-        open={open}
-        classes={{
-          paper: classes.paper,
-        }}
-        anchorEl={anchorEl}
-        onClose={handlePopoverClose}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'center',
-        }}
-        transformOrigin={{
-          vertical: 'bottom',
-          horizontal: 'center',
-        }}
       >
-        <Typography>Live Pointer</Typography>
-      </Popover>
+        <div className={classes.iconContainer}>
+          <LivePointerIcon />
+        </div>
+        <div className={classes.label}>Live Pointer</div>
+      </IconButton>
     </>
   );
 }
