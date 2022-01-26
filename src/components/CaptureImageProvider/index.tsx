@@ -70,8 +70,8 @@ type CaptureImageContextType = {
   setIsImagePreviewOpen: (isImagePreviewOpen: boolean) => void;
   isVideoOpen: boolean;
   setIsVideoOpen: (isImagePreviewOpen: boolean) => void;
-  isAnnotationSnackOpen: boolean;
-  setIsAnnotationSnackOpen: (isAnnotationSnackOpen: boolean) => void;
+  isCaptureSnackOpen: boolean;
+  setIsCaptureSnackOpen: (isCaptureSnackOpen: boolean) => void;
   isZoomMode: boolean;
   setIsZoomMode: (isZoomMode: boolean) => void;
   onZoomChange: (event: any, scale: any) => void;
@@ -99,7 +99,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   const [isImagePreviewOpen, setIsImagePreviewOpen] = useState(false);
   const [isVideoOpen, setIsVideoOpen] = useState(true);
   const [isBackdropOpen, setIsBackdropOpen] = useState(false);
-  const [isAnnotationSnackOpen, setIsAnnotationSnackOpen] = React.useState(false);
+  const [isCaptureSnackOpen, setIsCaptureSnackOpen] = React.useState(false);
 
   const [scale, setScale] = useState(1);
   const [isZoomMode, setIsZoomMode] = useState(false);
@@ -516,8 +516,8 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         setIsImagePreviewOpen,
         isVideoOpen,
         setIsVideoOpen,
-        isAnnotationSnackOpen,
-        setIsAnnotationSnackOpen,
+        isCaptureSnackOpen,
+        setIsCaptureSnackOpen,
         isZoomMode,
         setIsZoomMode,
         onZoomChange,

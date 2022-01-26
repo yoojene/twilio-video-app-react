@@ -108,8 +108,8 @@ export default function CaptureImage() {
     setIsVideoOpen,
     setIsRemoteCaptureMode,
     isRemoteCaptureMode,
-    isAnnotationSnackOpen,
-    setIsAnnotationSnackOpen,
+    isCaptureSnackOpen,
+    setIsCaptureSnackOpen,
     setIsZoomMode,
     isZoomMode,
     onZoomChange,
@@ -169,13 +169,13 @@ export default function CaptureImage() {
 
   useEffect(() => {
     if (isRemoteCaptureMode) {
-      setIsAnnotationSnackOpen(true);
+      setIsCaptureSnackOpen(true);
     }
   }, [isRemoteCaptureMode]);
 
   const handleClose = () => {
     // setIsBackdropOpen(false);
-    setIsAnnotationSnackOpen(false);
+    setIsCaptureSnackOpen(false);
   };
 
   const firstUpdate = useRef(true);
@@ -230,8 +230,8 @@ export default function CaptureImage() {
           vertical: 'top',
           horizontal: 'left',
         }}
-        message="Annotation mode"
-        open={isAnnotationSnackOpen}
+        message="Please wait..."
+        open={isCaptureSnackOpen}
         autoHideDuration={6000}
         onClose={handleClose}
       />
