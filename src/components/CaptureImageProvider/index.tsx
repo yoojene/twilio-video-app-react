@@ -72,6 +72,8 @@ type CaptureImageContextType = {
   setIsVideoOpen: (isImagePreviewOpen: boolean) => void;
   isCaptureSnackOpen: boolean;
   setIsCaptureSnackOpen: (isCaptureSnackOpen: boolean) => void;
+  snackMessage: string;
+  setSnackMessage: (snackMessage: string) => void;
   isZoomMode: boolean;
   setIsZoomMode: (isZoomMode: boolean) => void;
   onZoomChange: (event: any, scale: any) => void;
@@ -105,6 +107,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   const [isVideoOpen, setIsVideoOpen] = useState(true);
   const [isBackdropOpen, setIsBackdropOpen] = useState(false);
   const [isCaptureSnackOpen, setIsCaptureSnackOpen] = React.useState(false);
+  const [snackMessage, setSnackMessage] = React.useState('Please wait...');
 
   const [scale, setScale] = useState(1);
   const [isZoomMode, setIsZoomMode] = useState(false);
@@ -323,6 +326,8 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
       },
     })
       .then(async response => {
+        setSnackMessage('Image saved');
+        setIsCaptureSnackOpen(false);
         console.log({ response });
 
         // Create text file of Predictions response
@@ -551,6 +556,8 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         setIsVideoOpen,
         isCaptureSnackOpen,
         setIsCaptureSnackOpen,
+        snackMessage,
+        setSnackMessage,
         isZoomMode,
         setIsZoomMode,
         onZoomChange,

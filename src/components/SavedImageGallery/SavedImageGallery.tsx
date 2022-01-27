@@ -4,10 +4,11 @@ import { Storage } from 'aws-amplify';
 import { AmplifyS3Image } from '@aws-amplify/ui-react';
 import styled from 'styled-components';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
+import { Grid } from '@material-ui/core';
 
 const StyledS3Image = styled(AmplifyS3Image)`
-  --height: 200px;
-  --width: 400px;
+  --height: 600px;
+  --width: 320px;
 `;
 export default function SavedImageGallery() {
   const [images, setImages] = useState<S3ProviderListOutput>([]);
@@ -39,11 +40,13 @@ export default function SavedImageGallery() {
     }
   }, [images]);
   return (
-    <>
+    <Grid container direction="column">
       {images?.map((img: any) => (
         // eslint-disable-next-line react/jsx-key
-        <StyledS3Image imgKey={img.key}></StyledS3Image>
+        <Grid item key={img.key}>
+          <StyledS3Image imgKey={img.key}></StyledS3Image>
+        </Grid>
       ))}
-    </>
+    </Grid>
   );
 }

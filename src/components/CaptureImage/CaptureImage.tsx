@@ -76,11 +76,11 @@ const useStyles = makeStyles(() => ({
     //    // marginLeft: '8px',
     // }
   },
-  galleryTitle: {
+  drawerTitle: {
     textAlign: 'center',
   },
   galleryContainer: {
-    textAlign: 'center',
+    padding: '16px',
   },
   zoomSlider: {
     width: 400,
@@ -98,6 +98,7 @@ export default function CaptureImage() {
     checkIsUser,
     scale,
     isGalleryOpen,
+    setIsGalleryOpen,
     isLivePointerOpen,
     setIsRemoteLivePointerOpen,
     isRemoteLivePointerOpen,
@@ -113,6 +114,7 @@ export default function CaptureImage() {
     isRemoteCaptureMode,
     isCaptureSnackOpen,
     setIsCaptureSnackOpen,
+    snackMessage,
     setIsZoomMode,
     isZoomMode,
     onZoomChange,
@@ -231,6 +233,10 @@ export default function CaptureImage() {
     setIsOCRMode(false);
   };
 
+  const toggleGalleryDrawer = () => {
+    setIsGalleryOpen(false);
+  };
+
   return (
     <div className={classes.container}>
       {/* <Backdrop className={classes.backdrop} open={isBackdropOpen} onClick={handleClose}>
@@ -241,7 +247,7 @@ export default function CaptureImage() {
           vertical: 'top',
           horizontal: 'left',
         }}
-        message="Please wait..."
+        message={snackMessage}
         open={isCaptureSnackOpen}
         autoHideDuration={6000}
         onClose={handleClose}
@@ -250,7 +256,7 @@ export default function CaptureImage() {
       <Drawer anchor="bottom" open={isZoomMode} onClose={toggleZoomDrawer}>
         <br></br>
         <br></br>
-        <h3 className={classes.galleryTitle}>Zoom</h3>
+        <h3 className={classes.drawerTitle}>Zoom</h3>
         <Slider
           className={classes.zoomSlider}
           defaultValue={scale}
@@ -270,7 +276,7 @@ export default function CaptureImage() {
       <Drawer anchor="right" open={isOCRMode} onClose={toggleDrawer}>
         <br></br>
         <br></br>
-        <h3 className={classes.galleryTitle}>Captured Text</h3>
+        <h3 className={classes.drawerTitle}>Captured Text</h3>
         <div className={classes.ocrText}>{OCRText}</div>
         <br></br>
         <br></br>
@@ -305,7 +311,7 @@ export default function CaptureImage() {
         ''
       )}
 
-      {isGalleryOpen ? (
+      {/* {isGalleryOpen ? (
         <>
           {isChatWindowOpen ? (
             <Grid item xs={3}>
@@ -316,7 +322,7 @@ export default function CaptureImage() {
             </Grid>
           ) : (
             <Grid item xs={6}>
-              <DialogTitle className={classes.galleryTitle}>Saved Images</DialogTitle>
+              <DialogTitle className={classes.drawerTitle}>Saved Images</DialogTitle>
               <div className={classes.galleryContainer}>
                 <SavedImageGallery></SavedImageGallery>
               </div>
@@ -325,7 +331,18 @@ export default function CaptureImage() {
         </>
       ) : (
         ''
-      )}
+      )} */}
+
+      <Drawer anchor="right" open={isGalleryOpen} onClose={toggleGalleryDrawer}>
+        <br></br>
+        <br></br>
+        <h3 className={classes.drawerTitle}>Saved Images</h3>
+        <div className={classes.galleryContainer}>
+          <SavedImageGallery></SavedImageGallery>
+        </div>
+        <br></br>
+        <br></br>
+      </Drawer>
 
       {isChatWindowOpen ? (
         <Grid item xs={3}>

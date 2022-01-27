@@ -24,9 +24,10 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function SaveCaptureImageButton() {
   const classes = useStyles();
 
-  const { isCaptureMode, saveImageToStorage } = useCaptureImageContext();
+  const { isCaptureMode, saveImageToStorage, setIsCaptureSnackOpen } = useCaptureImageContext();
 
   const saveImage = async () => {
+    setIsCaptureSnackOpen(true);
     saveImageToStorage();
   };
 
