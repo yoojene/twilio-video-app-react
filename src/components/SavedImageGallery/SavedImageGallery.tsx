@@ -4,13 +4,24 @@ import { Storage } from 'aws-amplify';
 import { AmplifyS3Image } from '@aws-amplify/ui-react';
 import styled from 'styled-components';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
-import { Grid } from '@material-ui/core';
+import { createStyles, Grid, makeStyles, Theme } from '@material-ui/core';
+import format from 'date-fns/format';
 
 const StyledS3Image = styled(AmplifyS3Image)`
   --height: 600px;
   --width: 320px;
 `;
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    date: {
+      // border: '1px solid black',
+      marginBottom: '20px',
+    },
+  })
+);
+
 export default function SavedImageGallery() {
+  const classes = useStyles();
   const [images, setImages] = useState<S3ProviderListOutput>([]);
   const { room } = useVideoContext();
 
@@ -41,10 +52,12 @@ export default function SavedImageGallery() {
   }, [images]);
   return (
     <Grid container direction="column">
-      {images?.map((img: any) => (
-        // eslint-disable-next-line react/jsx-key
+      {images?.map((img: S3ProviderListOutputItem) => (
         <Grid item key={img.key}>
-          <StyledS3Image imgKey={img.key}></StyledS3Image>
+          <>
+            <StyledS3Image imgKey={img.key}></StyledS3Image>
+            <div className={classes.date}>{format(img.lastModified!, 'EEE dd/MM/yyyy HH:mm:ss')}</div>
+          </>
         </Grid>
       ))}
     </Grid>
