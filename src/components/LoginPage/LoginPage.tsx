@@ -12,6 +12,7 @@ import Typography from '@material-ui/core/Typography';
 
 import { makeStyles } from '@material-ui/core/styles';
 import { useLocation, useHistory } from 'react-router-dom';
+import useUser from '../../utils/useUser/useUser';
 
 const useStyles = makeStyles((theme: Theme) => ({
   googleButton: {
@@ -61,6 +62,8 @@ export default function LoginPage() {
   const [passcode, setPasscode] = useState('');
   const [authError, setAuthError] = useState<Error | null>(null);
 
+  const checkIsUser = useUser();
+
   const isAuthEnabled = Boolean(process.env.REACT_APP_SET_AUTH);
 
   const login = () => {
@@ -78,7 +81,14 @@ export default function LoginPage() {
   };
 
   if (user || !isAuthEnabled) {
-    history.replace('/');
+    console.log(user);
+    console.log(isAuthEnabled);
+
+    if (checkIsUser()) {
+      history.replace('/room/101/name/User');
+    } else {
+      history.replace('/room/101/name/Agent');
+    }
   }
 
   if (!isAuthReady) {

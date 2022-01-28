@@ -10,7 +10,6 @@ import { DataStore } from '@aws-amplify/datastore';
 import { Image } from '../../models';
 
 type CaptureImageContextType = {
-  checkIsUser: () => boolean;
   captureImage: () => void;
   getVideoElementFromDialog: () => Promise<HTMLElement | null>;
   isCaptureImageOpen: boolean;
@@ -120,13 +119,6 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   if (room) {
     [localDataTrackPublication] = [...room!.localParticipant.dataTracks.values()];
   }
-
-  // For now, assumption is that Remote User will be on mobile device and Agent will be on desktop
-  const checkIsUser = () => {
-    let isUser: boolean;
-    window.navigator.appVersion.includes('Mobile') ? (isUser = true) : (isUser = false);
-    return isUser;
-  };
 
   const captureImage = async () => {
     const video = await getVideoElementFromDialog();
@@ -507,7 +499,6 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   return (
     <CaptureImageContext.Provider
       value={{
-        checkIsUser,
         captureImage,
         isCaptureImageOpen,
         setIsCaptureImageOpen,

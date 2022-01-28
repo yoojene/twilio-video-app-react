@@ -28,6 +28,7 @@ import RemoteImagePreview from '../RemoteImagePreview/RemoteImagePreview';
 import { DataTrack as IDataTrack } from 'twilio-video';
 import LivePointer from '../LivePointer/LivePointer';
 import RemoteLivePointer from '../RemoteLivePointer/RemoteLivePointer';
+import useUser from '../../utils/useUser/useUser';
 
 const useStyles = makeStyles(() => ({
   backdrop: {
@@ -95,7 +96,6 @@ const useStyles = makeStyles(() => ({
 export default function CaptureImage() {
   const classes = useStyles();
   const {
-    checkIsUser,
     scale,
     isGalleryOpen,
     setIsGalleryOpen,
@@ -122,6 +122,8 @@ export default function CaptureImage() {
     setIsOCRMode,
     OCRText,
   } = useCaptureImageContext();
+
+  const checkIsUser = useUser();
 
   const { isChatWindowOpen } = useChatContext();
 

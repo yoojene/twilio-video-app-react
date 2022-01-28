@@ -22,6 +22,7 @@ import ToggleGalleryButton from '../Buttons/ToggleGalleryButton/ToggleGalleryBut
 import RemoteAnnotateButton from '../Buttons/RemoteAnnotateButton/RemoteAnnotateButton';
 import ToggleLivePointerButton from '../Buttons/ToggleLivePointerButton/ToggleLivePointerButton';
 import OCRButton from '../Buttons/OCRButton/OCRButton';
+import useUser from '../../utils/useUser/useUser';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -106,7 +107,8 @@ export default function MenuBar() {
   const isReconnecting = roomState === 'reconnecting';
   const noParticipants = participants.length === 0;
   const { room } = useVideoContext();
-  const { isRemoteCaptureMode, checkIsUser } = useCaptureImageContext();
+  const checkIsUser = useUser();
+  const { isRemoteCaptureMode } = useCaptureImageContext();
 
   // Local testing
   // switch noParticipants to !noParticipants when not testing on single feed
