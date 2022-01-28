@@ -6,6 +6,8 @@ import RoomNameScreen from './RoomNameScreen/RoomNameScreen';
 import { useAppState } from '../../state';
 import { useParams } from 'react-router-dom';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
+import useChatContext from '../../hooks/useChatContext/useChatContext';
+import { CircularProgress } from '@material-ui/core';
 
 export enum Steps {
   roomNameStep,
@@ -15,6 +17,7 @@ export enum Steps {
 export default function PreJoinScreens() {
   const { user } = useAppState();
   const { getAudioAndVideoTracks } = useVideoContext();
+
   const { URLRoomName, URLUserName } = useParams();
   const [step, setStep] = useState(Steps.roomNameStep);
 
@@ -39,7 +42,7 @@ export default function PreJoinScreens() {
   }, [URLUserName]);
 
   useEffect(() => {
-    if (step === Steps.deviceSelectionStep && !mediaError) {
+    if (step === Steps.roomNameStep && !mediaError) {
       getAudioAndVideoTracks().catch(error => {
         console.log('Error acquiring local media:');
         console.dir(error);
@@ -48,26 +51,11 @@ export default function PreJoinScreens() {
     }
   }, [getAudioAndVideoTracks, step, mediaError]);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    // If this app is deployed as a twilio function, don't change the URL because routing isn't supported.
-    if (!window.location.origin.includes('twil.io')) {
-      window.history.replaceState(null, '', window.encodeURI(`/room/${roomName}${window.location.search || ''}`));
-    }
-    setStep(Steps.deviceSelectionStep);
-  };
-
   return (
     <IntroContainer>
       <MediaErrorSnackbar error={mediaError} />
       {step === Steps.roomNameStep && (
-        <RoomNameScreen
-          name={name}
-          roomName={roomName}
-          setName={setName}
-          setRoomName={setRoomName}
-          handleSubmit={handleSubmit}
-        />
+        <RoomNameScreen name={name} roomName={roomName} setName={setName} setRoomName={setRoomName} />
       )}
 
       {step === Steps.deviceSelectionStep && (

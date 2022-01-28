@@ -1,6 +1,19 @@
-import React, { ChangeEvent, FormEvent } from 'react';
-import { Typography, makeStyles, TextField, Grid, Button, InputLabel, Theme } from '@material-ui/core';
+import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import {
+  Typography,
+  makeStyles,
+  TextField,
+  Grid,
+  Button,
+  InputLabel,
+  Theme,
+  CircularProgress,
+} from '@material-ui/core';
 import { useAppState } from '../../../state';
+import useChatContext from '../../../hooks/useChatContext/useChatContext';
+import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
+import useUser from '../../../utils/useUser/useUser';
+import useRoomState from '../../../hooks/useRoomState/useRoomState';
 
 const useStyles = makeStyles((theme: Theme) => ({
   gutterBottom: {
@@ -32,75 +45,75 @@ interface RoomNameScreenProps {
   roomName: string;
   setName: (name: string) => void;
   setRoomName: (roomName: string) => void;
-  handleSubmit: (event: FormEvent<HTMLFormElement>) => void;
 }
 
-export default function RoomNameScreen({ name, roomName, setName, setRoomName, handleSubmit }: RoomNameScreenProps) {
+export default function RoomNameScreen({ name, roomName, setName, setRoomName }: RoomNameScreenProps) {
   const classes = useStyles();
-  const { user } = useAppState();
+  const { user, getToken } = useAppState();
+  const roomState = useRoomState();
 
-  const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setName(event.target.value);
+  const { connect: videoConnect } = useVideoContext();
+  const { connect: chatConnect } = useChatContext();
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const checkIsUser = useUser();
+
+  // const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
+  //   setName(event.target.value);
+  // };
+
+  // const handleRoomNameChange = (event: ChangeEvent<HTMLInputElement>) => {
+  //   setRoomName(event.target.value);
+  // };
+
+  // const hasUsername = !window.location.search.includes('customIdentity=true') && user?.displayName;
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    // If this app is deployed as a twilio function, don't change the URL because routing isn't supported.
+    // if (!window.location.origin.includes('twil.io')) {
+    //   window.history.replaceState(null, '', window.encodeURI(`/room/${roomName}${window.location.search || ''}`));
+    // }
+    // setStep(Steps.deviceSelectionStep);
+
+    setIsLoading(true);
+    getToken(name, roomName).then(({ token }) => {
+      videoConnect(token);
+      process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && chatConnect(token);
+
+      // Add slight delay so screen transition happens without button reappearing
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 500);
+    });
   };
 
-  const handleRoomNameChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setRoomName(event.target.value);
-  };
-
-  const hasUsername = !window.location.search.includes('customIdentity=true') && user?.displayName;
+  // Repopulate default name and roomName params which are lost after a refresh or disconnection
+  useEffect(() => {
+    if (!name) {
+      checkIsUser() ? (name = 'User') : (name = 'Agent');
+    }
+    if (!roomName) {
+      roomName = '101';
+    }
+  });
 
   return (
     <>
       <Typography variant="h5" className={classes.gutterBottom}>
-        Join a Room
+        Hostcomm Remote Video
       </Typography>
-      <Typography variant="body1">
-        {hasUsername
-          ? "Enter the name of a room you'd like to join."
-          : "Enter your name and the name of a room you'd like to join"}
-      </Typography>
+      <Typography variant="body1"></Typography>
       <form onSubmit={handleSubmit}>
-        <div className={classes.inputContainer}>
-          {!hasUsername && (
-            <div className={classes.textFieldContainer}>
-              <InputLabel shrink htmlFor="input-user-name">
-                Your Name
-              </InputLabel>
-              <TextField
-                id="input-user-name"
-                variant="outlined"
-                fullWidth
-                size="small"
-                value={name}
-                onChange={handleNameChange}
-              />
-            </div>
+        <Grid container justifyContent="flex-start" alignItems="center">
+          {isLoading && roomState === 'disconnected' ? (
+            <CircularProgress />
+          ) : (
+            <Button variant="contained" type="submit" size="large" color="primary" className={classes.continueButton}>
+              Connect
+            </Button>
           )}
-          <div className={classes.textFieldContainer}>
-            <InputLabel shrink htmlFor="input-room-name">
-              Room Name
-            </InputLabel>
-            <TextField
-              autoCapitalize="false"
-              id="input-room-name"
-              variant="outlined"
-              fullWidth
-              size="small"
-              value={roomName}
-              onChange={handleRoomNameChange}
-            />
-          </div>
-        </div>
-        <Grid container justifyContent="flex-end">
-          <Button
-            variant="contained"
-            type="submit"
-            color="primary"
-            disabled={!name || !roomName}
-            className={classes.continueButton}
-          >
-            Continue
-          </Button>
         </Grid>
       </form>
     </>
