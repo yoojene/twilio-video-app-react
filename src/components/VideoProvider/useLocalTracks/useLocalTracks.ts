@@ -85,6 +85,7 @@ export default function useLocalTracks() {
     const localTrackConstraints = {
       video: shouldAcquireVideo && {
         ...(DEFAULT_VIDEO_CONSTRAINTS as {}),
+        facingMode: 'environment', // Default to rear facing camera
         name: `camera-${Date.now()}`,
         ...(hasSelectedVideoDevice && { deviceId: { exact: selectedVideoDeviceId! } }),
       },
