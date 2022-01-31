@@ -25,11 +25,11 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function OCRButton() {
   const classes = useStyles();
 
-  const { isCaptureMode, captureOCR, setIsCaptureSnackOpen } = useCaptureImageContext();
+  const { isCaptureMode, captureOCR, setIsCaptureSnackOpen, setSnackMessage } = useCaptureImageContext();
 
   const doOCR = async () => {
     console.log('doOCR');
-    // annotateImage();
+    setSnackMessage('Please wait..');
     setIsCaptureSnackOpen(true);
     await captureOCR();
   };

@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function ToggleLivePointerButton(): ReactElement {
   const classes = useStyles();
 
-  const { setIsLivePointerOpen, isLivePointerOpen } = useCaptureImageContext();
+  const { setIsLivePointerOpen, isLivePointerOpen, isCaptureMode } = useCaptureImageContext();
   const { room } = useVideoContext();
 
   let localDataTrackPublication: LocalDataTrackPublication;
@@ -51,6 +51,7 @@ export default function ToggleLivePointerButton(): ReactElement {
       <IconButton
         classes={{ label: classes.iconButton }}
         onClick={doOpenLivePointer}
+        disabled={isCaptureMode}
         color={isLivePointerOpen ? 'secondary' : undefined}
       >
         <div className={classes.iconContainer}>

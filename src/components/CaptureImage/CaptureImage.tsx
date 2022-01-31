@@ -79,6 +79,7 @@ const useStyles = makeStyles(() => ({
   },
   drawerTitle: {
     textAlign: 'center',
+    padding: '16px',
   },
   galleryContainer: {
     padding: '16px',
@@ -90,6 +91,7 @@ const useStyles = makeStyles(() => ({
   },
   ocrText: {
     padding: '16px',
+    maxWidth: '30vw',
   },
 }));
 
@@ -114,6 +116,7 @@ export default function CaptureImage() {
     isRemoteCaptureMode,
     isCaptureSnackOpen,
     setIsCaptureSnackOpen,
+    setSnackMessage,
     snackMessage,
     setIsZoomMode,
     isZoomMode,
@@ -161,6 +164,7 @@ export default function CaptureImage() {
           console.log(isRemoteLivePointerOpen);
           setIsRemoteLivePointerOpen(!isRemoteLivePointerOpen);
           console.log(isRemoteLivePointerOpen);
+          return;
         }
         if (typeof event === 'string' && event.startsWith('{"isCaptureMode')) {
           console.log('isCaptureMode - toggle state');
@@ -168,6 +172,13 @@ export default function CaptureImage() {
           setIsRemoteCaptureMode(!isRemoteCaptureMode);
           console.log(isRemoteCaptureMode);
           setIsVideoOpen(!isVideoOpen);
+          return;
+        }
+        if (typeof event === 'string' && event.startsWith('{"isSendingAnnotation')) {
+          console.log('isSendingAnnotation - toggle state');
+          setIsCaptureSnackOpen(true);
+          setSnackMessage(`${!checkIsUser() ? 'User' : 'Agent'} is annotating, please wait...`);
+          return;
         }
       };
       dataTrack.on('message', handleMessage);
@@ -180,6 +191,7 @@ export default function CaptureImage() {
   useEffect(() => {
     if (isRemoteCaptureMode) {
       setIsCaptureSnackOpen(true);
+      setSnackMessage(`Agent is capturing image, please wait...`);
     }
   }, [isRemoteCaptureMode]);
 
@@ -206,22 +218,6 @@ export default function CaptureImage() {
       setIsVideoOpen(!isVideoOpen);
     }
   }, [isCaptureMode]);
-
-  // useEffect(() => {
-  //   console.log('annotation mode effect');
-  //   console.log(isAnnotationMode);
-
-  //   if (isAnnotationMode) {
-  //     // Update remote client into Annotation Mode
-
-  //     localDataTrackPublication.track.send(
-  //       JSON.stringify({
-  //         isAnnotationMode: !isAnnotationMode,
-  //       })
-  //     );
-
-  //   }
-  // }, [isAnnotationMode]);
 
   const [open, setOpen] = useState(true);
 
@@ -256,8 +252,6 @@ export default function CaptureImage() {
       />
 
       <Drawer anchor="bottom" open={isZoomMode} onClose={toggleZoomDrawer}>
-        <br></br>
-        <br></br>
         <h3 className={classes.drawerTitle}>Zoom</h3>
         <Slider
           className={classes.zoomSlider}
@@ -312,28 +306,6 @@ export default function CaptureImage() {
       ) : (
         ''
       )}
-
-      {/* {isGalleryOpen ? (
-        <>
-          {isChatWindowOpen ? (
-            <Grid item xs={3}>
-              <div className={classes.galleryContainer}>
-                <DialogTitle>Saved Images</DialogTitle>
-                <SavedImageGallery></SavedImageGallery>
-              </div>
-            </Grid>
-          ) : (
-            <Grid item xs={6}>
-              <DialogTitle className={classes.drawerTitle}>Saved Images</DialogTitle>
-              <div className={classes.galleryContainer}>
-                <SavedImageGallery></SavedImageGallery>
-              </div>
-            </Grid>
-          )}
-        </>
-      ) : (
-        ''
-      )} */}
 
       <Drawer anchor="right" open={isGalleryOpen} onClose={toggleGalleryDrawer}>
         <br></br>

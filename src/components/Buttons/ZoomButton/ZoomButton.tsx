@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function ZoomButton() {
   const classes = useStyles();
 
-  const { setIsZoomMode, isZoomMode } = useCaptureImageContext();
+  const { setIsZoomMode, isZoomMode, isCaptureMode, isLivePointerOpen } = useCaptureImageContext();
 
   const doToggleZoom = () => {
     setIsZoomMode(!isZoomMode);
@@ -35,6 +35,7 @@ export default function ZoomButton() {
       <IconButton
         classes={{ label: classes.iconButton }}
         onClick={doToggleZoom}
+        disabled={isCaptureMode || isLivePointerOpen}
         color={isZoomMode ? 'secondary' : undefined}
       >
         <div className={classes.iconContainer}>

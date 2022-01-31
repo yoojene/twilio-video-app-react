@@ -61,8 +61,8 @@ type CaptureImageContextType = {
   setIsCaptureMode: (isCaptureMode: boolean) => void;
   isRemoteCaptureMode: boolean;
   setIsRemoteCaptureMode: (isRemoteCaptureMode: boolean) => void;
-  isAnnotationMode: boolean;
-  setIsAnnotationMode: (isAnnotationMode: boolean) => void;
+  isSendingAnnotation: boolean;
+  setIsSendingAnnotation: (isSendingAnnotation: boolean) => void;
   isBackdropOpen: boolean;
   setIsBackdropOpen: (isBackdropOpen: boolean) => void;
   isImagePreviewOpen: boolean;
@@ -101,7 +101,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   const [isRemoteLivePointerOpen, setIsRemoteLivePointerOpen] = useState(false);
   const [isCaptureMode, setIsCaptureMode] = useState(false);
   const [isRemoteCaptureMode, setIsRemoteCaptureMode] = useState(false);
-  const [isAnnotationMode, setIsAnnotationMode] = useState(false);
+  const [isSendingAnnotation, setIsSendingAnnotation] = useState(false);
   const [isImagePreviewOpen, setIsImagePreviewOpen] = useState(false);
   const [isVideoOpen, setIsVideoOpen] = useState(true);
   const [isBackdropOpen, setIsBackdropOpen] = useState(false);
@@ -126,11 +126,9 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     if (video) {
       const canvas = await setVideoOnCanvas(video);
       if (canvas) {
-        // if (!isAnnotating) {
         console.log('here');
         await sendCanvasDimensionsOnDataTrack(canvas);
         await sendImageOnDataTrack(canvas);
-        // }
         showPhoto(canvas);
         setIsVideoOpen(!isVideoOpen);
       }
@@ -389,6 +387,11 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
 
         console.log('about to send annotated canvas on datatrack');
         const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+        localDataTrackPublication.track.send(
+          JSON.stringify({
+            isSendingAnnotation: !isSendingAnnotation,
+          })
+        );
         await sendCanvasDimensionsOnDataTrack(canvas!);
         await sendImageOnDataTrack(canvas!);
       }
@@ -396,7 +399,6 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
 
     markerArea.addEventListener('close', () => {
       console.log('close');
-      setIsAnnotationMode(false);
       setMarkupPanelOpen(false);
     });
 
@@ -537,8 +539,8 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         setIsCaptureMode,
         isRemoteCaptureMode,
         setIsRemoteCaptureMode,
-        isAnnotationMode,
-        setIsAnnotationMode,
+        isSendingAnnotation,
+        setIsSendingAnnotation,
         isBackdropOpen,
         setIsBackdropOpen,
         isImagePreviewOpen,

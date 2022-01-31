@@ -11,3 +11,8 @@ export const SELECTED_VIDEO_INPUT_KEY = 'TwilioVideoApp-selectedVideoInput';
 
 // This is used to store the current background settings in localStorage
 export const SELECTED_BACKGROUND_SETTINGS_KEY = 'TwilioVideoApp-selectedBackgroundSettings';
+
+// Todo externalise into env file
+export const USERNAME = 'User';
+export const AGENTNAME = 'Agent';
+export const ROOMNAME = '101';

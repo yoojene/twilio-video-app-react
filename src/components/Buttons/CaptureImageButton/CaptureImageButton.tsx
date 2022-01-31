@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function CaptureImageButton() {
   const classes = useStyles();
 
-  const { setIsCaptureMode, isCaptureMode } = useCaptureImageContext();
+  const { setIsCaptureMode, isCaptureMode, isLivePointerOpen } = useCaptureImageContext();
   const { room } = useVideoContext();
 
   let localDataTrackPublication: LocalDataTrackPublication;
@@ -52,6 +52,7 @@ export default function CaptureImageButton() {
       <IconButton
         classes={{ label: classes.iconButton, root: classes.button }}
         onClick={doCaptureImage}
+        disabled={isLivePointerOpen}
         color={isCaptureMode ? 'secondary' : 'default'}
       >
         <div className={classes.iconContainer}>

@@ -14,6 +14,7 @@ import useChatContext from '../../../hooks/useChatContext/useChatContext';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 import useUser from '../../../utils/useUser/useUser';
 import useRoomState from '../../../hooks/useRoomState/useRoomState';
+import { AGENTNAME, ROOMNAME, USERNAME } from '../../../constants';
 
 const useStyles = makeStyles((theme: Theme) => ({
   gutterBottom: {
@@ -92,10 +93,10 @@ export default function RoomNameScreen({ name, roomName, setName, setRoomName }:
   // Repopulate default name and roomName params which are lost after a refresh or disconnection
   useEffect(() => {
     if (!name) {
-      checkIsUser() ? (name = 'User') : (name = 'Agent');
+      checkIsUser() ? (name = USERNAME) : (name = AGENTNAME);
     }
     if (!roomName) {
-      roomName = '101';
+      roomName = ROOMNAME;
     }
   });
 
