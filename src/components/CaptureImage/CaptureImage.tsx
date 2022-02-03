@@ -52,10 +52,6 @@ const useStyles = makeStyles(() => ({
   },
   preview: {
     width: '100vw',
-    // width: '1000px',
-    // '@media (max-width: 1600px)': {
-    //   width: '1000px',
-    // },
     maxHeight: '600px',
     margin: '0.5em auto',
     '& video': {
@@ -281,7 +277,7 @@ export default function CaptureImage() {
       {isVideoOpen && videoTrack && !isLivePointerOpen && !isRemoteLivePointerOpen && (
         // Main video track
         <div className={classes.preview}>
-          <VideoTrack id={'capture-video'} track={videoTrack} scale={scale} />
+          <VideoTrack id={'capture-video'} track={videoTrack} />
         </div>
       )}
       {isLivePointerOpen && !isRemoteLivePointerOpen && videoTrack && dataTrack ? (

@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useEffect, useState } from 'react';
+import React, { ChangeEvent, createContext, useCallback, useEffect, useState } from 'react';
 import { Predictions, Storage } from 'aws-amplify';
 import * as markerjs2 from 'markerjs2';
 import { S3ProviderListOutputItem, S3ProviderListOutput } from '@aws-amplify/storage';
@@ -14,7 +14,7 @@ type CaptureImageContextType = {
   getVideoElementFromDialog: () => Promise<HTMLElement | null>;
   isCaptureImageOpen: boolean;
   setIsCaptureImageOpen: (isCaptureImageOpen: boolean) => void;
-  setVideoOnCanvas: (video: HTMLElement) => Promise<HTMLCanvasElement | undefined>;
+  setVideoOnCanvas: (video: HTMLVideoElement) => Promise<HTMLCanvasElement | undefined>;
   saveImageToStorage: () => void;
   sendCanvasDimensionsOnDataTrack: (canvas: HTMLCanvasElement) => Promise<unknown>;
   sendImageOnDataTrack: (canvas: HTMLCanvasElement) => void;
@@ -121,7 +121,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   }
 
   const captureImage = async () => {
-    const video = await getVideoElementFromDialog();
+    const video = (await getVideoElementFromDialog()) as HTMLVideoElement;
     setIsImagePreviewOpen(!isImagePreviewOpen);
     if (video) {
       const canvas = await setVideoOnCanvas(video);
@@ -154,38 +154,33 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     return video;
   }, []);
 
-  const setVideoOnCanvas = useCallback(
-    async video => {
-      // setIsCaptureMode(!isCaptureMode);
+  const setVideoOnCanvas = async (video: HTMLVideoElement) => {
+    const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+    console.log(video);
+    console.log('set video on canvas');
+    console.log(canvas);
 
-      const canvas = document.getElementById('canvas') as HTMLCanvasElement;
-      console.log(video);
-      console.log('set video on canvas');
-      console.log(canvas);
-
-      if (canvas) {
-        const ctx = canvas.getContext('2d');
-        // Canvas setup for device in landscape mode
-        // TODO change this based on phone orientation
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        if (scale) {
-          ctx?.scale(scale, scale);
-        }
-
-        const x = (canvas.width / scale - video.offsetWidth) / 2;
-        const y = (canvas.height / scale - video.offsetHeight) / 2;
-
-        if (scale === 1) {
-          ctx?.drawImage(video as CanvasImageSource, 0, 0);
-        } else {
-          ctx?.drawImage(video as CanvasImageSource, x, y);
-        }
-        return canvas;
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+      // Canvas setup for device in landscape mode
+      // TODO change this based on phone orientation
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      if (scale) {
+        ctx?.scale(scale, scale);
       }
-    },
-    [scale]
-  );
+
+      const x = (canvas.width / scale - video.offsetWidth) / 2;
+      const y = (canvas.height / scale - video.offsetHeight) / 2;
+
+      if (scale === 1) {
+        ctx?.drawImage(video as CanvasImageSource, 0, 0);
+      } else {
+        ctx?.drawImage(video as CanvasImageSource, x, y);
+      }
+      return canvas;
+    }
+  };
 
   const setImageFromCanvas = async () => {
     const canvas = document.getElementById('canvas') as HTMLCanvasElement;
@@ -257,9 +252,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
 
   const onZoomChange = (event: any, scale: any) => {
     console.log('on Zoom change');
-    // console.log(event);
     console.log(scale);
-
     setScale(scale);
   };
 
