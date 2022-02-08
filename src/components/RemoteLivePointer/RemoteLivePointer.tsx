@@ -137,7 +137,7 @@ export default function RemoteLivePointer({ videoTrack, dataTrack, scale }: Remo
       console.log(video);
       console.log(video.videoHeight);
       console.log(video.videoWidth);
-      canvas.width = 360;
+      canvas.width = 340;
       canvas.height = 600;
       drawLivePointer(canvas, mouseX, mouseY, color);
     };

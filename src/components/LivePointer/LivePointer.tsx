@@ -69,7 +69,7 @@ export default function LivePointer({ videoTrack, dataTrack, scale }: LivePointe
       setTimeout(() => {
         console.log(video.videoWidth);
         console.log(video.videoHeight);
-        canvas.width = 320;
+        canvas.width = 340;
         canvas.height = 600;
         const ctx = canvas!.getContext('2d');
 

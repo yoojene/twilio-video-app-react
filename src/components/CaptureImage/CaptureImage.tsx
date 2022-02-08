@@ -49,13 +49,14 @@ const useStyles = makeStyles(() => ({
     backgroundSize: 'cover',
     background: 'white',
     overflowY: 'scroll',
+    paddingTop: '16px',
   },
   preview: {
     width: '100vw',
     maxHeight: '600px',
     margin: '0.5em auto',
     '& video': {
-      maxHeight: '600px',
+      maxHeight: '600px !important' as any,
     },
   },
   buttonContainer: {
