@@ -6,14 +6,21 @@ import TwilioLogo from './TwilioLogo';
 import { useAppState } from '../../state';
 import UserMenu from './UserMenu/UserMenu';
 import { useLocation } from 'react-router-dom';
-
+import HostcommImg from '../../images/hostcomm/Hostcomm Only RGB-trans.png';
 const useStyles = makeStyles((theme: Theme) => ({
   background: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    background: 'rgb(40, 42, 43)',
+    background: 'white',
     height: '100%',
+  },
+  topBanner: {
+    position: 'absolute',
+    top: '0',
+    height: '40%',
+    backgroundColor: `${theme.palette.primary.main}`,
+    width: '100%',
   },
   container: {
     position: 'relative',
@@ -21,29 +28,27 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   innerContainer: {
     display: 'flex',
-    width: '888px',
+    width: '50%',
     height: '379px',
-    borderRadius: '8px',
+    borderRadius: '25px',
     boxShadow: '0px 2px 4px 0px rgba(40, 42, 43, 0.3)',
     overflow: 'hidden',
     position: 'relative',
     margin: 'auto',
+    flexDirection: 'column',
+    maxWidth: '500px',
     [theme.breakpoints.down('sm')]: {
       display: 'block',
       height: 'auto',
       width: 'calc(100% - 40px)',
       margin: 'auto',
-      maxWidth: '400px',
+      maxWidth: '300px',
+      // zIndex: '100'
     },
   },
   swooshContainer: {
-    position: 'relative',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundImage: Swoosh,
-    backgroundSize: 'cover',
-    width: '296px',
+    backgroundColor: 'white',
+
     [theme.breakpoints.down('sm')]: {
       width: '100%',
       height: '100px',
@@ -51,18 +56,22 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   logoContainer: {
-    position: 'absolute',
-    width: '210px',
-    textAlign: 'center',
+    padding: '40px',
+    width: '90%',
+    marginTop: '20px',
+    marginLeft: 'auto',
+    marginRight: 'auto',
     [theme.breakpoints.down('sm')]: {
-      display: 'flex',
-      alignItems: 'center',
+      marginLeft: '20px',
       width: '90%',
       textAlign: 'initial',
       '& svg': {
         height: '64px',
       },
     },
+  },
+  hostcommLogo: {
+    width: '100%',
   },
   twilioLogo: {
     position: 'absolute',
@@ -73,7 +82,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   content: {
     background: 'white',
     width: '100%',
-    padding: '4em',
     flex: 1,
     [theme.breakpoints.down('sm')]: {
       padding: '2em',
@@ -100,16 +108,13 @@ const IntroContainer = (props: IntroContainerProps) => {
 
   return (
     <div className={classes.background}>
-      <TwilioLogo className={classes.twilioLogo} />
+      <div className={classes.topBanner}></div>
       {user && location.pathname !== '/login' && <UserMenu />}
       <div className={classes.container}>
         <div className={classes.innerContainer}>
           <div className={classes.swooshContainer}>
             <div className={classes.logoContainer}>
-              <VideoLogo />
-              <Typography variant="h6" className={classes.title}>
-                Twilio Programmable Video
-              </Typography>
+              <img className={classes.hostcommLogo} src={HostcommImg}></img>
             </div>
           </div>
           <div className={classes.content}>{props.children}</div>

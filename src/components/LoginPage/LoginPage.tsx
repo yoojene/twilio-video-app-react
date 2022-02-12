@@ -45,12 +45,23 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginBottom: '1em',
   },
   passcodeContainer: {
-    minHeight: '120px',
+    marginLeft: 'auto',
+    marginRight: 'auto',
   },
   submitButton: {
+    borderRadius: '16px',
+    marginTop: '20px',
+    width: '40%',
     [theme.breakpoints.down('sm')]: {
-      width: '100%',
+      width: '60%',
     },
+  },
+  passcodeLabel: {
+    textAlign: 'center',
+    paddingBottom: '10px',
+  },
+  passcodeInput: {
+    border: '10px',
   },
 }));
 
@@ -80,16 +91,16 @@ export default function LoginPage() {
     login();
   };
 
-  if (user || !isAuthEnabled) {
-    console.log(user);
-    console.log(isAuthEnabled);
+  // if (user || !isAuthEnabled) {
+  //   console.log(user);
+  //   console.log(isAuthEnabled);
 
-    if (checkIsUser()) {
-      history.replace('/room/101/name/User');
-    } else {
-      history.replace('/room/101/name/Agent');
-    }
-  }
+  //   if (checkIsUser()) {
+  //     history.replace('/room/101/name/User');
+  //   } else {
+  //     history.replace('/room/101/name/Agent');
+  //   }
+  // }
 
   if (!isAuthReady) {
     return null;
@@ -111,16 +122,14 @@ export default function LoginPage() {
 
       {process.env.REACT_APP_SET_AUTH === 'passcode' && (
         <>
-          <Typography variant="h5" className={classes.gutterBottom}>
-            Enter passcode to join a room
-          </Typography>
           <form onSubmit={handleSubmit}>
             <Grid container justifyContent="space-between">
               <div className={classes.passcodeContainer}>
-                <InputLabel shrink htmlFor="input-passcode">
-                  Passcode
+                <InputLabel className={classes.passcodeLabel} htmlFor="input-passcode">
+                  SESSION ID
                 </InputLabel>
                 <TextField
+                  className={classes.passcodeInput}
                   id="input-passcode"
                   onChange={(e: ChangeEvent<HTMLInputElement>) => setPasscode(e.target.value)}
                   type="password"
@@ -137,7 +146,7 @@ export default function LoginPage() {
                 </div>
               </div>
             </Grid>
-            <Grid container justifyContent="flex-end">
+            <Grid container justifyContent="center">
               <Button
                 variant="contained"
                 color="primary"
@@ -145,7 +154,7 @@ export default function LoginPage() {
                 disabled={!passcode.length}
                 className={classes.submitButton}
               >
-                Submit
+                CONNECT
               </Button>
             </Grid>
           </form>

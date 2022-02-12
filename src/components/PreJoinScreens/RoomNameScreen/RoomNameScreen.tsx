@@ -90,31 +90,41 @@ export default function RoomNameScreen({ name, roomName, setName, setRoomName }:
     });
   };
 
+  const connectVideoSession = () => {
+    getToken(name, roomName).then(({ token }) => {
+      videoConnect(token);
+      process.env.REACT_APP_DISABLE_TWILIO_CONVERSATIONS !== 'true' && chatConnect(token);
+
+      // Add slight delay so screen transition happens without button reappearing
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 500);
+    });
+  };
+
   // Repopulate default name and roomName params which are lost after a refresh or disconnection
   useEffect(() => {
+    setIsLoading(true);
+
     if (!name) {
       checkIsUser() ? (name = USERNAME) : (name = AGENTNAME);
     }
     if (!roomName) {
       roomName = ROOMNAME;
     }
-  });
+
+    // NB this will auto log back in the room after 2.5s being disonnected, need better solution
+    setTimeout(() => {
+      connectVideoSession();
+    }, 2500);
+  }, []);
 
   return (
     <>
-      <Typography variant="h5" className={classes.gutterBottom}>
-        Hostcomm Remote Video
-      </Typography>
       <Typography variant="body1"></Typography>
       <form onSubmit={handleSubmit}>
-        <Grid container justifyContent="flex-start" alignItems="center">
-          {isLoading && roomState === 'disconnected' ? (
-            <CircularProgress />
-          ) : (
-            <Button variant="contained" type="submit" size="large" color="primary" className={classes.continueButton}>
-              Connect
-            </Button>
-          )}
+        <Grid container justifyContent="center" alignItems="center">
+          {isLoading && roomState === 'disconnected' ? <CircularProgress /> : ''}
         </Grid>
       </form>
     </>
