@@ -110,11 +110,14 @@ export default createTheme({
     },
   },
   typography: {
-    fontFamily: 'Inter, sans-serif',
+    fontFamily: 'Monserrat, sans-serif',
   },
   palette: {
     primary: {
-      main: '#027AC5',
+      main: '#009ac7',
+    },
+    secondary: {
+      main: '#00455c',
     },
   },
   brand: '#E22525',
