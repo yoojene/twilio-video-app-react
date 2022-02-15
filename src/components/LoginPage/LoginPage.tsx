@@ -5,7 +5,7 @@ import Button from '@material-ui/core/Button';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import Grid from '@material-ui/core/Grid';
 import { ReactComponent as GoogleLogo } from './google-logo.svg';
-import { InputLabel, Theme } from '@material-ui/core';
+import { InputLabel, Link, Theme } from '@material-ui/core';
 import IntroContainer from '../IntroContainer/IntroContainer';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
@@ -62,6 +62,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   passcodeInput: {
     border: '10px',
+  },
+  ppLink: {
+    marginTop: '20px',
   },
 }));
 
@@ -158,6 +161,10 @@ export default function LoginPage() {
               </Button>
             </Grid>
           </form>
+          <Typography className={classes.ppLink} variant="body1" align="center">
+            By proceeding you agree to our&nbsp;
+            <Link href="https://www.hostcomm.co.uk/support/privacy-policy">Privacy Policy</Link>
+          </Typography>
         </>
       )}
     </IntroContainer>

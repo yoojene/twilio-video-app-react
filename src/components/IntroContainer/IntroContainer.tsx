@@ -6,7 +6,7 @@ import TwilioLogo from './TwilioLogo';
 import { useAppState } from '../../state';
 import UserMenu from './UserMenu/UserMenu';
 import { useLocation } from 'react-router-dom';
-import HostcommImg from '../../images/hostcomm/Hostcomm Only RGB-trans.png';
+import HostcommImg from '../../images/hostcomm/Hostcomm_Logo_trans.png';
 const useStyles = makeStyles((theme: Theme) => ({
   background: {
     display: 'flex',
@@ -43,7 +43,6 @@ const useStyles = makeStyles((theme: Theme) => ({
       width: 'calc(100% - 40px)',
       margin: 'auto',
       maxWidth: '300px',
-      // zIndex: '100'
     },
   },
   swooshContainer: {
