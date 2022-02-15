@@ -78,6 +78,14 @@ export default function RoomNameScreen({ name, roomName, setName, setRoomName }:
     // }
     // setStep(Steps.deviceSelectionStep);
 
+    if (!name) {
+      checkIsUser() ? (name = USERNAME) : (name = AGENTNAME);
+    }
+    if (!roomName) {
+      roomName = ROOMNAME;
+    }
+
+    console.log(name, roomName);
     setIsLoading(true);
     getToken(name, roomName).then(({ token }) => {
       videoConnect(token);
@@ -104,19 +112,11 @@ export default function RoomNameScreen({ name, roomName, setName, setRoomName }:
 
   // Repopulate default name and roomName params which are lost after a refresh or disconnection
   useEffect(() => {
-    setIsLoading(true);
-
-    if (!name) {
-      checkIsUser() ? (name = USERNAME) : (name = AGENTNAME);
-    }
-    if (!roomName) {
-      roomName = ROOMNAME;
-    }
-
+    // setIsLoading(true);
     // NB this will auto log back in the room after 2.5s being disonnected, need better solution
-    setTimeout(() => {
-      connectVideoSession();
-    }, 2500);
+    // setTimeout(() => {
+    //   connectVideoSession();
+    // }, 2500);
   }, []);
 
   return (
@@ -124,7 +124,13 @@ export default function RoomNameScreen({ name, roomName, setName, setRoomName }:
       <Typography variant="body1"></Typography>
       <form onSubmit={handleSubmit}>
         <Grid container justifyContent="center" alignItems="center">
-          {isLoading && roomState === 'disconnected' ? <CircularProgress /> : ''}
+          {isLoading && roomState === 'disconnected' ? (
+            <CircularProgress />
+          ) : (
+            <Button variant="contained" type="submit" size="large" color="primary" className={classes.continueButton}>
+              Join Call
+            </Button>
+          )}
         </Grid>
       </form>
     </>
