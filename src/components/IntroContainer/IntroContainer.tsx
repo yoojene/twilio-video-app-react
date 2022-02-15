@@ -61,8 +61,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     marginLeft: 'auto',
     marginRight: 'auto',
     [theme.breakpoints.down('sm')]: {
-      marginLeft: '20px',
-      width: '90%',
+      marginTop: '0px',
       textAlign: 'initial',
       '& svg': {
         height: '64px',
