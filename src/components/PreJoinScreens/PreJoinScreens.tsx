@@ -8,6 +8,8 @@ import { useParams } from 'react-router-dom';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import useChatContext from '../../hooks/useChatContext/useChatContext';
 import { CircularProgress } from '@material-ui/core';
+import { USERNAME, AGENTNAME, ROOMNAME } from '../../constants';
+import useUser from '../../utils/useUser/useUser';
 
 export enum Steps {
   roomNameStep,
@@ -25,6 +27,7 @@ export default function PreJoinScreens() {
   const [roomName, setRoomName] = useState<string>('');
 
   const [mediaError, setMediaError] = useState<Error>();
+  const checkIsUser = useUser();
 
   useEffect(() => {
     if (URLRoomName) {
@@ -50,6 +53,19 @@ export default function PreJoinScreens() {
       });
     }
   }, [getAudioAndVideoTracks, step, mediaError]);
+
+  useEffect(() => {
+    console.log('pre join screen ueffect');
+    console.log(localStorage.getItem('userName'));
+    console.log(localStorage.getItem('agentName'));
+    console.log(localStorage.getItem('roomName'));
+
+    checkIsUser()
+      ? setName(localStorage.getItem('userName') || USERNAME)
+      : setName(localStorage.getItem('agentName') || AGENTNAME);
+
+    setRoomName(localStorage.getItem('roomName') || ROOMNAME);
+  }, []);
 
   return (
     <IntroContainer>

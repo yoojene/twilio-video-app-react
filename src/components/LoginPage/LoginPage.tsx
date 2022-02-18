@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState, FormEvent } from 'react';
+import React, { ChangeEvent, useState, FormEvent, useEffect, useCallback } from 'react';
 import { useAppState } from '../../state';
 
 import Button from '@material-ui/core/Button';
@@ -13,7 +13,6 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import { useLocation, useHistory } from 'react-router-dom';
 import useUser from '../../utils/useUser/useUser';
-
 const useStyles = makeStyles((theme: Theme) => ({
   googleButton: {
     background: 'white',
@@ -68,6 +67,12 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
+interface JoinCallResponse {
+  sessionId: string;
+  roomName: string;
+  agentName: string;
+  userName: string;
+}
 export default function LoginPage() {
   const classes = useStyles();
   const { signIn, user, isAuthReady } = useAppState();
@@ -105,6 +110,33 @@ export default function LoginPage() {
   //   }
   // }
 
+  const fetchCallDetails = useCallback(async () => {
+    try {
+      const response = await fetch('https://hostcomm-call-join.vercel.app/api/join');
+      const body: JoinCallResponse = await response.json();
+      console.log(body);
+      return body;
+    } catch (error) {
+      console.error(error);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchCallDetails()
+      .then(res => {
+        console.log(res);
+        console.log(res!.sessionId);
+
+        localStorage.setItem('sessionId', res!.sessionId);
+        localStorage.setItem('agentName', res!.agentName);
+        localStorage.setItem('userName', res!.userName);
+        localStorage.setItem('roomName', res!.roomName);
+
+        setPasscode(res!.sessionId);
+      })
+      .catch(err => console.error(err));
+  }, [fetchCallDetails]);
+
   if (!isAuthReady) {
     return null;
   }
@@ -134,6 +166,7 @@ export default function LoginPage() {
                 <TextField
                   className={classes.passcodeInput}
                   id="input-passcode"
+                  value={passcode}
                   onChange={(e: ChangeEvent<HTMLInputElement>) => setPasscode(e.target.value)}
                   type="password"
                   variant="outlined"

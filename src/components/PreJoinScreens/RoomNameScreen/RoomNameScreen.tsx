@@ -58,8 +58,6 @@ export default function RoomNameScreen({ name, roomName, setName, setRoomName }:
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const checkIsUser = useUser();
-
   // const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
   //   setName(event.target.value);
   // };
@@ -77,13 +75,6 @@ export default function RoomNameScreen({ name, roomName, setName, setRoomName }:
     //   window.history.replaceState(null, '', window.encodeURI(`/room/${roomName}${window.location.search || ''}`));
     // }
     // setStep(Steps.deviceSelectionStep);
-
-    if (!name) {
-      checkIsUser() ? (name = USERNAME) : (name = AGENTNAME);
-    }
-    if (!roomName) {
-      roomName = ROOMNAME;
-    }
 
     console.log(name, roomName);
     setIsLoading(true);
