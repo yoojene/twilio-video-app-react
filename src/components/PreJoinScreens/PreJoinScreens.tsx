@@ -60,11 +60,9 @@ export default function PreJoinScreens() {
     console.log(localStorage.getItem('agentName'));
     console.log(localStorage.getItem('roomName'));
 
-    checkIsUser()
-      ? setName(localStorage.getItem('userName') || USERNAME)
-      : setName(localStorage.getItem('agentName') || AGENTNAME);
+    checkIsUser() ? setName(localStorage.getItem('userName')!) : setName(localStorage.getItem('agentName')!);
 
-    setRoomName(localStorage.getItem('roomName') || ROOMNAME);
+    setRoomName(localStorage.getItem('roomName')!);
   }, []);
 
   return (

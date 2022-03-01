@@ -72,6 +72,7 @@ interface JoinCallResponse {
   roomName: string;
   agentName: string;
   userName: string;
+  error?: any;
 }
 export default function LoginPage() {
   const classes = useStyles();
@@ -110,31 +111,36 @@ export default function LoginPage() {
   //   }
   // }
 
-  // const fetchCallDetails = useCallback(async () => {
-  //   try {
-  //     const response = await fetch('https://hostcomm-call-join.vercel.app/api/join');
-  //     const body: JoinCallResponse = await response.json();
-  //     console.log(body);
-  //     return body;
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // }, []);
+  const fetchCallDetails = useCallback(async () => {
+    try {
+      const response = await fetch(process.env.REACT_APP_JOIN_ENDPOINT!);
+      const body: JoinCallResponse = await response.json();
+      console.log(body);
+      return body;
+    } catch (error) {
+      console.error(error);
+    }
+  }, []);
 
   useEffect(() => {
-    // fetchCallDetails()
-    //   .then(res => {
-    //     console.log(res);
-    //     console.log(res!.sessionId);
+    fetchCallDetails()
+      .then(res => {
+        console.log(res);
 
-    localStorage.setItem('sessionId', '12345');
-    localStorage.setItem('agentName', 'Agent');
-    localStorage.setItem('userName', 'User');
-    localStorage.setItem('roomName', 'Fri25feb5');
+        // TODO handle error from API, this should be in the .catch ()
+        if (res!.error) {
+          // setAuthError(new Error(res!.error.message));
+          throw new Error(res!.error.message);
+        }
 
-    setPasscode('12345');
-    // })
-    // .catch(err => console.error(err));
+        localStorage.setItem('sessionId', res!.sessionId);
+        localStorage.setItem('agentName', res!.agentName);
+        localStorage.setItem('userName', res!.userName);
+        localStorage.setItem('roomName', res!.roomName);
+
+        setPasscode(res!.sessionId);
+      })
+      .catch(err => console.error(err));
   }, []);
 
   if (!isAuthReady) {

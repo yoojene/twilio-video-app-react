@@ -4,9 +4,25 @@ import { useHistory } from 'react-router-dom';
 const endpoint = process.env.REACT_APP_TOKEN_ENDPOINT || '/token';
 
 export function getPasscode() {
-  const match = window.location.search.match(/passcode=(.*)&?/);
-  const passcode = match ? match[1] : window.sessionStorage.getItem('passcode');
+  const match = window.location.search.match(/passcode=[^&]*/);
+  // const match = window.location.search.match(/passcode=(.*?)&/);
+
+  const passcode = match ? match[0] : window.localStorage.getItem('passcode');
   return passcode;
+}
+export function getUserName() {
+  const match = window.location.search.match(/username=[^&]*/);
+
+  const userName = match ? match[0] : window.localStorage.getItem('userName');
+  // console.log(userName);
+  return userName;
+}
+export function getRoomName() {
+  const match = window.location.search.match(/roomname=[^&]*/);
+
+  const roomName = match ? match[0] : window.localStorage.getItem('roomName');
+  // console.log(roomName);
+  return roomName;
 }
 
 export function fetchToken(
@@ -105,6 +121,15 @@ export default function usePasscodeAuth() {
 
   useEffect(() => {
     const passcode = getPasscode();
+    const userName = getUserName();
+    const roomName = getRoomName();
+
+    if (userName) {
+      localStorage.setItem('userName', splitter(userName));
+    }
+    if (roomName) {
+      localStorage.setItem('roomName', splitter(roomName));
+    }
 
     if (passcode) {
       verifyPasscode(passcode)
@@ -137,6 +162,11 @@ export default function usePasscodeAuth() {
     window.sessionStorage.removeItem('passcode');
     return Promise.resolve();
   }, []);
+
+  const splitter = (str: string) => {
+    const split = str.split('=')[1];
+    return split;
+  };
 
   return { user, isAuthReady, getToken, signIn, signOut, updateRecordingRules };
 }
