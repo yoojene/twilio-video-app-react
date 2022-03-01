@@ -56,6 +56,7 @@ export default function Menu(props: { buttonClassName?: string }) {
       <Button
         onClick={() => setMenuOpen(isOpen => !isOpen)}
         ref={anchorRef}
+        disabled={true}
         className={props.buttonClassName}
         data-cy-more-button
       >

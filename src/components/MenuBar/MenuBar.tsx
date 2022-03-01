@@ -145,20 +145,9 @@ export default function MenuBar() {
             ) : (
               ''
             )}
-
             <Hidden smDown>
               <Menu />
             </Hidden>
-            {/* TODO revisit Zoom function later {isCaptureImageOpen ? (
-              <Grid container>
-                <div className={classes.buttonContainer}>
-                  {!checkIsUser() ? <ZoomButton /> : ''}
-                  
-                </div>
-              </Grid>
-            ) : (
-              ''
-            )} */}
           </Grid>
           <Hidden smDown>
             <Grid style={{ flex: 1 }}>
