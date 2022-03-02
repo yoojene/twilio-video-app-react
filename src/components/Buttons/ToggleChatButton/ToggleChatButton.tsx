@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import Button from '@material-ui/core/Button';
 import ChatIcon from '../../../icons/ChatIcon';
 import clsx from 'clsx';
 import { createStyles, IconButton, makeStyles, Theme } from '@material-ui/core';
@@ -61,6 +60,12 @@ const useStyles = makeStyles((theme: Theme) =>
     label: {
       fontSize: '12px',
     },
+    hover: {
+      '&:hover': {
+        borderBottom: `5px ${theme.brand} solid`,
+        color: `${theme.brand}`,
+      },
+    },
   })
 );
 
@@ -93,22 +98,9 @@ export default function ToggleChatButton() {
 
   return (
     <>
-      {/* <Button
-        data-cy-chat-button
-        onClick={toggleChatWindow}
-        disabled={!conversation}
-        startIcon={
-          <div className={classes.iconContainer}>
-            <ChatIcon />
-            <div className={clsx(classes.ring, { [classes.animateRing]: shouldAnimate })} />
-            <div className={clsx(classes.circle, { [classes.hasUnreadMessages]: hasUnreadMessages })} />
-          </div>
-        }
-      ></Button> */}
-
       <IconButton
         data-cy-chat-button
-        classes={{ label: classes.iconButton }}
+        classes={{ label: classes.iconButton, root: classes.hover }}
         onClick={toggleChatWindow}
         disabled={!conversation}
       >

@@ -8,7 +8,6 @@ const useStyles = makeStyles((theme: Theme) =>
     iconContainer: {
       width: `${theme.iconButtonWidth}px`,
     },
-    button: {},
     paper: {
       padding: theme.spacing(1),
     },
@@ -17,7 +16,13 @@ const useStyles = makeStyles((theme: Theme) =>
       flexDirection: 'column',
     },
     label: {
-      fontSize: '12px',
+      fontSize: `${theme.menuBarIconFontSize}px`,
+    },
+    hover: {
+      '&:hover': {
+        borderBottom: `5px ${theme.brand} solid`,
+        color: `${theme.brand}`,
+      },
     },
   })
 );
@@ -33,7 +38,11 @@ export default function SaveCaptureImageButton() {
 
   return (
     <>
-      <IconButton classes={{ label: classes.iconButton }} onClick={saveImage} disabled={!isCaptureMode}>
+      <IconButton
+        classes={{ label: classes.iconButton, root: classes.hover }}
+        onClick={saveImage}
+        disabled={!isCaptureMode}
+      >
         <div className={classes.iconContainer}>
           <SaveIcon />
         </div>

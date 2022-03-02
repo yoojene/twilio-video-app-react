@@ -9,13 +9,20 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     iconContainer: {
       width: `${theme.iconButtonWidth}px`,
+      color: 'red',
     },
     iconButton: {
       display: 'flex',
       flexDirection: 'column',
     },
     label: {
-      fontSize: '12px',
+      fontSize: `${theme.menuBarIconFontSize}px`,
+    },
+    hover: {
+      '&:hover': {
+        borderBottom: `5px ${theme.brand} solid`,
+        color: `${theme.brand}`,
+      },
     },
   })
 );
@@ -30,7 +37,7 @@ export default function ToggleAudioButton(props: { disabled?: boolean; className
     <>
       <IconButton
         data-cy-audio-toggle
-        classes={{ label: classes.iconButton }}
+        classes={{ label: classes.iconButton, root: classes.hover }}
         onClick={toggleAudioEnabled}
         disabled={!hasAudioTrack}
       >

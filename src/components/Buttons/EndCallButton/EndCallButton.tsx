@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme: Theme) =>
       background: theme.brand,
       color: 'white',
       '&:hover': {
-        background: '#600101',
+        background: theme.brand,
       },
     },
   })
@@ -34,7 +34,7 @@ export default function EndCallButton(props: { className?: string }) {
 
   return (
     <Button onClick={disconnect} className={clsx(classes.button, props.className)} data-cy-disconnect>
-      Disconnect
+      DISCONNECT
     </Button>
   );
 }

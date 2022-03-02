@@ -11,7 +11,6 @@ const useStyles = makeStyles((theme: Theme) =>
     iconContainer: {
       width: `${theme.iconButtonWidth}px`,
     },
-    button: {},
     paper: {
       padding: theme.spacing(1),
     },
@@ -20,7 +19,13 @@ const useStyles = makeStyles((theme: Theme) =>
       flexDirection: 'column',
     },
     label: {
-      fontSize: '12px',
+      fontSize: `${theme.menuBarIconFontSize}px`,
+    },
+    hover: {
+      '&:hover': {
+        borderBottom: `5px ${theme.brand} solid`,
+        color: `${theme.brand}`,
+      },
     },
   })
 );
@@ -49,7 +54,7 @@ export default function ToggleLivePointerButton(): ReactElement {
   return (
     <>
       <IconButton
-        classes={{ label: classes.iconButton }}
+        classes={{ label: classes.iconButton, root: classes.hover }}
         onClick={doOpenLivePointer}
         disabled={isCaptureMode}
         color={isLivePointerOpen ? 'secondary' : undefined}

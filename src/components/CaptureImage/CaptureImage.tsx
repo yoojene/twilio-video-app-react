@@ -16,6 +16,7 @@ import {
   Snackbar,
   Drawer,
   Slider,
+  Theme,
 } from '@material-ui/core';
 import useParticipants from '../../hooks/useParticipants/useParticipants';
 import usePublications from '../../hooks/usePublications/usePublications';
@@ -30,7 +31,7 @@ import LivePointer from '../LivePointer/LivePointer';
 import RemoteLivePointer from '../RemoteLivePointer/RemoteLivePointer';
 import useUser from '../../utils/useUser/useUser';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme: Theme) => ({
   backdrop: {
     zIndex: 1,
     color: '#000000',
@@ -47,7 +48,7 @@ const useStyles = makeStyles(() => ({
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover',
-    background: 'white',
+    background: theme.palette.background.default,
     overflowY: 'scroll',
     paddingTop: '16px',
   },
@@ -70,9 +71,6 @@ const useStyles = makeStyles(() => ({
   button: {
     textAlign: 'center',
     marginLeft: '8px',
-    // "> :not(:first-child)" :{
-    //    // marginLeft: '8px',
-    // }
   },
   drawerTitle: {
     textAlign: 'center',

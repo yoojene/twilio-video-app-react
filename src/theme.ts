@@ -12,6 +12,8 @@ declare module '@material-ui/core/styles/createTheme' {
     participantBorderWidth: number;
     rightDrawerWidth: number;
     iconButtonWidth: number;
+    menuBarIconFontSize: number;
+    menuBarButtonColor: string;
   }
 
   // allow configuration using `createMuiTheme`
@@ -26,6 +28,8 @@ declare module '@material-ui/core/styles/createTheme' {
     participantBorderWidth: number;
     rightDrawerWidth?: number;
     iconButtonWidth?: number;
+    menuBarIconFontSize?: number;
+    menuBarButtonColor?: string;
   }
 }
 
@@ -53,6 +57,9 @@ export default createTheme({
       text: {
         padding: '6px 14px',
       },
+      // label: {
+      //   color: '#373F46'
+      // },
       contained: {
         boxShadow: 'none',
         '&:hover': {
@@ -67,6 +74,11 @@ export default createTheme({
       },
       startIcon: {
         marginRight: '6px',
+      },
+    },
+    MuiIconButton: {
+      root: {
+        borderRadius: '0',
       },
     },
     MuiTypography: {
@@ -113,14 +125,17 @@ export default createTheme({
     fontFamily: 'Monserrat, sans-serif',
   },
   palette: {
+    background: {
+      default: '#3D454D',
+    },
     primary: {
       main: '#009ac7',
     },
     secondary: {
-      main: '#00455c',
+      main: '#E3E3E3',
     },
   },
-  brand: '#E22525',
+  brand: '#029AC7',
   footerHeight: 72,
   mobileFooterHeight: 95,
   sidebarWidth: 300,
@@ -133,4 +148,6 @@ export default createTheme({
   // Added styles
 
   iconButtonWidth: 18,
+  menuBarIconFontSize: 12,
+  menuBarButtonColor: '#373F46',
 });

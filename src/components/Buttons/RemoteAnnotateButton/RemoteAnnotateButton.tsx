@@ -9,7 +9,6 @@ const useStyles = makeStyles((theme: Theme) =>
     iconContainer: {
       width: '15px',
     },
-    button: {},
     paper: {
       padding: theme.spacing(1),
     },
@@ -18,7 +17,13 @@ const useStyles = makeStyles((theme: Theme) =>
       flexDirection: 'column',
     },
     label: {
-      fontSize: '12px',
+      fontSize: `${theme.menuBarIconFontSize}px`,
+    },
+    hover: {
+      '&:hover': {
+        borderBottom: `5px ${theme.brand} solid`,
+        color: `${theme.brand}`,
+      },
     },
   })
 );

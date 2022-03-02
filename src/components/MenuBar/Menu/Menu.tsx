@@ -18,6 +18,8 @@ import {
   MenuItem,
   Typography,
   Hidden,
+  makeStyles,
+  createStyles,
 } from '@material-ui/core';
 import { isSupported } from '@twilio/video-processors';
 
@@ -36,7 +38,17 @@ export const IconContainer = styled('div')({
   marginRight: '0.3em',
 });
 
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    disabled: {
+      color: `rgba(0, 0, 0, 0.26)`,
+      backgroundColor: `transparent`,
+    },
+  })
+);
 export default function Menu(props: { buttonClassName?: string }) {
+  const classes = useStyles();
+
   const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'));
 
   const [aboutOpen, setAboutOpen] = useState(false);
@@ -57,6 +69,7 @@ export default function Menu(props: { buttonClassName?: string }) {
         onClick={() => setMenuOpen(isOpen => !isOpen)}
         ref={anchorRef}
         disabled={true}
+        classes={{ label: classes.disabled }}
         className={props.buttonClassName}
         data-cy-more-button
       >

@@ -8,7 +8,6 @@ const useStyles = makeStyles((theme: Theme) =>
     iconContainer: {
       width: `${theme.iconButtonWidth}px`,
     },
-    button: {},
     paper: {
       padding: theme.spacing(1),
     },
@@ -17,7 +16,7 @@ const useStyles = makeStyles((theme: Theme) =>
       flexDirection: 'column',
     },
     label: {
-      fontSize: '12px',
+      fontSize: `${theme.menuBarIconFontSize}px`,
     },
     scale: {
       border: '1px solid',
@@ -30,6 +29,12 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '21px',
       height: '23px',
       fontSize: 'small',
+    },
+    hover: {
+      '&:hover': {
+        borderBottom: `5px ${theme.brand} solid`,
+        color: `${theme.brand}`,
+      },
     },
   })
 );
@@ -45,7 +50,7 @@ export default function ZoomButton() {
   return (
     <>
       <IconButton
-        classes={{ label: classes.iconButton }}
+        classes={{ label: classes.iconButton, root: classes.hover }}
         onClick={doToggleZoom}
         disabled={isCaptureMode || isLivePointerOpen}
         color={isZoomMode ? 'secondary' : undefined}

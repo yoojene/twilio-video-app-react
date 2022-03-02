@@ -3,15 +3,12 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 
 import Button from '@material-ui/core/Button';
 import EndCallButton from '../Buttons/EndCallButton/EndCallButton';
-import { isMobile } from '../../utils';
 import Menu from './Menu/Menu';
 import useRoomState from '../../hooks/useRoomState/useRoomState';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import { Typography, Grid, Hidden } from '@material-ui/core';
 import ToggleAudioButton from '../Buttons/ToggleAudioButton/ToggleAudioButton';
 import ToggleChatButton from '../Buttons/ToggleChatButton/ToggleChatButton';
-import ToggleVideoButton from '../Buttons/ToggleVideoButton/ToggleVideoButton';
-import ToggleScreenShareButton from '../Buttons/ToogleScreenShareButton/ToggleScreenShareButton';
 import useParticipants from '../../hooks/useParticipants/useParticipants';
 import useCaptureImageContext from '../../hooks/useCaptureImageContext/useCaptureImageContext';
 import SaveCaptureImageButton from '../Buttons/SaveCaptureImageButton/SaveCaptureImageButton';
@@ -27,7 +24,7 @@ import useUser from '../../utils/useUser/useUser';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
-      backgroundColor: theme.palette.background.default,
+      backgroundColor: theme.palette.secondary.main,
       bottom: 0,
       left: 0,
       right: 0,
@@ -69,29 +66,6 @@ const useStyles = makeStyles((theme: Theme) =>
         display: 'none',
       },
     },
-    buttonGridItem: {
-      // "&*::after": {
-      // height: '22px',
-      // },
-      // "&*::before": {
-      // height: '22px',
-      // }
-    },
-    buttonGridContainer: {
-      // [theme.breakpoints.down('sm')]: {
-      //   marginTop: `-57px`,
-      // },
-    },
-    buttonContainer: {
-      // marginTop: '-5rem',
-      // paddingTop: '16px',
-      // paddingBottom: '16px',
-      // height: '40px',
-      // marginLeft: '8px',
-      // flex: '0 0 auto',
-      // display: 'flex',
-      // justifyContent: 'center',
-    },
     button: {
       textAlign: 'center',
       marginLeft: '8px',
@@ -128,7 +102,7 @@ export default function MenuBar() {
               <Typography variant="body1">{room!.name}</Typography>
             </Grid>
           </Hidden>
-          <Grid className={classes.buttonGridItem}>
+          <Grid>
             <ToggleAudioButton disabled={isReconnecting} />
             {!noParticipants ? (
               <>

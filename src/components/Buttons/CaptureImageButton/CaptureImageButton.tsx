@@ -1,5 +1,5 @@
 import { createStyles, IconButton, makeStyles, Theme } from '@material-ui/core';
-import React, { useEffect, useLayoutEffect } from 'react';
+import React from 'react';
 import { LocalDataTrackPublication } from 'twilio-video';
 import useCaptureImageContext from '../../../hooks/useCaptureImageContext/useCaptureImageContext';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
@@ -10,9 +10,6 @@ const useStyles = makeStyles((theme: Theme) =>
     iconContainer: {
       width: `${theme.iconButtonWidth}px`,
     },
-    button: {
-      // color: '#000000'
-    },
     paper: {
       padding: theme.spacing(1),
     },
@@ -21,7 +18,13 @@ const useStyles = makeStyles((theme: Theme) =>
       flexDirection: 'column',
     },
     label: {
-      fontSize: '12px',
+      fontSize: `${theme.menuBarIconFontSize}px`,
+    },
+    hover: {
+      '&:hover': {
+        borderBottom: `5px ${theme.brand} solid`,
+        color: `${theme.brand}`,
+      },
     },
   })
 );
@@ -50,10 +53,10 @@ export default function CaptureImageButton() {
   return (
     <>
       <IconButton
-        classes={{ label: classes.iconButton, root: classes.button }}
+        classes={{ label: classes.iconButton, root: classes.hover }}
         onClick={doCaptureImage}
         disabled={isLivePointerOpen}
-        color={isCaptureMode ? 'secondary' : 'default'}
+        color={isCaptureMode ? 'default' : 'default'}
       >
         <div className={classes.iconContainer}>
           <CameraIcon />
