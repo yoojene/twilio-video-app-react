@@ -1,9 +1,7 @@
-import React, { ChangeEvent, createContext, useCallback, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useState } from 'react';
 import { Predictions, Storage } from 'aws-amplify';
 import * as markerjs2 from 'markerjs2';
-import { S3ProviderListOutputItem, S3ProviderListOutput } from '@aws-amplify/storage';
-import { Room, LocalDataTrack, LocalDataTrackPublication } from 'twilio-video';
-import useRoomState from '../../hooks/useRoomState/useRoomState';
+import { LocalDataTrackPublication } from 'twilio-video';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import { defaultBase64Image } from '../RemoteImagePreview/RemoteImagePreviewData';
 import { DataStore } from '@aws-amplify/datastore';
@@ -82,10 +80,6 @@ type CaptureImageContextType = {
   OCRText: string;
   setOCRText: (OCRText: string) => void;
 };
-
-interface CanvasElement extends HTMLCanvasElement {
-  captureStream(frameRate?: number): MediaStream;
-}
 
 export const CaptureImageContext = createContext<CaptureImageContextType>(null!);
 

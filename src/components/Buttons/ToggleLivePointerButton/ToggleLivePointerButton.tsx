@@ -57,7 +57,7 @@ export default function ToggleLivePointerButton(): ReactElement {
         classes={{ label: classes.iconButton, root: classes.hover }}
         onClick={doOpenLivePointer}
         disabled={isCaptureMode}
-        color={isLivePointerOpen ? 'secondary' : undefined}
+        color={isLivePointerOpen ? 'default' : 'default'}
       >
         <div className={classes.iconContainer}>
           <LivePointerIcon />

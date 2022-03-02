@@ -1,23 +1,12 @@
 /* eslint-disable no-var */
 import { makeStyles } from '@material-ui/styles';
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import VideoTrack from '../VideoTrack/VideoTrack';
 
-import { LocalVideoTrack, Participant, RemoteVideoTrack, Room, LocalDataTrackPublication } from 'twilio-video';
+import { LocalVideoTrack, RemoteVideoTrack } from 'twilio-video';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import useCaptureImageContext from '../../hooks/useCaptureImageContext/useCaptureImageContext';
-import {
-  Backdrop,
-  CircularProgress,
-  Button,
-  DialogActions,
-  DialogTitle,
-  Grid,
-  Snackbar,
-  Drawer,
-  Slider,
-  Theme,
-} from '@material-ui/core';
+import { Backdrop, CircularProgress, Grid, Snackbar, Drawer, Slider, Theme } from '@material-ui/core';
 import useParticipants from '../../hooks/useParticipants/useParticipants';
 import usePublications from '../../hooks/usePublications/usePublications';
 import useTrack from '../../hooks/useTrack/useTrack';

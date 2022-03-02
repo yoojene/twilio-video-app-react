@@ -1,7 +1,6 @@
 import { makeStyles } from '@material-ui/core';
 import { DataTrack as IDataTrack } from 'twilio-video';
 import React, { ReactElement, useEffect } from 'react';
-import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import useCaptureImageContext from '../../hooks/useCaptureImageContext/useCaptureImageContext';
 import VideoTrack from '../VideoTrack/VideoTrack';
 import { IVideoTrack } from '../../types';

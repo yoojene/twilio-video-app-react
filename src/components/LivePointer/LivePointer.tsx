@@ -50,12 +50,6 @@ export default function LivePointer({ videoTrack, dataTrack, scale }: LivePointe
   const { room } = useVideoContext();
   const { getPosition, sendMouseCoordsAndCanvasSize, drawVideoToCanvas, drawLivePointer } = useCaptureImageContext();
 
-  let localDataTrackPublication: LocalDataTrackPublication;
-
-  if (room) {
-    [localDataTrackPublication] = [...room!.localParticipant.dataTracks.values()];
-  }
-
   const color = LOCAL_POINTER_COLOR;
   console.log(color);
 

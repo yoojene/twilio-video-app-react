@@ -4,14 +4,14 @@ import { Storage } from 'aws-amplify';
 import { AmplifyS3Image } from '@aws-amplify/ui-react';
 import styled from 'styled-components';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
-import { createStyles, Grid, makeStyles, Theme } from '@material-ui/core';
+import { createStyles, Grid, makeStyles } from '@material-ui/core';
 import format from 'date-fns/format';
 
 const StyledS3Image = styled(AmplifyS3Image)`
   --height: 600px;
   --width: 320px;
 `;
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     date: {
       // border: '1px solid black',
