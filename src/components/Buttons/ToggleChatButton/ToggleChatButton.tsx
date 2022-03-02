@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import ChatIcon from '../../../icons/ChatIcon';
+// import ChatIcon from '../../../icons/ChatIcon';
 import clsx from 'clsx';
 import { createStyles, IconButton, makeStyles, Theme } from '@material-ui/core';
 import useChatContext from '../../../hooks/useChatContext/useChatContext';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
-
+import { ReactComponent as ChatIcon } from '../../../icons/chat-icon.svg';
 export const ANIMATION_DURATION = 700;
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -66,6 +66,13 @@ const useStyles = makeStyles((theme: Theme) =>
         color: `${theme.brand}`,
       },
     },
+    chat: {
+      fill: theme.menuBarButtonColor,
+
+      '&:hover': {
+        fill: theme.brand,
+      },
+    },
   })
 );
 
@@ -105,7 +112,7 @@ export default function ToggleChatButton() {
         disabled={!conversation}
       >
         <div className={classes.iconContainer}>
-          <ChatIcon />
+          <ChatIcon className={classes.chat} />
           <div className={clsx(classes.ring, { [classes.animateRing]: shouldAnimate })} />
           <div className={clsx(classes.circle, { [classes.hasUnreadMessages]: hasUnreadMessages })} />
         </div>

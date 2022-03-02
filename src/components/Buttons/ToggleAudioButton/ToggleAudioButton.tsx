@@ -1,15 +1,14 @@
 import React from 'react';
-import MicIcon from '../../../icons/MicIcon';
 import MicOffIcon from '../../../icons/MicOffIcon';
 import useLocalAudioToggle from '../../../hooks/useLocalAudioToggle/useLocalAudioToggle';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 import { makeStyles, Theme, createStyles, IconButton } from '@material-ui/core';
+import { ReactComponent as MicIcon } from '../../../icons/mic-icon.svg';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     iconContainer: {
       width: `${theme.iconButtonWidth}px`,
-      color: 'red',
     },
     iconButton: {
       display: 'flex',
@@ -21,7 +20,13 @@ const useStyles = makeStyles((theme: Theme) =>
     hover: {
       '&:hover': {
         borderBottom: `5px ${theme.brand} solid`,
-        color: `${theme.brand}`,
+        color: theme.brand,
+      },
+    },
+    mic: {
+      fill: theme.menuBarButtonColor,
+      '&:hover': {
+        fill: theme.brand,
       },
     },
   })
@@ -44,7 +49,7 @@ export default function ToggleAudioButton(props: { disabled?: boolean; className
         {isAudioEnabled ? (
           <>
             <div className={classes.iconContainer}>
-              <MicIcon />
+              <MicIcon className={classes.mic} />
             </div>
             <div className={classes.label}>Mic On</div>
           </>
