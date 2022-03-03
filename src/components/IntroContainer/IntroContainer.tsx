@@ -3,21 +3,15 @@ import { makeStyles, Theme } from '@material-ui/core';
 import { useAppState } from '../../state';
 import UserMenu from './UserMenu/UserMenu';
 import { useLocation } from 'react-router-dom';
-import HostcommImg from '../../images/hostcomm/Hostcomm_Logo_trans.png';
+import { ReactComponent as HostCommLogo } from '../../images/hostcomm/hostcomm-white.svg';
+
 const useStyles = makeStyles((theme: Theme) => ({
   background: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    background: 'white',
+    background: theme.palette.background.default,
     height: '100%',
-  },
-  topBanner: {
-    position: 'absolute',
-    top: '0',
-    height: '40%',
-    backgroundColor: `${theme.palette.primary.main}`,
-    width: '100%',
   },
   container: {
     position: 'relative',
@@ -43,7 +37,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
   swooshContainer: {
-    backgroundColor: 'white',
+    backgroundColor: theme.palette.secondary.main,
 
     [theme.breakpoints.down('sm')]: {
       width: '100%',
@@ -65,9 +59,6 @@ const useStyles = makeStyles((theme: Theme) => ({
       },
     },
   },
-  hostcommLogo: {
-    width: '100%',
-  },
   twilioLogo: {
     position: 'absolute',
     top: 0,
@@ -75,7 +66,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     margin: '20px',
   },
   content: {
-    background: 'white',
+    background: theme.palette.secondary.main,
     width: '100%',
     flex: 1,
     [theme.breakpoints.down('sm')]: {
@@ -103,13 +94,12 @@ const IntroContainer = (props: IntroContainerProps) => {
 
   return (
     <div className={classes.background}>
-      <div className={classes.topBanner}></div>
       {user && location.pathname !== '/login' && <UserMenu />}
       <div className={classes.container}>
         <div className={classes.innerContainer}>
           <div className={classes.swooshContainer}>
             <div className={classes.logoContainer}>
-              <img className={classes.hostcommLogo} src={HostcommImg}></img>
+              <HostCommLogo></HostCommLogo>
             </div>
           </div>
           <div className={classes.content}>{props.children}</div>
