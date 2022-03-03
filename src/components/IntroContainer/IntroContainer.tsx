@@ -54,10 +54,16 @@ const useStyles = makeStyles((theme: Theme) => ({
     [theme.breakpoints.down('sm')]: {
       marginTop: '0px',
       textAlign: 'initial',
+      padding: '15px',
+      paddingTop: '35px',
+
       '& svg': {
         height: '64px',
       },
     },
+  },
+  hostcommlogo: {
+    maxWidth: '100%',
   },
   twilioLogo: {
     position: 'absolute',
@@ -99,7 +105,7 @@ const IntroContainer = (props: IntroContainerProps) => {
         <div className={classes.innerContainer}>
           <div className={classes.swooshContainer}>
             <div className={classes.logoContainer}>
-              <HostCommLogo></HostCommLogo>
+              <HostCommLogo className={classes.hostcommlogo}></HostCommLogo>
             </div>
           </div>
           <div className={classes.content}>{props.children}</div>
