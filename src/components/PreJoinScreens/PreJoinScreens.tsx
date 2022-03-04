@@ -6,8 +6,6 @@ import RoomNameScreen from './RoomNameScreen/RoomNameScreen';
 import { useAppState } from '../../state';
 import { useParams } from 'react-router-dom';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
-import useChatContext from '../../hooks/useChatContext/useChatContext';
-import { CircularProgress } from '@material-ui/core';
 import { USERNAME, AGENTNAME, ROOMNAME } from '../../constants';
 import useUser from '../../utils/useUser/useUser';
 
@@ -56,13 +54,29 @@ export default function PreJoinScreens() {
 
   useEffect(() => {
     console.log('pre join screen ueffect');
-    console.log(localStorage.getItem('userName'));
-    console.log(localStorage.getItem('agentName'));
-    console.log(localStorage.getItem('roomName'));
 
-    checkIsUser() ? setName(localStorage.getItem('userName')!) : setName(localStorage.getItem('agentName')!);
+    let userName;
+    let agentName;
+    let roomName;
 
-    setRoomName(localStorage.getItem('roomName')!);
+    // Check local storage for values which are stored from the API (Agent) / SMS link (User), fall back to constants if empty.
+    localStorage.getItem('userName') === 'undefined' || !localStorage.getItem('userName')
+      ? (userName = USERNAME)
+      : (userName = localStorage.getItem('userName'));
+    localStorage.getItem('agentName') === 'undefined' || !localStorage.getItem('agentName')
+      ? (agentName = AGENTNAME)
+      : (agentName = localStorage.getItem('agentName'));
+    localStorage.getItem('roomName') === 'undefined' || !localStorage.getItem('roomName')
+      ? (roomName = ROOMNAME)
+      : (roomName = localStorage.getItem('userName'));
+
+    console.log(userName);
+    console.log(agentName);
+    console.log(roomName);
+
+    checkIsUser() ? setName(userName!) : setName(agentName!);
+
+    setRoomName(roomName!);
   }, []);
 
   return (
