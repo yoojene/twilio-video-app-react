@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function OCRButton() {
   const classes = useStyles();
 
-  const { isCaptureMode, captureOCR, setIsCaptureSnackOpen, setSnackMessage } = useCaptureImageContext();
+  const { isCaptureMode, captureOCR, setIsCaptureSnackOpen, isOCRMode, setSnackMessage } = useCaptureImageContext();
 
   const doOCR = async () => {
     console.log('doOCR');
@@ -45,6 +45,7 @@ export default function OCRButton() {
         classes={{ label: classes.iconButton, root: classes.hover }}
         onClick={doOCR}
         disabled={!isCaptureMode}
+        color={isOCRMode ? 'primary' : 'default'}
       >
         <div className={classes.iconContainer}>
           <TextIcon />

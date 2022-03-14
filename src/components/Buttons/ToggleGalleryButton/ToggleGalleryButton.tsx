@@ -36,7 +36,11 @@ export default function ToggleGalleryButton() {
   };
   return (
     <>
-      <IconButton classes={{ label: classes.iconButton, root: classes.hover }} onClick={toggleGallery}>
+      <IconButton
+        classes={{ label: classes.iconButton, root: classes.hover }}
+        onClick={toggleGallery}
+        color={isGalleryOpen ? 'primary' : 'default'}
+      >
         <div className={classes.iconContainer}>
           <GalleryIcon />
         </div>

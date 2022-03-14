@@ -110,6 +110,7 @@ export default function ToggleChatButton() {
         classes={{ label: classes.iconButton, root: classes.hover }}
         onClick={toggleChatWindow}
         disabled={!conversation}
+        color={isChatWindowOpen ? 'primary' : 'default'}
       >
         <div className={classes.iconContainer}>
           <ChatIcon className={classes.chat} />

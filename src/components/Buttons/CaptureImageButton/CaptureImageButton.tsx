@@ -56,7 +56,7 @@ export default function CaptureImageButton() {
         classes={{ label: classes.iconButton, root: classes.hover }}
         onClick={doCaptureImage}
         disabled={isLivePointerOpen}
-        color={isCaptureMode ? 'default' : 'default'}
+        color={isCaptureMode ? 'primary' : 'default'}
       >
         <div className={classes.iconContainer}>
           <CameraIcon />
