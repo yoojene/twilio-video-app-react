@@ -424,9 +424,9 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     ctx!.clearRect(0, 0, canvas.width, canvas.height);
     ctx!.beginPath();
     ctx!.arc(mouseX, mouseY, 10, 0, 2 * Math.PI, true);
-    // ctx!.fillStyle = '#FF6A6A'; // TODO toggle based on local/remote user
-    ctx!.fillStyle = color; // TODO toggle based on local/remote user
-    ctx!.fill();
+    ctx!.lineWidth = 5;
+    ctx!.strokeStyle = color; // TODO toggle based on local/remote user
+    ctx!.stroke();
     requestAnimationFrame(() => drawLivePointer(canvas, mouseX, mouseY, color));
   };
 

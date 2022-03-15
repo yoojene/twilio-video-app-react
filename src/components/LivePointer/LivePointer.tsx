@@ -107,8 +107,9 @@ export default function LivePointer({ videoTrack, dataTrack, scale }: LivePointe
           ctx!.clearRect(0, 0, canvasWidth, canvasHeight);
           ctx!.beginPath();
           ctx!.arc(mouseX, mouseY, 10, 0, 2 * Math.PI, true);
-          ctx!.fillStyle = color; // TODO toggle based on local/remote user
-          ctx!.fill();
+          ctx!.lineWidth = 5;
+          ctx!.strokeStyle = color; // TODO toggle based on local/remote user
+          ctx!.stroke();
           requestAnimationFrame(drawCircle);
         };
 
