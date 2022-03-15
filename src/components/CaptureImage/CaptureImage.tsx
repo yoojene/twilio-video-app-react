@@ -161,7 +161,7 @@ export default function CaptureImage() {
         if (typeof event === 'string' && event.startsWith('{"isSendingAnnotation')) {
           console.log('isSendingAnnotation - toggle state');
           setIsCaptureSnackOpen(true);
-          setSnackMessage(`${!checkIsUser() ? 'User' : 'Agent'} is annotating, please wait...`);
+          setSnackMessage(`${!checkIsUser() ? 'User' : 'Host'} is annotating, please wait...`);
           return;
         }
       };
@@ -189,7 +189,7 @@ export default function CaptureImage() {
   // Capture effect
   useEffect(() => {
     if (isCaptureMode) {
-      console.log('calling captureImage() in layout eeffect');
+      console.log('calling captureImage() in layout effect');
       captureImage();
     }
     if (firstUpdate.current) {

@@ -66,7 +66,7 @@ type CaptureImageContextType = {
   isImagePreviewOpen: boolean;
   setIsImagePreviewOpen: (isImagePreviewOpen: boolean) => void;
   isVideoOpen: boolean;
-  setIsVideoOpen: (isImagePreviewOpen: boolean) => void;
+  setIsVideoOpen: (isVideoOpen: boolean) => void;
   isCaptureSnackOpen: boolean;
   setIsCaptureSnackOpen: (isCaptureSnackOpen: boolean) => void;
   snackMessage: string;
@@ -316,6 +316,15 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
 
         const textRes = await Storage.put(`${path}/${textFileName}`, text);
         console.log(textRes);
+
+        // Switch back to Capture mode after image saved to S3
+        setIsCaptureMode(!isCaptureMode);
+        console.log('about to send isCaptureMode on DT after save');
+        localDataTrackPublication.track.send(
+          JSON.stringify({
+            isCaptureMode: !isCaptureMode,
+          })
+        );
       })
       .catch(error => console.error(error));
 
