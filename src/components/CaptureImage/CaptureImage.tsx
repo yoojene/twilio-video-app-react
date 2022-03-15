@@ -175,7 +175,7 @@ export default function CaptureImage() {
   useEffect(() => {
     if (isRemoteCaptureMode) {
       setIsCaptureSnackOpen(true);
-      setSnackMessage(`Agent is capturing image, please wait...`);
+      setSnackMessage(`Host is capturing image, please wait...`);
     }
   }, [isRemoteCaptureMode]);
 
