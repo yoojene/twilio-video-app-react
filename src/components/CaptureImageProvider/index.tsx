@@ -6,6 +6,7 @@ import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import { defaultBase64Image } from '../RemoteImagePreview/RemoteImagePreviewData';
 import { DataStore } from '@aws-amplify/datastore';
 import { Image } from '../../models';
+import useUser from '../../utils/useUser/useUser';
 
 type CaptureImageContextType = {
   captureImage: () => void;
@@ -79,6 +80,8 @@ type CaptureImageContextType = {
   setIsOCRMode: (isOCRMode: boolean) => void;
   OCRText: string;
   setOCRText: (OCRText: string) => void;
+  isAnnotateMode: boolean;
+  setIsAnnotateMode: (isAnnotateMode: boolean) => void;
 };
 
 export const CaptureImageContext = createContext<CaptureImageContextType>(null!);
@@ -106,6 +109,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   const [isZoomMode, setIsZoomMode] = useState(false);
   const [isOCRMode, setIsOCRMode] = useState(false);
   const [OCRText, setOCRText] = useState<string>('');
+  const [isAnnotateMode, setIsAnnotateMode] = useState(false);
   const { room } = useVideoContext();
 
   let localDataTrackPublication: LocalDataTrackPublication;
@@ -113,6 +117,8 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
   if (room) {
     [localDataTrackPublication] = [...room!.localParticipant.dataTracks.values()];
   }
+
+  const checkIsUser = useUser();
 
   const captureImage = async () => {
     const video = (await getVideoElementFromDialog()) as HTMLVideoElement;
@@ -233,6 +239,7 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     if (len! % CHUNK_LEN) {
       console.log('last ' + (len! % CHUNK_LEN) + ' byte(s)');
       localDataTrackPublication.track.send(img?.data.subarray(n * CHUNK_LEN) as ArrayBuffer);
+      localDataTrackPublication.track.send('data-send-complete');
     }
   };
 
@@ -366,12 +373,22 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
     // create a marker.js MarkerArea
     const markerArea = new markerjs2.MarkerArea(imageRef!.current!);
 
-    // TODO change this to just FrameMarker for OCR "mode"
-    markerArea.availableMarkerTypes = [...markerArea.BASIC_MARKER_TYPES];
+    // Allowing only Arrow, Freehand, Text and Frame markers
+    markerArea.availableMarkerTypes = [
+      markerjs2.ArrowMarker,
+      markerjs2.FreehandMarker,
+      markerjs2.TextMarker,
+      markerjs2.FrameMarker,
+    ];
+    markerArea.settings.displayMode = 'inline';
 
-    markerArea.settings.displayMode = 'popup';
+    // Toggle marker viewport layout
+    // checkIsUser() ? markerArea.settings.displayMode = 'popup' : markerArea.settings.displayMode = 'inline';
+
+    // Toggle marker colors based on Host / User
+    checkIsUser() ? (markerArea.settings.defaultColor = 'blue') : (markerArea.settings.defaultColor = 'red');
+
     markerArea.renderTarget = document.getElementById('canvas') as HTMLCanvasElement;
-    console.log(markerArea.renderTarget);
 
     // attach an event handler to assign annotated image back to our image element
     markerArea.addEventListener('render', async event => {
@@ -393,9 +410,26 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
       }
     });
 
+    markerArea.addEventListener('markercreate', async event => {
+      // console.log('about to send annotated canvas on datatrack after marker created');
+      // if (imageRef!.current) {
+      //   imageRef!.current.src = event.dataUrl;
+      //   console.log('about to send annotated canvas on datatrack');
+      //   const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+      //   localDataTrackPublication.track.send(
+      //     JSON.stringify({
+      //       isSendingAnnotation: !isSendingAnnotation,
+      //     })
+      //   );
+      //   await sendCanvasDimensionsOnDataTrack(canvas!);
+      //   await sendImageOnDataTrack(canvas!);
+      // }
+    });
+
     markerArea.addEventListener('close', () => {
       console.log('close');
       setMarkupPanelOpen(false);
+      setIsAnnotateMode(false);
     });
 
     markerArea.addEventListener('show', () => {
@@ -555,6 +589,8 @@ export const CaptureImageProvider: React.FC = ({ children }) => {
         setIsOCRMode,
         OCRText,
         setOCRText,
+        isAnnotateMode,
+        setIsAnnotateMode,
       }}
     >
       {children}

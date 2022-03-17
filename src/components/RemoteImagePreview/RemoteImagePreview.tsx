@@ -60,6 +60,21 @@ export default function RemoteImagePreview({ track }: { track: IDataTrack }) {
 
         return Promise.resolve([canvasWidthNum, canvasHeightNum]);
       }
+
+      if (typeof event === 'string' && event.startsWith('data-send-complete')) {
+        const remotecanvas = document.getElementById('canvas') as HTMLCanvasElement;
+
+        const ctx = remotecanvas.getContext('2d');
+        remotecanvas.width = canvasWidthNum;
+        remotecanvas.height = canvasHeightNum;
+        console.log('Done can render photo now');
+
+        const img = ctx?.createImageData(canvasWidthNum, canvasHeightNum);
+        img!.data.set(buf);
+        ctx?.putImageData(img!, 0, 0);
+        setRemoteImageFromCanvas();
+      }
+
       if (typeof event === 'string') {
         // eslint-disable-next-line no-var
         buf = new Uint8ClampedArray(parseInt(event));
@@ -75,20 +90,6 @@ export default function RemoteImagePreview({ track }: { track: IDataTrack }) {
 
       console.log(count);
       console.log(buf.byteLength);
-
-      if (count === buf.byteLength) {
-        console.log('Done can render photo now');
-        const remotecanvas = document.getElementById('canvas') as HTMLCanvasElement;
-
-        const ctx = remotecanvas.getContext('2d');
-        remotecanvas.width = canvasWidthNum;
-        remotecanvas.height = canvasHeightNum;
-
-        const img = ctx?.createImageData(canvasWidthNum, canvasHeightNum);
-        img!.data.set(buf);
-        ctx?.putImageData(img!, 0, 0);
-        setRemoteImageFromCanvas();
-      }
     };
     track.on('message', handleMessage);
     return () => {

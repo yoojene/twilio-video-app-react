@@ -108,6 +108,8 @@ export default function CaptureImage() {
     isOCRMode,
     setIsOCRMode,
     OCRText,
+    isAnnotateMode,
+    annotateImage,
   } = useCaptureImageContext();
 
   const checkIsUser = useUser();
@@ -218,6 +220,12 @@ export default function CaptureImage() {
   const toggleGalleryDrawer = () => {
     setIsGalleryOpen(false);
   };
+
+  useEffect(() => {
+    if (isAnnotateMode) {
+      annotateImage();
+    }
+  }, [isAnnotateMode]);
 
   return (
     <div className={classes.container}>

@@ -31,13 +31,19 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function RemoteAnnotateButton() {
   const classes = useStyles();
 
-  const { annotateImage } = useCaptureImageContext();
+  const { setIsAnnotateMode, isAnnotateMode } = useCaptureImageContext();
   const doAnnotate = async () => {
-    annotateImage();
+    // annotateImage();
+    setIsAnnotateMode(!isAnnotateMode);
   };
   return (
     <>
-      <IconButton classes={{ label: classes.iconButton }} onClick={doAnnotate}>
+      <IconButton
+        classes={{ label: classes.iconButton }}
+        onClick={doAnnotate}
+        disabled={isAnnotateMode}
+        color={isAnnotateMode ? 'primary' : 'default'}
+      >
         <div className={classes.iconContainer}>
           <PencilIcon />
         </div>
