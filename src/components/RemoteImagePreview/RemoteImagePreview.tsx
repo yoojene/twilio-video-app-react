@@ -3,7 +3,6 @@ import { makeStyles } from '@material-ui/styles';
 import React, { useEffect, useRef } from 'react';
 import { DataTrack as IDataTrack } from 'twilio-video';
 import useCaptureImageContext from '../../hooks/useCaptureImageContext/useCaptureImageContext';
-import imagePlaceholder from '../../images/import_placeholder-90.png';
 
 const useStyles = makeStyles(() => ({
   title: {
@@ -25,7 +24,6 @@ const useStyles = makeStyles(() => ({
   photoContainer: {
     width: '100%',
     textAlign: 'center',
-    marginLeft: '16px',
   },
 }));
 export default function RemoteImagePreview({ track }: { track: IDataTrack }) {
@@ -99,9 +97,6 @@ export default function RemoteImagePreview({ track }: { track: IDataTrack }) {
 
   return (
     <>
-      {/* <h2 className={classes.title}>Remote Image Preview</h2> */}
-      {/* style={{ display: isRemoteCanvasOpen ? 'block' : 'none' } */}
-      {/* style={{ display: isRemoteCanvasOpen ? 'block' : 'none' } */}
       <div className={classes.canvasContainer}>
         <canvas id="canvas" className={classes.canvas}></canvas>
       </div>
